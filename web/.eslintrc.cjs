@@ -11,5 +11,13 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest'
-  }
+  },
+  overrides: [
+    {
+      "files": ["src/**/index.vue"], // 匹配views和二级目录中的index.vue
+      "rules": {
+        "vue/multi-word-component-names": "off"
+      } //给上面匹配的文件指定规则
+    }
+  ]
 }

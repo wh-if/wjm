@@ -1,4 +1,4 @@
-import request from '.'
+import {request} from '.'
 
 export function login(data: Record<string, any>) {
   return request({
