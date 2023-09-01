@@ -1,10 +1,12 @@
 import Koa from "Koa";
 import router from "./controller/router";
 import koaBody from "koa-body";
+import { auth } from "./middleware/auth";
 
 // 创建并设置 app
 const app = new Koa();
 
+app.use(auth())
 app.use(koaBody());
 app.use(router.routes());
 app.use(router.allowedMethods());

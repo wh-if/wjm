@@ -17,6 +17,8 @@ export const auth: () => Koa.Middleware<
     if (findIndex === -1) {
       try {
         const decoded = jwt.verify(ctx.headers.token as string, "WJM");
+        // console.log(decoded);
+        
       } catch (error) {
         ctx.body = AjaxResult.error("token 已过期或不存在, 请重新登录");
         return;
