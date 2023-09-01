@@ -1,19 +1,41 @@
-import './assets/main.css'
+import "./assets/main.css";
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp, watch } from "vue";
+import { createPinia } from "pinia";
 
-import App from './App.vue'
-import router from './router'
+import App from "./App.vue";
+import router from "./router";
 
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+// element-plus
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
+// element-plus icon
+import * as ElementPlusIconsVue from "@element-plus/icons-vue";
+
+const app = createApp(App);
+
+const pinia = createPinia()
+app.use(pinia);
+app.use(router);
+
+// element-plus
+app.use(ElementPlus);
+// element-plus icon
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
+
+app.mount("#app");
 
 
-const app = createApp(App)
+const storagedState = JSON.parse(sessionStorage.getItem('piniaState') || '{}')
+pinia.state.value = storagedState;
 
-app.use(createPinia())
-app.use(router)
-app.use(ElementPlus)
-
-app.mount('#app')
+watch(
+  pinia.state,
+  (state) => {
+    // 每当状态发生变化时，将整个 state 持久化到本地存储。
+    sessionStorage.setItem('piniaState', JSON.stringify(state))
+  },
+  { deep: true }
+)

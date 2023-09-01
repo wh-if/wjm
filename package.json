@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev:web": "pnpm -F @wjm/web run dev",
+    "dev:server": "pnpm -F @wjm/server run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

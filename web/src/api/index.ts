@@ -1,3 +1,4 @@
+import { useUserStore } from "@/stores/user";
 import axios from "axios";
 import type {
   AxiosInstance,
@@ -10,7 +11,7 @@ import { ElMessage } from "element-plus";
 type AjaxResult = {
   message: string;
   code: 0 | 1;
-  data: Record<string, any>;
+  data: Record<string, any> | Array<Record<string, any>>;
 };
 
 const service: AxiosInstance = axios.create({
@@ -20,7 +21,9 @@ const service: AxiosInstance = axios.create({
 
 service.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem("token");
+    // const token = sessionStorage.getItem("token");
+    const userStore = useUserStore();
+    const token = userStore.user.token;
     if (token) {
       config.headers.token = token;
     }

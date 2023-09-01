@@ -33,7 +33,7 @@ ElMenuItem
 </template>
 
 <script setup lang="ts">
-import { login } from "@/api/user";
+import { useUserStore } from "@/stores/user";
 import {
   ElCard,
   ElInput,
@@ -45,7 +45,6 @@ import {
   ElMessage
 } from "element-plus";
 import { reactive, ref } from "vue";
-import { useRouter } from "vue-router";
 
 const inputState = reactive({
   email: "",
@@ -54,15 +53,12 @@ const inputState = reactive({
 
 const activeTab = ref<0 | 1>(0);
 
-const router = useRouter();
+const userStore = useUserStore();
 
 function handleLogin() {
-  login({
+  userStore.loginAction({
     email: inputState.email,
     password: inputState.password
-  }).then(({ message }) => {
-    ElMessage.success(message);
-    router.replace("mine");
   });
 }
 </script>
