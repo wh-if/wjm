@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { getQuestionnaireList } from "@/api/questionnaire";
+import { getSurveyList } from "@/api/survey";
 import {
   ElAside,
   ElButton,
@@ -55,12 +55,12 @@ import {
 import { shallowReactive } from "vue";
 
 const state = shallowReactive({
-  questionnaireList: [] as Array<Record<string,any>>
-})
+  questionnaireList: [] as Array<Record<string, any>>
+});
 
 function getData() {
-  getQuestionnaireList().then(({data}) => {
-    state.questionnaireList = data as Record<string,any>[];
+  getSurveyList({ keyword: "", orderBy: "answerCount"}).then(({ data }) => {
+    state.questionnaireList = data as Record<string, any>[];
   });
 }
 getData();
@@ -82,3 +82,4 @@ getData();
   justify-content: right;
 }
 </style>
+@/api/survey

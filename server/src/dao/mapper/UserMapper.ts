@@ -4,12 +4,8 @@ export interface User {
   name?: string;
   email?: string;
   password?: string;
-  sex?: string;
-  avatar?: string;
-  birthday?: string;
-  accountNumber?: string;
-  registTime?: string;
-  permiss?: string;
+  status?: string;
+  
 }
 class UserMapper extends BaseMapper<User> {
   constructor() {

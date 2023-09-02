@@ -35,7 +35,23 @@ const router = createRouter({
             needLogin: true
           },
           component: () => import("../views/Mine/index.vue")
-        }
+        },
+        {
+          path: "/edit",
+          name: "edit",
+          meta: {
+            needLogin: true
+          },
+          component: () => import("../views/Edit/index.vue")
+        },
+        {
+          path: "/edit",
+          name: "edit",
+          meta: {
+            needLogin: true
+          },
+          component: () => import("../views/Edit/index.vue")
+        },
       ]
     }
   ]

@@ -18,12 +18,12 @@ const controller: Controller[] = [
     method: HttpMethodEnum.POST,
     handler: async (ctx) => {
       const { email, password } = ctx.request.body;
-      
+
       const user = await userMapper.selectOne({ email });
       if (user && password === user.password) {
         // Reflect.deleteProperty(user, "id");
         Reflect.deleteProperty(user, "password");
-        const token = jwt.sign({ ...user }, "WJM");
+        const token = jwt.sign({ ...user }, "WJM", { expiresIn: "30min" });
         ctx.body = AjaxResult.success("登录成功！", { ...user, token });
       } else {
         ctx.body = AjaxResult.error("用户名或密码错误！");

@@ -1,3 +1,4 @@
+import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import axios from "axios";
 import type {
@@ -6,7 +7,8 @@ import type {
   AxiosResponse,
   AxiosRequestConfig
 } from "axios";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
 
 type AjaxResult = {
   message: string;
@@ -50,7 +52,22 @@ const request = (config: AxiosRequestConfig) => {
   return new Promise<AjaxResult>((resolve, reject) => {
     service(config).then((response) => {
       if (response.status === 200) {
-        resolve(response.data);
+        const { code, message } = response.data;
+        if (code === 1) {
+          ElMessageBox.confirm(message, "提示", {
+            showCancelButton: false,
+            confirmButtonText: "确认"
+          })
+            .then(() => {
+              router.push('login')
+            })
+            .catch(() => {
+              // router.back()
+            });
+        } else {
+          resolve(response.data);
+        }
+        
       } else {
         ElMessage.warning(response.statusText);
         reject(response);
