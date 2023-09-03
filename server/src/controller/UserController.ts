@@ -9,7 +9,7 @@ const controller: Controller[] = [
     path: "/user",
     method: HttpMethodEnum.GET,
     handler: async (ctx) => {
-      ctx.body = await userMapper.select({ id: "1" });
+      ctx.body = await userMapper.select({ id: 1 });
     },
   },
   // 登录

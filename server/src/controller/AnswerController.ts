@@ -9,12 +9,12 @@ const controller: Controller[] = [
     method: HttpMethodEnum.GET,
     handler: async (ctx) => {
       const { surveyId } = ctx.params;
-      const {  } = ctx.query;
+      const {} = ctx.query;
 
       // TODO 问卷的创建者才有权查看这个问卷的所有答卷
-      const result = answerMapper.select({ surveyId });
+      const result = answerMapper.select({ surveyId: parseInt(surveyId) });
 
-      ctx.body = AjaxResult.success(result);
+      ctx.body = AjaxResult.success({ list: result });
     },
   },
   // 提交答卷
@@ -22,15 +22,15 @@ const controller: Controller[] = [
     path: "/answer/:surveyId",
     method: HttpMethodEnum.POST,
     handler: async (ctx) => {
-      const {surveyId} = ctx.params;
-      const {content,expendDuration} = ctx.request.body;
+      const { surveyId } = ctx.params;
+      const { content, expendDuration } = ctx.request.body;
       const newAnswer: Answer = {
         content,
         submitTime: Date.now().toString(),
         ip: ctx.req.socket.remoteAddress,
         expendDuration,
-        surveyId
-      }
+        surveyId: parseInt(surveyId),
+      };
 
       // TODO 问卷的创建者才有权查看这个问卷的所有答卷
       const result = answerMapper.insert(newAnswer);

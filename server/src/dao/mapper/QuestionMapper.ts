@@ -1,13 +1,14 @@
 import BaseMapper from "./BaseMapper";
 export interface Question {
-  id?: string;
+  id?: number;
   title?: string;
   type?: string;
   content?: string;
-  surveyId?: string;
+  surveyId?: number;
   description?: string;
-  required?: string;
-  userId?: string;
+  required?: boolean;
+  userId?: number;
+  index?: number;
   
 }
 class QuestionMapper extends BaseMapper<Question> {

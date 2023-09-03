@@ -25,12 +25,16 @@ export default class BaseMapper<T> {
   }
 
   select(whereValues: T, type?: SelectType) {
+    let sql = warpWhere(
+      `select * from \`${this.TABLE_NAME}\``,
+      whereValues,
+      type
+    );
+    return this.selectBySql(sql);
+  }
+
+  selectBySql(sql: string) {
     return new Promise<T[]>((resolve, reject) => {
-      let sql = warpWhere(
-        `select * from \`${this.TABLE_NAME}\``,
-        whereValues,
-        type
-      );
       console.warn(sql);
       this.POOL.query(sql, function (error, results, fields) {
         if (error) throw error;
@@ -38,6 +42,11 @@ export default class BaseMapper<T> {
           if (field.type === mysql.Types.JSON) {
             results.forEach(
               (item: T) => (item[field.name] = JSON.parse(item[field.name]))
+            );
+          }
+          if (field.type === mysql.Types.TINY) {
+            results.forEach(
+              (item: T) => (item[field.name] = !!item[field.name])
             );
           }
         });

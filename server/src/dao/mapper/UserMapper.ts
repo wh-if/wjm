@@ -1,6 +1,6 @@
 import BaseMapper from "./BaseMapper";
 export interface User {
-  id?: string;
+  id?: number;
   name?: string;
   email?: string;
   password?: string;

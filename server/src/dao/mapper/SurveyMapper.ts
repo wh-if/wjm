@@ -1,14 +1,15 @@
 import BaseMapper from "./BaseMapper";
 export interface Survey {
-  id?: string;
+  id?: number;
   title?: string;
-  userId?: string;
+  userId?: number;
   description?: string;
   status?: string;
   qrCode?: string;
   linkUrl?: string;
   createTime?: string;
   updateTime?: string;
+  test?: boolean;
 }
 
 type SelectListParams = {
@@ -27,17 +28,10 @@ class SurveyMapper extends BaseMapper<Survey> {
     orderBy: "answerCount" | "createTime" = "createTime",
     desc: boolean = true
   ) {
-    return new Promise((resolve, reject) => {
-      const sql = `SELECT *, (SELECT COUNT(1) from answer where answer.surveyId=survey.id) as answerCount FROM survey where userId=${userId} and survey.title like ${this.POOL.escape(
-        "%" + keyword + "%"
-      )} order by ${orderBy} ${desc ? "desc" : ""}`;
-      // console.log(sql);
-
-      this.POOL.query(sql, (error, results, fields) => {
-        // console.log(results);
-        resolve(results);
-      });
-    });
+    const sql = `SELECT *, (SELECT COUNT(1) from answer where answer.surveyId=survey.id) as answerCount FROM survey where userId=${userId} and survey.title like ${this.POOL.escape(
+      "%" + keyword + "%"
+    )} order by ${orderBy} ${desc ? "desc" : ""}`;
+    return this.selectBySql(sql);
   }
 }
 

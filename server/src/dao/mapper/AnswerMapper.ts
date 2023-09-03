@@ -1,7 +1,7 @@
 import BaseMapper from "./BaseMapper";
 export interface Answer {
-  id?: string;
-  surveyId?: string;
+  id?: number;
+  surveyId?: number;
   content?: string;
   submitTime?: string;
   expendDuration?: string;

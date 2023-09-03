@@ -11,11 +11,13 @@ const controller: Controller[] = [
       const { id, surveyId } = ctx.query;
       let result: any;
       if (id) {
-        result = questionMapper.selectOne({ id: id as string });
+        result = questionMapper.selectOne({ id: parseInt(id as string) });
       } else {
-        result = questionMapper.select({ surveyId: surveyId as string });
+        result = questionMapper.select({
+          surveyId: parseInt(surveyId as string),
+        });
       }
-      ctx.body = AjaxResult.success(result);
+      ctx.body = AjaxResult.success({ list: result });
     },
   },
   // 新增问题
@@ -23,7 +25,7 @@ const controller: Controller[] = [
     path: "/question",
     method: HttpMethodEnum.POST,
     handler: async (ctx) => {
-      const { title, type, content, surveyId, description, required } =
+      const { title, type, content, surveyId, description, required, index } =
         ctx.request.body;
       const newQuestion: Question = {
         title,
@@ -33,6 +35,7 @@ const controller: Controller[] = [
         description,
         required,
         userId: ctx.body,
+        index,
       };
       const result = questionMapper.insert(newQuestion);
       ctx.body = AjaxResult.success(result);
@@ -62,7 +65,7 @@ const controller: Controller[] = [
     method: HttpMethodEnum.DELETE,
     handler: async (ctx) => {
       const { id } = ctx.params;
-      const result = questionMapper.remove({ id });
+      const result = questionMapper.remove({ id: parseInt(id) });
       ctx.body = AjaxResult.success(result);
     },
   },
