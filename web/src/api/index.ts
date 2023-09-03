@@ -13,7 +13,7 @@ import { useRouter } from "vue-router";
 type AjaxResult = {
   message: string;
   code: 0 | 1;
-  data: Record<string, any> | Array<Record<string, any>>;
+  data: Record<string, any>;
 };
 
 const service: AxiosInstance = axios.create({

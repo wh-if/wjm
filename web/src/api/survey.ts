@@ -13,3 +13,10 @@ export function getSurveyList(params: SearchSurveyParams) {
     params
   });
 }
+
+export function createNewSurvey() {
+  return request({
+    url: "/survey",
+    method: "post",
+  });
+}
