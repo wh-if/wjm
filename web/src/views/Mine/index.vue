@@ -1,7 +1,7 @@
 <template>
   <ElContainer>
     <ElAside>
-      <div style="text-align: center">
+      <div style="text-align: center;padding: 20px 0;">
         <ElButton
           type="primary"
           @click="handleNewCreate"
@@ -76,7 +76,7 @@ import {
   ElTableColumn,
   ElOption
 } from "element-plus";
-import { shallowReactive } from "vue";
+import { shallowReactive, reactive } from "vue";
 import { useRouter } from "vue-router";
 
 const state = shallowReactive({
@@ -126,4 +126,3 @@ getData();
   justify-content: right;
 }
 </style>
-@/api/survey

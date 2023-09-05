@@ -11,13 +11,16 @@
         <ElDropdownMenu>
           <ElDropdownItem>Action 1</ElDropdownItem>
           <ElDropdownItem>Action 2</ElDropdownItem>
-          <ElDropdownItem @click="handleLogout" divided>退出登录</ElDropdownItem>
+          <ElDropdownItem @click="handleLogout" divided
+            >退出登录</ElDropdownItem
+          >
         </ElDropdownMenu>
       </template>
     </ElDropdown>
   </ElHeader>
-
-  <RouterView class="main-content"></RouterView>
+  <div class="main-content">
+    <RouterView></RouterView>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -44,9 +47,11 @@ function handleLogout() {
   justify-content: flex-end;
   position: fixed;
   width: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid #dcdfe6;
 }
 
-.main-content{
+.main-content {
   padding-top: 60px;
   min-height: 100vh;
 }
