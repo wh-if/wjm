@@ -16,22 +16,35 @@
       <QuestionCard>
         <EditInput v-model="surveyData.description"> </EditInput>
       </QuestionCard>
-      <QuestionCard>
-        <RadioQuestion :list-index="0"></RadioQuestion>
+      <QuestionCard
+        v-for="(item, index) in surveyData.quesitons"
+        :key="item.id"
+      >
+        <RadioQuestion :list-index="index"></RadioQuestion>
       </QuestionCard>
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { SurveyWithQuestions } from "@/api/survey";
+import { updateSurvey, type SurveyWithQuestions } from "@/api/survey";
 import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
 import RadioQuestion from "@/components/RadioQuestion.vue";
 import { ElCard, ElInput } from "element-plus";
-import { inject, ref, type Ref } from "vue";
+import { inject, ref, watch, type Ref } from "vue";
 
 const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData")!;
+
+watch(
+  () => [surveyData.value.title, surveyData.value.description],
+  (val) => {
+    updateSurvey({
+      title: val[0],
+      description: val[1]
+    } as SurveyWithQuestions);
+  }
+);
 </script>
 
 <style lang="scss">

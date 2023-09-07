@@ -10,10 +10,10 @@ import type {
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 
-type AjaxResult = {
+type AjaxResult<T> = {
   message: string;
   code: 0 | 1;
-  data: Record<string, any>;
+  data: T;
 };
 
 const service: AxiosInstance = axios.create({
@@ -48,8 +48,8 @@ service.interceptors.response.use(
   }
 );
 
-const request = (config: AxiosRequestConfig) => {
-  return new Promise<AjaxResult>((resolve, reject) => {
+const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
+  return new Promise<AjaxResult<T>>((resolve, reject) => {
     service(config).then((response) => {
       if (response.status === 200) {
         const { code, message } = response.data;
@@ -59,7 +59,7 @@ const request = (config: AxiosRequestConfig) => {
             confirmButtonText: "确认"
           })
             .then(() => {
-              router.push('login')
+              router.push("login");
             })
             .catch(() => {
               // router.back()
@@ -67,7 +67,6 @@ const request = (config: AxiosRequestConfig) => {
         } else {
           resolve(response.data);
         }
-        
       } else {
         ElMessage.warning(response.statusText);
         reject(response);

@@ -18,11 +18,20 @@
 </template>
 
 <script setup lang="ts">
+import { addQuestionToSurvey } from "@/api/question";
+import type { SurveyWithQuestions } from "@/api/survey";
 import { ElCard, ElTabs, ElTabPane, ElButton } from "element-plus";
-import { inject } from "vue";
+import { type Ref, inject } from "vue";
+
+const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData");
+
+console.log(surveyData!.value);
+
 
 function handleClick(type: string) {
-  console.log(type);
+  addQuestionToSurvey(surveyData!.value.id, type).then(({ data }) => {
+    surveyData?.value.quesitons.push(data);
+  })
 }
 </script>
 

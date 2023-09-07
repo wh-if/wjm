@@ -29,11 +29,13 @@ const controller: Controller[] = [
     handler: async (ctx) => {
       const { surveyId } = ctx.params;
 
-      const surveyResult = await surveyMapper.selectOne({ id: parseInt(surveyId) });
+      const surveyResult = await surveyMapper.selectOne({
+        id: parseInt(surveyId),
+      });
 
       const questionResult = await questionMapper.select({
         surveyId: parseInt(surveyId),
-      });      
+      });
 
       ctx.body = AjaxResult.success({
         ...surveyResult,
@@ -86,7 +88,14 @@ const controller: Controller[] = [
     path: "/survey/:surveyId",
     method: HttpMethodEnum.PUT,
     handler: async (ctx) => {
-      const result = await surveyMapper.update(ctx.request.body, {
+      const { title, description } = ctx.request.body;
+
+      const updateSurvey: Survey = {
+        title,
+        description,
+      };
+
+      const result = await surveyMapper.update(updateSurvey, {
         id: parseInt(ctx.params.surveyId),
       });
 

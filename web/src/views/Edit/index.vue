@@ -27,13 +27,15 @@ const state = ref<SurveyWithQuestions>();
 const loading = ref(true);
 const router = useRouter();
 const surveyId = router.currentRoute.value.query.surveyId as string;
+const activeQuestionIndex = ref<number>();
 
 getSurveyWithQuestions(surveyId).then(({ data }) => {
-  state.value = reactive(data as SurveyWithQuestions);
+  state.value = reactive(data);
   loading.value = false;
 });
 
 provide("surveyData", state);
+provide("activeQuestionIndex", activeQuestionIndex);
 </script>
 
 <style lang="scss" scoped>

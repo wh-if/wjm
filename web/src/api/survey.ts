@@ -1,4 +1,5 @@
 import { request } from ".";
+import type { Question } from "./question";
 
 type SearchSurveyParams = {
   keyword: string;
@@ -6,19 +7,7 @@ type SearchSurveyParams = {
   desc?: boolean;
 };
 
-export interface Question {
-  id: number;
-  title: string;
-  type: string;
-  content: Record<string, any>;
-  surveyId: number;
-  description: string;
-  required: boolean;
-  userId: number;
-  index: number;
-}
-
-export type SurveyWithQuestions = {
+export interface SurveyWithQuestions {
   id: number;
   title: string;
   status: number;
@@ -30,7 +19,7 @@ export type SurveyWithQuestions = {
   userId: number;
   endOfSurvey: string;
   quesitons: Question[];
-};
+}
 
 export function getSurveyList(params: SearchSurveyParams) {
   return request({
@@ -48,8 +37,16 @@ export function createNewSurvey() {
 }
 
 export function getSurveyWithQuestions(surveyId: number | string) {
-  return request({
+  return request<SurveyWithQuestions>({
     url: "/survey/" + surveyId,
     method: "get"
+  });
+}
+
+export function updateSurvey(data: SurveyWithQuestions) {
+  return request({
+    url: "/survey/" + data.id,
+    method: "put",
+    data
   });
 }

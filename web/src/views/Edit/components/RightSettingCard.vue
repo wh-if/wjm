@@ -2,15 +2,18 @@
   <ElCard class="right-setting-box">
     <ElTabs>
       <ElTabPane label="题目设置">
-        <ElForm>
+        <ElForm v-if="activeQuestionIndex !== undefined">
           <ElFormItem>
-            <ElSelect placeholder="题目类型">
+            <ElSelect v-model="questionData!.type" placeholder="题目类型">
               <ElOption :label="'单选'" :value="'radio'" />
             </ElSelect>
           </ElFormItem>
           <ElFormItem>
-            
-            <ElCheckbox label="必答题" size="large" />
+            <ElCheckbox
+              v-model="questionData!.required"
+              label="必答题"
+              size="large"
+            />
           </ElFormItem>
         </ElForm>
         <!-- <div style="overflow-y: auto; height: 100%">
@@ -22,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import type { SurveyWithQuestions } from "@/api/survey";
 import {
   ElCard,
   ElCheckbox,
@@ -30,7 +34,15 @@ import {
   ElOption,
   ElTabs
 } from "element-plus";
-import { inject } from "vue";
+import { computed, inject, type Ref } from "vue";
+
+const activeQuestionIndex = inject<Ref<number>>("activeQuestionIndex");
+
+const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData");
+
+const questionData = computed(
+  () => surveyData!.value.quesitons[activeQuestionIndex!.value | 0]
+);
 </script>
 
 <style lang="scss" scoped>

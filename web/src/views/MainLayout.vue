@@ -49,6 +49,7 @@ function handleLogout() {
   width: 100%;
   background-color: #fff;
   border-bottom: 1px solid #dcdfe6;
+  z-index: 99;
 }
 
 .main-content {

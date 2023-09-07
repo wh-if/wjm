@@ -19,5 +19,6 @@ import { ElSteps, ElStep } from "element-plus";
   justify-content: center;
 
   background-color: #fff;
+  z-index: 99;
 }
 </style>

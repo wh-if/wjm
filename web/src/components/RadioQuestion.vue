@@ -1,18 +1,36 @@
 <template>
-  <div>
-    <ElTag>单选</ElTag>
-  </div>
-  <h2 class="question-title">
-    <span style="margin-right: 15px">{{ listIndex + 1 }}</span>
-    <EditInput style="flex:1" v-model="questionData.title" placeholder="请输入题目标题"></EditInput>
-  </h2>
+  <div
+    :id="$props.listIndex.toString()"
+    @click="handleClickQuestion"
+    class="radio-question"
+  >
+    <div>
+      <ElTag>单选</ElTag>
+    </div>
+    <h2 class="question-title">
+      <span style="margin-right: 15px">{{ listIndex + 1 }}</span>
+      <EditInput
+        style="flex: 1"
+        v-model="questionData.title"
+        placeholder="请输入题目标题"
+      ></EditInput>
+    </h2>
 
-  <EditInput class="question-description" v-model="questionData.description" placeholder="请输入题目说明（选填）"></EditInput>
-  <!-- <ElRadioGroup v-model="value"> -->
-  <div class="options-box">
-    <div v-for="item in questionData.content.options" :key="item.id" class="option-item">
-      <ElRadio :model-value="false" class="option-radio" disabled> </ElRadio>
-      <EditInput class="option-text" v-model="item.text"></EditInput>
+    <EditInput
+      class="question-description"
+      v-model="questionData.description"
+      placeholder="请输入题目说明（选填）"
+    ></EditInput>
+    <!-- <ElRadioGroup v-model="value"> -->
+    <div class="options-box">
+      <div
+        v-for="item in questionData.content.options"
+        :key="item.id"
+        class="option-item"
+      >
+        <ElRadio :model-value="false" class="option-radio" disabled> </ElRadio>
+        <EditInput class="option-text" v-model="item.text"></EditInput>
+      </div>
     </div>
   </div>
 
@@ -22,10 +40,10 @@
 <script setup lang="ts">
 import { ElTag, ElRadio, ElRadioGroup } from "element-plus";
 import EditInput from "./EditInput.vue";
-import { inject, ref, type Ref } from "vue";
+import { inject, ref, watch, type Ref } from "vue";
 import type { SurveyWithQuestions } from "@/api/survey";
+import { updateQuestion } from "@/api/question";
 
-const value = ref("1");
 const props = defineProps({
   questionId: Number,
   listIndex: {
@@ -37,6 +55,18 @@ const questionData =
   inject<Ref<SurveyWithQuestions>>("surveyData")?.value.quesitons[
     props.listIndex
   ]!;
+const activeQuestionIndex = inject<Ref<number>>("activeQuestionIndex");
+
+  // 给右侧面板用
+function handleClickQuestion() {
+  activeQuestionIndex!.value = props.listIndex;
+}
+
+watch(questionData, (newVal) => {
+  updateQuestion(newVal);
+})
+
+// 修改后的保存
 </script>
 
 <style lang="scss" scoped>
@@ -46,7 +76,7 @@ const questionData =
   padding-top: 12px;
 }
 
-.question-description{
+.question-description {
   margin: 10px 0;
 }
 .option-item {

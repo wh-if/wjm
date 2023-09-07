@@ -25,19 +25,25 @@ const controller: Controller[] = [
     path: "/question",
     method: HttpMethodEnum.POST,
     handler: async (ctx) => {
-      const { title, type, content, surveyId, description, required, index } =
-        ctx.request.body;
+      const { surveyId, questionType } = ctx.request.body;
       const newQuestion: Question = {
-        title,
-        type,
-        content,
-        surveyId,
-        description,
-        required,
+        title: "请输入题目标题",
+        type: "radio",
+        content: JSON.stringify({
+          options: [
+            { text: "选项", id: 1 },
+            { text: "选项", id: 1 },
+            { text: "选项", id: 1 },
+            { text: "选项", id: 1 },
+          ],
+        }),
+        index: 1,
         userId: ctx.body,
-        index,
+        required: false,
+        surveyId: surveyId,
       };
-      const result = questionMapper.insert(newQuestion);
+      const questionId = await questionMapper.insert(newQuestion);
+      const result = await questionMapper.selectOne({ id: questionId });
       ctx.body = AjaxResult.success(result);
     },
   },
@@ -48,10 +54,11 @@ const controller: Controller[] = [
     handler: async (ctx) => {
       const { id, title, type, content, description, required } =
         ctx.request.body;
+      
       const updateQuestion: Question = {
         title,
         type,
-        content,
+        content: JSON.stringify(content),
         description,
         required,
       };
