@@ -6,6 +6,8 @@
           <ElButton
             @click="handleClick('radio')"
             style="width: 90%; margin: 10px auto"
+            bg
+            text
           >
             单选
           </ElButton>
@@ -20,7 +22,7 @@
 <script setup lang="ts">
 import { addQuestionToSurvey } from "@/api/question";
 import type { SurveyWithQuestions } from "@/api/survey";
-import { ElCard, ElTabs, ElTabPane, ElButton } from "element-plus";
+import { ElCard, ElTabs, ElTabPane, ElButton, ElText, ElLink } from "element-plus";
 import { type Ref, inject } from "vue";
 
 const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData");

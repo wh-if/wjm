@@ -45,12 +45,12 @@ const router = createRouter({
           component: () => import("../views/Edit/index.vue")
         },
         {
-          path: "/share",
-          name: "share",
+          path: "/overview",
+          name: "overview",
           meta: {
             needLogin: true
           },
-          component: () => import("../views/Share/index.vue")
+          component: () => import("../views/Overview/index.vue")
         },
       ]
     }

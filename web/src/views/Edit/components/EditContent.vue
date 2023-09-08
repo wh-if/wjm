@@ -41,7 +41,8 @@ watch(
   (val) => {
     updateSurvey({
       title: val[0],
-      description: val[1]
+      description: val[1],
+      id: surveyData.value.id
     } as SurveyWithQuestions);
   }
 );

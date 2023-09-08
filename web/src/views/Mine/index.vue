@@ -1,7 +1,7 @@
 <template>
   <ElContainer>
     <ElAside>
-      <div style="text-align: center;padding: 20px 0;">
+      <div style="text-align: center; padding: 20px 0">
         <ElButton
           type="primary"
           @click="handleNewCreate"
@@ -26,8 +26,12 @@
           size="large"
           clearable
           placeholder="输入问卷标题"
-        />
-        <ElButton size="large" @click="getData">搜索</ElButton>
+        >
+          <template #append>
+            <ElButton @click="getData" :icon="Search" />
+          </template>
+        </ElInput>
+        <!-- <ElButton size="large">搜索</ElButton> -->
         <div class="right">
           <ElSelect @change="getData" v-model="state.searchOrderBy">
             <ElOption key="answerCount" label="答卷数量" value="answerCount" />
@@ -39,7 +43,16 @@
           </ElSelect>
         </div>
       </div>
-      <ElTable :data="state.questionnaireList" height="600" size="large">
+      <ElTable
+        :data="
+          state.surveyList.slice(
+            (state.currentPage - 1) * state.pageSize,
+            state.currentPage * state.pageSize
+          )
+        "
+        max-height="700"
+        size="large"
+      >
         <ElTableColumn label="问卷ID" prop="id"> </ElTableColumn>
         <ElTableColumn label="标题" prop="title"></ElTableColumn>
         <ElTableColumn label="创建时间" prop="createTime">
@@ -49,13 +62,37 @@
         </ElTableColumn>
         <ElTableColumn label="答卷数量" prop="answerCount"></ElTableColumn>
         <ElTableColumn label="状态" prop="status"></ElTableColumn>
+        <ElTableColumn fixed="right" label="操作" width="120">
+          <template #default="scope">
+            <el-button
+              link
+              type="primary"
+              size="large"
+              @click="$router.push(`/edit?surveyId=${scope.row.id}`)"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="success"
+              size="large"
+              @click="state.showShareDialog = true"
+              >分享</el-button
+            >
+          </template>
+        </ElTableColumn>
       </ElTable>
       <ElPagination
         class="pagination"
         background
-        layout="prev, pager, next"
-        :total="1000"
+        layout="total, sizes, prev, pager, next, jumper"
+        v-model:page-size="state.pageSize"
+        v-model:current-page="state.currentPage"
+        :page-sizes="[10, 15, 20, 25]"
+        :total="state.surveyList.length"
       />
+      <ElDialog title="分享问卷" v-model="state.showShareDialog">
+        <SharePane></SharePane>
+      </ElDialog>
     </ElMain>
   </ElContainer>
 </template>
@@ -76,14 +113,19 @@ import {
   ElTableColumn,
   ElOption
 } from "element-plus";
+import { Search } from "@element-plus/icons-vue";
 import { shallowReactive, reactive } from "vue";
 import { useRouter } from "vue-router";
+import SharePane from "@/components/SharePane.vue";
 
 const state = shallowReactive({
-  questionnaireList: [] as Array<Record<string, any>>,
+  surveyList: [] as Array<Record<string, any>>,
   searchInputValue: "",
   searchOrderBy: "createTime" as const,
-  searchDesc: true
+  searchDesc: true,
+  currentPage: 1,
+  pageSize: 10,
+  showShareDialog: false
 });
 
 const router = useRouter();
@@ -100,7 +142,7 @@ function getData() {
     orderBy: state.searchOrderBy,
     desc: state.searchDesc
   }).then(({ data }) => {
-    state.questionnaireList = data.list;
+    state.surveyList = data.list;
   });
 }
 getData();
