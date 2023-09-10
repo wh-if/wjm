@@ -53,6 +53,16 @@ const router = createRouter({
           component: () => import("../views/Overview/index.vue")
         },
       ]
+    },
+    {
+      path: "/s/:surveyId",
+      name: "answer",
+      component: () => import("../views/AnswerView.vue")
+    },
+    {
+      path: "/result",
+      name: "result",
+      component: () => import("../views/ResultView.vue")
     }
   ]
 });

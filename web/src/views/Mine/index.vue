@@ -75,7 +75,7 @@
               link
               type="success"
               size="large"
-              @click="state.showShareDialog = true"
+              @click="e=>showShareDialog(scope.row.id)"
               >分享</el-button
             >
           </template>
@@ -91,7 +91,7 @@
         :total="state.surveyList.length"
       />
       <ElDialog title="分享问卷" v-model="state.showShareDialog">
-        <SharePane></SharePane>
+        <SharePane :survey-id="currentFocusSurvey"></SharePane>
       </ElDialog>
     </ElMain>
   </ElContainer>
@@ -114,7 +114,7 @@ import {
   ElOption
 } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
-import { shallowReactive, reactive } from "vue";
+import { shallowReactive, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import SharePane from "@/components/SharePane.vue";
 
@@ -128,12 +128,19 @@ const state = shallowReactive({
   showShareDialog: false
 });
 
+const currentFocusSurvey=ref<number>(0)
+
 const router = useRouter();
 
 function handleNewCreate() {
   createNewSurvey().then(({ data }) => {
     router.push(`/edit?surveyId=${data.surveyId}`);
   });
+}
+
+function showShareDialog(surveyId: number) {
+  state.showShareDialog = true;
+  currentFocusSurvey.value = surveyId;
 }
 
 function getData() {

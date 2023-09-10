@@ -25,7 +25,7 @@ const controller: Controller[] = [
       const { surveyId } = ctx.params;
       const { content, expendDuration } = ctx.request.body;
       const newAnswer: Answer = {
-        content,
+        content: JSON.stringify(content),
         submitTime: Date.now().toString(),
         ip: ctx.req.socket.remoteAddress,
         expendDuration,

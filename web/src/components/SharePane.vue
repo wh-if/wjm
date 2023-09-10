@@ -3,12 +3,12 @@
     <div class="share-method__item">
       <p class="share-method__item-info">链接分享</p>
       <div class="share-method__item-link">
-        https://wj.qq.com/s2/13033962/96ed/
+        {{ linkUrl }}
       </div>
       <div>
-        <ElLink :underline="false" >打开</ElLink>
+        <ElLink :underline="false" :href="linkUrl">打开</ElLink>
         <ElDivider direction="vertical" style="margin: 0 50px"></ElDivider>
-        <ElLink :underline="false">复制</ElLink>
+        <ElLink :underline="false" @click="handleCopy">复制</ElLink>
       </div>
     </div>
     <div class="share-method__item">
@@ -26,6 +26,18 @@
 
 <script setup lang="ts">
 import { ElCard, ElDivider, ElImage, ElLink } from "element-plus";
+import { computed } from "vue";
+
+const props = defineProps({
+  surveyId: {
+    type: Number,
+    required: true
+  }
+});
+
+const linkUrl = computed(() => location.origin + "/s/" + props.surveyId);
+
+function handleCopy() {}
 </script>
 
 <style lang="scss" scoped>

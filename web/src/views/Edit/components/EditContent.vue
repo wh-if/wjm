@@ -1,11 +1,6 @@
 <template>
   <div class="edit-content-box">
-    <ElCard style="margin: 0 70px; overflow: visible">
-      <!-- <QuestionCard>
-        <div class="editable-box" contenteditable="true">
-          <h1 style="text-align: center">jdksfsdf lidf wlfkw</h1>
-        </div>
-      </QuestionCard> -->
+    <!-- <ElCard style="margin: 0 70px; overflow: visible">
       <QuestionCard>
         <EditInput
           v-model="surveyData.title"
@@ -22,30 +17,13 @@
       >
         <RadioQuestion :list-index="index"></RadioQuestion>
       </QuestionCard>
-    </ElCard>
+    </ElCard> -->
+    <SurveyContent  :is-edit="true"></SurveyContent>
   </div>
 </template>
 
 <script setup lang="ts">
-import { updateSurvey, type SurveyWithQuestions } from "@/api/survey";
-import EditInput from "@/components/EditInput.vue";
-import QuestionCard from "@/components/QuestionCard.vue";
-import RadioQuestion from "@/components/RadioQuestion.vue";
-import { ElCard, ElInput } from "element-plus";
-import { inject, ref, watch, type Ref } from "vue";
-
-const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData")!;
-
-watch(
-  () => [surveyData.value.title, surveyData.value.description],
-  (val) => {
-    updateSurvey({
-      title: val[0],
-      description: val[1],
-      id: surveyData.value.id
-    } as SurveyWithQuestions);
-  }
-);
+import SurveyContent from "@/components/SurveyContent.vue";
 </script>
 
 <style lang="scss">
@@ -56,3 +34,4 @@ watch(
   }
 }
 </style>
+  

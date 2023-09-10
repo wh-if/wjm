@@ -1,12 +1,13 @@
 <template>
   <div
-    class="editable-box"
+    :class="isEdit ? 'editable-box' : ''"
+    v-show="showFlag"
     :style="{}"
     @input="handleInput"
     @keydown="handleKeyDown"
     @focus="handleFocus"
     @blur="handleBlur"
-    contenteditable="true"
+    :contenteditable="isEdit"
   >
     <p
       :style="
@@ -20,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type PropType, type StyleValue } from "vue";
+import { ref, type PropType, type StyleValue, inject, computed } from "vue";
 const props = defineProps({
   modelValue: {
     type: String,
@@ -35,6 +36,8 @@ const props = defineProps({
     default: () => ({ padding: "8px" })
   }
 });
+const isEdit = inject<boolean>("isEdit");
+const showFlag = computed(() => isEdit || props.modelValue !== "");
 const inputValue = ref(props.modelValue || props.placeholder);
 
 function handleKeyDown(e: KeyboardEvent) {
@@ -76,7 +79,10 @@ function handleInput(e: Event) {
 </script>
 
 <style lang="scss" scoped>
-.editable-box:hover {
-  border: 1px dashed rgb(64, 160, 220);
+.editable-box {
+  border: 1px solid transparent;
+  & :hover {
+    border: 1px dashed rgb(64, 160, 220);
+  }
 }
 </style>
