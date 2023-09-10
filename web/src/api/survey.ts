@@ -18,7 +18,7 @@ export interface SurveyWithQuestions {
   description: string;
   userId: number;
   endOfSurvey: string;
-  quesitons: Question[];
+  questions: Question[];
 }
 
 export function getSurveyList(params: SearchSurveyParams) {

@@ -32,9 +32,9 @@ const controller: Controller[] = [
         content: JSON.stringify({
           options: [
             { text: "选项", id: 1 },
-            { text: "选项", id: 1 },
-            { text: "选项", id: 1 },
-            { text: "选项", id: 1 },
+            { text: "选项", id: 2 },
+            { text: "选项", id: 3 },
+            { text: "选项", id: 4 },
           ],
         }),
         index: 1,
@@ -54,7 +54,7 @@ const controller: Controller[] = [
     handler: async (ctx) => {
       const { id, title, type, content, description, required } =
         ctx.request.body;
-      
+
       const updateQuestion: Question = {
         title,
         type,

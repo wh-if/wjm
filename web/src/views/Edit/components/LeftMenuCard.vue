@@ -32,7 +32,7 @@ console.log(surveyData!.value);
 
 function handleClick(type: string) {
   addQuestionToSurvey(surveyData!.value.id, type).then(({ data }) => {
-    surveyData?.value.quesitons.push(data);
+    surveyData?.value.questions.push(data);
   })
 }
 </script>

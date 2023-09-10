@@ -60,7 +60,7 @@ const activeQuestionIndex = inject<Ref<number>>("activeQuestionIndex");
 const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData");
 
 const questionData = computed(
-  () => surveyData!.value.quesitons[activeQuestionIndex!.value | 0]
+  () => surveyData!.value.questions[activeQuestionIndex!.value | 0]
 );
 </script>
 

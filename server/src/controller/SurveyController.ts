@@ -39,7 +39,7 @@ const controller: Controller[] = [
 
       ctx.body = AjaxResult.success({
         ...surveyResult,
-        quesitons: questionResult,
+        questions: questionResult,
       });
     },
   },
@@ -68,9 +68,9 @@ const controller: Controller[] = [
         content: JSON.stringify({
           options: [
             { text: "选项", id: 1 },
-            { text: "选项", id: 1 },
-            { text: "选项", id: 1 },
-            { text: "选项", id: 1 },
+            { text: "选项", id: 2 },
+            { text: "选项", id: 3 },
+            { text: "选项", id: 4 },
           ],
         }),
         index: 1,

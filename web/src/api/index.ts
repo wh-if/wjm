@@ -59,7 +59,7 @@ const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
             confirmButtonText: "确认"
           })
             .then(() => {
-              router.push("login");
+              router.push("/login");
             })
             .catch(() => {
               // router.back()
