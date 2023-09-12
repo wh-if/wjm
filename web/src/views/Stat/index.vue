@@ -54,7 +54,7 @@ const headerInfo = computed(() => {
     rate = (statRawData.answerList.length * 100) / statRawData.survey.viewCount;
     averageTime =
       statRawData.answerList.reduce(
-        (prev, cur) => prev + parseInt(cur.expendDuration as string),
+        (prev, cur) => prev + (cur.expendDuration as number),
         0
       ) / statRawData.answerList.length;
   }

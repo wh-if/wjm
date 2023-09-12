@@ -3,7 +3,11 @@
     v-if="surveyData === undefined"
     v-loading.fullscreen.lock="surveyData === undefined"
   ></div>
-  <ElCard v-else style="margin: 0 70px; overflow: visible">
+  <ElCard
+    v-else
+    body-style="padding: 0;"
+    style="margin: 0 70px; overflow: visible"
+  >
     <QuestionCard>
       <EditInput
         v-model="surveyData!.value.title"
@@ -48,13 +52,7 @@ import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
 import RadioQuestion from "@/components/RadioQuestion.vue";
 import { ElButton, ElCard, ElInput, ElMessage } from "element-plus";
-import {
-  inject,
-  ref,
-  watch,
-  type Ref,
-  provide,
-} from "vue";
+import { inject, ref, watch, type Ref, provide } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -108,10 +106,10 @@ function handleSubmit() {
   addAnswer(
     surveyData.value?.value.id as number,
     questionAnswer.value as Record<string, any>[],
-    Date.now() - startTime
+    parseInt(((Date.now() - startTime) / 1000).toFixed(0))
   ).then(() => {
     ElMessage.success("提交成功！");
-    router.push("/result");
+    router.replace("/result");
   });
 }
 
@@ -123,7 +121,7 @@ function updateViewCount() {
   const { surveyId } = router.currentRoute.value.params;
   updateSurvey({
     id: parseInt(surveyId as string),
-    viewCount: surveyData.value?.value.viewCount! + 1,
+    viewCount: surveyData.value?.value.viewCount! + 1
   });
 }
 

@@ -95,12 +95,18 @@ const controller: Controller[] = [
       const result = await surveyMapper.update(updateSurvey, {
         id: parseInt(ctx.params.surveyId),
       });
-
-      if (result) {
-        ctx.body = AjaxResult.success();
-      } else {
-        ctx.body = AjaxResult.error();
-      }
+      ctx.body = AjaxResult.success({ result });
+    },
+  },
+  // 删除问卷
+  {
+    path: "/survey/:surveyId",
+    method: HttpMethodEnum.DELETE,
+    handler: async (ctx) => {
+      const result = await surveyMapper.remove({
+        id: parseInt(ctx.params.surveyId),
+      });
+      ctx.body = AjaxResult.success({ result });
     },
   },
 ];

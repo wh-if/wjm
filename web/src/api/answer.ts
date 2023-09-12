@@ -5,7 +5,7 @@ export interface Answer {
   surveyId?: number;
   content?: string;
   submitTime?: string;
-  expendDuration?: string;
+  expendDuration?: number;
   ip?: string;
 }
 

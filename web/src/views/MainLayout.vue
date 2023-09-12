@@ -53,6 +53,7 @@ function handleLogout() {
 }
 
 .main-content {
+  position: relative;
   padding-top: 60px;
   min-height: 100vh;
 }

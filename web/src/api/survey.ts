@@ -51,3 +51,10 @@ export function updateSurvey(data: SurveyWithQuestions) {
     data
   });
 }
+
+export function removeSurvey(surveyId: number) {
+  return request({
+    url: "/survey/" + surveyId,
+    method: "delete"
+  });
+}

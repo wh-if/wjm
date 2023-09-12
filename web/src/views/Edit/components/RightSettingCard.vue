@@ -35,6 +35,7 @@
             />
           </ElFormItem>
         </ElForm>
+        <ElEmpty v-else description="请选择题目"></ElEmpty>
         <!-- <div style="overflow-y: auto; height: 100%">
           
         </div> -->
@@ -48,6 +49,7 @@ import type { SurveyWithQuestions } from "@/api/survey";
 import {
   ElCard,
   ElCheckbox,
+  ElEmpty,
   ElForm,
   ElFormItem,
   ElOption,
@@ -60,7 +62,7 @@ const activeQuestionIndex = inject<Ref<number>>("activeQuestionIndex");
 const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData");
 
 const questionData = computed(
-  () => surveyData!.value.questions[activeQuestionIndex!.value | 0]
+  () => surveyData?.value.questions![activeQuestionIndex!.value | 0]
 );
 </script>
 

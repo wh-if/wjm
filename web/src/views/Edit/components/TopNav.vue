@@ -6,18 +6,18 @@
     <!-- <ElStep title="分享" status="finish"></ElStep>
       <ElStep title="统计" status="process"></ElStep>
     </ElSteps> -->
-      <ElPageHeader class="nav-left" @back="$router.back()">
-        <template #content>
-          <span class="text-large font-600 mr-3"> 编辑问卷 </span>
-        </template>
-      </ElPageHeader>
+    <ElPageHeader class="nav-left" @back="$router.back()">
+      <template #content>
+        <span class="text-large font-600 mr-3"> 编辑问卷 </span>
+      </template>
+    </ElPageHeader>
     <div class="nav-right">
       <ElButton @click="showShareDialog = true" type="primary"
         >分享问卷</ElButton
       >
     </div>
     <ElDialog title="分享问卷" v-model="showShareDialog">
-      <SharePane></SharePane>
+      <SharePane :survey-id="surveyData!.id!"></SharePane>
     </ElDialog>
   </div>
 </template>
@@ -31,8 +31,10 @@ import {
   ElPageHeader
 } from "element-plus";
 import SharePane from "@/components/SharePane.vue";
-import { ref } from "vue";
+import { inject, ref } from "vue";
+import { type SurveyWithQuestions } from "@/api/survey";
 const showShareDialog = ref(false);
+const surveyData = inject<SurveyWithQuestions>("surveyData");
 </script>
 
 <style lang="scss" scoped>
@@ -45,7 +47,7 @@ const showShareDialog = ref(false);
   z-index: 99;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06);
 
-  .nav-left{
+  .nav-left {
     display: flex;
     align-items: center;
     margin-left: 50px;

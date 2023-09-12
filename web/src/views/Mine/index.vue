@@ -1,6 +1,6 @@
 <template>
-  <ElContainer>
-    <ElAside>
+  <ElContainer class="mine">
+    <ElAside class="mine-sidebar">
       <div style="text-align: center; padding: 20px 0">
         <ElButton
           type="primary"
@@ -12,10 +12,19 @@
         </ElButton>
       </div>
 
-      <ElMenu>
-        <ElMenuItem>全部</ElMenuItem>
-        <ElMenuItem>重要</ElMenuItem>
-        <ElMenuItem>回收站</ElMenuItem>
+      <ElMenu default-active="all">
+        <ElMenuItem index="all">
+          <ElIcon><Setting /></ElIcon>
+          全部
+        </ElMenuItem>
+        <ElMenuItem index="important">
+          <ElIcon><Setting /></ElIcon>
+          重要
+        </ElMenuItem>
+        <ElMenuItem index="recycle">
+          <ElIcon><Setting /></ElIcon>
+          回收站
+        </ElMenuItem>
       </ElMenu>
     </ElAside>
     <ElMain>
@@ -61,23 +70,58 @@
           </template>
         </ElTableColumn>
         <ElTableColumn label="答卷数量" prop="answerCount"></ElTableColumn>
-        <ElTableColumn label="状态" prop="status"></ElTableColumn>
-        <ElTableColumn fixed="right" label="操作" width="120">
+        <ElTableColumn label="状态" prop="status">
           <template #default="scope">
-            <el-button
+            {{ scope.row.status == 1 ? "答题中" : "已停止" }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn fixed="right" label="操作" width="250">
+          <template #default="scope">
+            <ElButton
+              link
+              :type="scope.row.status == 1 ? 'danger' : 'success'"
+              size="large"
+              @click="
+                () =>
+                  handleChangeStatus(
+                    scope.row.id,
+                    scope.row.status == 1 ? 0 : 1
+                  )
+              "
+              >{{ scope.row.status == 1 ? "停止答题" : "开始答题" }}</ElButton
+            >
+            <ElButton
               link
               type="primary"
               size="large"
               @click="$router.push(`/edit?surveyId=${scope.row.id}`)"
-              >编辑</el-button
+              >编辑</ElButton
             >
-            <el-button
-              link
-              type="success"
-              size="large"
-              @click="e=>showShareDialog(scope.row.id)"
-              >分享</el-button
-            >
+
+            <ElDropdown trigger="click">
+              <ElButton text plain>
+                更多操作
+                <ElIcon class="el-icon--right">
+                  <ArrowDown />
+                </ElIcon>
+              </ElButton>
+              <template #dropdown>
+                <ElDropdownMenu>
+                  <ElDropdownItem @click="(e) => showShareDialog(scope.row.id)"
+                    >分享</ElDropdownItem
+                  >
+                  <ElDropdownItem
+                    @click="
+                      $router.push('/stat/overview?surveyId=' + scope.row.id)
+                    "
+                    >统计</ElDropdownItem
+                  >
+                  <ElDropdownItem @click="handleRemoveSurvey(scope.row.id)"
+                    >删除问卷</ElDropdownItem
+                  >
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
           </template>
         </ElTableColumn>
       </ElTable>
@@ -98,7 +142,12 @@
 </template>
 
 <script setup lang="ts">
-import { getSurveyList, createNewSurvey } from "@/api/survey";
+import {
+  getSurveyList,
+  createNewSurvey,
+  updateSurvey,
+  removeSurvey
+} from "@/api/survey";
 import {
   ElAside,
   ElButton,
@@ -111,9 +160,16 @@ import {
   ElSelect,
   ElTable,
   ElTableColumn,
-  ElOption
+  ElOption,
+  ElIcon,
+  ElDropdown,
+  ElDropdownMenu,
+  ElDropdownItem,
+  ElDialog,
+  ElMessageBox,
+  ElMessage
 } from "element-plus";
-import { Search } from "@element-plus/icons-vue";
+import { ArrowDown, Search, Setting } from "@element-plus/icons-vue";
 import { shallowReactive, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import SharePane from "@/components/SharePane.vue";
@@ -128,7 +184,7 @@ const state = shallowReactive({
   showShareDialog: false
 });
 
-const currentFocusSurvey=ref<number>(0)
+const currentFocusSurvey = ref<number>(0);
 
 const router = useRouter();
 
@@ -141,6 +197,29 @@ function handleNewCreate() {
 function showShareDialog(surveyId: number) {
   state.showShareDialog = true;
   currentFocusSurvey.value = surveyId;
+}
+
+function handleChangeStatus(surveyId: number, status: 0 | 1) {
+  updateSurvey({
+    id: surveyId,
+    status: status
+  }).then(() => {
+    getData();
+  });
+}
+
+function handleRemoveSurvey(surveyId: number) {
+  ElMessageBox.confirm("确定要删除该问卷吗？", "提示", {
+    cancelButtonText: "取消",
+    confirmButtonText: "确认"
+  })
+    .then(() => {
+      removeSurvey(surveyId).then(() => {
+        ElMessage.success("删除成功！");
+        getData();
+      });
+    })
+    .catch(() => {});
 }
 
 function getData() {
@@ -156,6 +235,16 @@ getData();
 </script>
 
 <style lang="scss" scoped>
+.mine {
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  width: 100%;
+  .mine-sidebar {
+    background-color: #fff;
+  }
+}
+
 .tool-bar {
   display: flex;
   padding: 10px 5px 20px;
