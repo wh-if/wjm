@@ -11,7 +11,7 @@
   >
     <p
       :style="
-        props.modelValue?.length > 0
+        props.modelValue?.length! > 0
           ? props.textBoxStyle
           : [props.textBoxStyle, { color: 'gray' }]
       "
@@ -25,7 +25,8 @@ import { ref, type PropType, type StyleValue, inject, computed } from "vue";
 const props = defineProps({
   modelValue: {
     type: String,
-    required: true
+    // required: true,
+    default: ""
   },
   placeholder: {
     type: String,

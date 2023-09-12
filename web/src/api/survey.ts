@@ -8,17 +8,18 @@ type SearchSurveyParams = {
 };
 
 export interface SurveyWithQuestions {
-  id: number;
-  title: string;
-  status: number;
-  createTime: string;
-  updateTime: string;
-  linkUrl: string;
-  qrCode: string;
-  description: string;
-  userId: number;
-  endOfSurvey: string;
-  questions: Question[];
+  id?: number;
+  title?: string;
+  status?: number;
+  createTime?: string;
+  updateTime?: string;
+  linkUrl?: string;
+  qrCode?: string;
+  description?: string;
+  userId?: number;
+  endOfSurvey?: string;
+  viewCount?: number;
+  questions?: Question[];
 }
 
 export function getSurveyList(params: SearchSurveyParams) {

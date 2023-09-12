@@ -65,7 +65,7 @@ const props = defineProps({
 });
 // 问题内容
 const questionData =
-  inject<Ref<SurveyWithQuestions>>("surveyData")?.value.questions[
+  inject<Ref<SurveyWithQuestions>>("surveyData")?.value.questions![
     props.listIndex
   ]!;
 

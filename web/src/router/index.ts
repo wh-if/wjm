@@ -45,13 +45,32 @@ const router = createRouter({
           component: () => import("../views/Edit/index.vue")
         },
         {
-          path: "/overview",
-          name: "overview",
+          path: "/stat",
+          name: "stat",
           meta: {
             needLogin: true
           },
-          component: () => import("../views/Overview/index.vue")
-        },
+          component: () => import("../views/Stat/index.vue"),
+          children: [
+            {
+              path: "/stat/overview",
+              alias: "/stat/",
+              name: "overview",
+              meta: {
+                needLogin: true
+              },
+              component: () => import("../views/Stat/Overview/index.vue")
+            },
+            {
+              path: "/stat/detail",
+              name: "detail",
+              meta: {
+                needLogin: true
+              },
+              component: () => import("../views/Stat/Detail/index.vue")
+            }
+          ]
+        }
       ]
     },
     {

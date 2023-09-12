@@ -9,6 +9,21 @@ export interface Answer {
   ip?: string;
 }
 
+export function getAnswerList(surveyId: number) {
+  return request({
+    url: `/answer/${surveyId}/list`,
+    method: "get"
+  });
+}
+
+export function updateAnswerData(surveyId: number, updateData: Answer) {
+  return request({
+    url: `/answer/${surveyId}`,
+    method: "put",
+    data: updateData
+  });
+}
+
 export function addAnswer(
   surveyId: number,
   content: Record<string, any>[],

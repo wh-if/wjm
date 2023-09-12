@@ -7,12 +7,17 @@
     <QuestionCard>
       <EditInput
         v-model="surveyData!.value.title"
+        placeholder="请输入问卷标题"
         :text-box-style="{ fontSize: '2.5rem', textAlign: 'center' }"
       >
       </EditInput>
     </QuestionCard>
     <QuestionCard>
-      <EditInput v-model="surveyData!.value.description"> </EditInput>
+      <EditInput
+        v-model="surveyData!.value.description"
+        placeholder="请输入问卷描述信息"
+      >
+      </EditInput>
     </QuestionCard>
     <QuestionCard
       v-for="(item, index) in surveyData!.value.questions"
@@ -43,7 +48,13 @@ import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
 import RadioQuestion from "@/components/RadioQuestion.vue";
 import { ElButton, ElCard, ElInput, ElMessage } from "element-plus";
-import { inject, ref, watch, type Ref, reactive, provide } from "vue";
+import {
+  inject,
+  ref,
+  watch,
+  type Ref,
+  provide,
+} from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -85,6 +96,7 @@ function initData() {
     ).then(({ data }) => {
       surveyData.value = ref(data);
       provideData.value = surveyData.value.value;
+      updateViewCount();
     });
     provide("surveyData", provideData);
   }
@@ -100,7 +112,19 @@ function handleSubmit() {
   ).then(() => {
     ElMessage.success("提交成功！");
     router.push("/result");
-  })
+  });
+}
+
+// 计算浏览量
+function updateViewCount() {
+  if (props.isEdit) {
+    return;
+  }
+  const { surveyId } = router.currentRoute.value.params;
+  updateSurvey({
+    id: parseInt(surveyId as string),
+    viewCount: surveyData.value?.value.viewCount! + 1,
+  });
 }
 
 provide("isEdit", props.isEdit);

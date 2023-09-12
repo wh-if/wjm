@@ -1,5 +1,5 @@
 <template>
-  <ElResult title="结果页"></ElResult>
+  <ElResult icon="success" title="结果页"></ElResult>
 </template>
 
 <script setup lang="ts">

@@ -12,9 +12,24 @@ const controller: Controller[] = [
       const {} = ctx.query;
 
       // TODO 问卷的创建者才有权查看这个问卷的所有答卷
-      const result = answerMapper.select({ surveyId: parseInt(surveyId) });
+      const result = await answerMapper.select({
+        surveyId: parseInt(surveyId),
+      });
 
       ctx.body = AjaxResult.success({ list: result });
+    },
+  },
+  // 修改
+  {
+    path: "/answer/:answerId",
+    method: HttpMethodEnum.PUT,
+    handler: async (ctx) => {
+      const { answerId } = ctx.params;
+      const result = await answerMapper.update(ctx.request.body, {
+        id: parseInt(answerId),
+      });
+
+      ctx.body = AjaxResult.success({ result });
     },
   },
   // 提交答卷
@@ -33,9 +48,9 @@ const controller: Controller[] = [
       };
 
       // TODO 问卷的创建者才有权查看这个问卷的所有答卷
-      const result = answerMapper.insert(newAnswer);
+      const result = await answerMapper.insert(newAnswer);
 
-      ctx.body = AjaxResult.success(result);
+      ctx.body = AjaxResult.success({ result });
     },
   },
 ];

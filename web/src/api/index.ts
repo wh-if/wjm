@@ -49,16 +49,22 @@ service.interceptors.response.use(
 );
 
 const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
+  let onlyOneMessage = false;
   return new Promise<AjaxResult<T>>((resolve, reject) => {
     service(config).then((response) => {
       if (response.status === 200) {
         const { code, message } = response.data;
         if (code === 1) {
+          if (onlyOneMessage) {
+            return;
+          }
+          onlyOneMessage = true;
           ElMessageBox.confirm(message, "提示", {
             showCancelButton: false,
             confirmButtonText: "确认"
           })
             .then(() => {
+              onlyOneMessage = false;
               router.push("/login");
             })
             .catch(() => {
