@@ -82,9 +82,11 @@ export default class BaseMapper<T> {
       let sqlBuilder = `update \`${this.TABLE_NAME}\` set `;
       for (const key in updateValues) {
         if (Object.hasOwnProperty.call(updateValues, key)) {
-          sqlBuilder += `${"`" + key + "`"}=${mysql.escape(
-            updateValues[key]
-          )},`;
+          if (updateValues[key]) {
+            sqlBuilder += `${"`" + key + "`"}=${mysql.escape(
+              updateValues[key]
+            )},`;
+          }
         }
       }
       sqlBuilder = sqlBuilder.substring(0, sqlBuilder.length - 1);

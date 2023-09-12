@@ -88,12 +88,9 @@ const controller: Controller[] = [
     path: "/survey/:surveyId",
     method: HttpMethodEnum.PUT,
     handler: async (ctx) => {
-      const { title, description } = ctx.request.body;
+      const { title, description, viewCount, status } = ctx.request.body;
 
-      const updateSurvey: Survey = {
-        title,
-        description,
-      };
+      const updateSurvey: Survey = { title, description, viewCount, status };
 
       const result = await surveyMapper.update(updateSurvey, {
         id: parseInt(ctx.params.surveyId),

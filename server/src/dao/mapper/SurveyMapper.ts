@@ -9,14 +9,8 @@ export interface Survey {
   linkUrl?: string;
   createTime?: string;
   updateTime?: string;
-  test?: boolean;
+  viewCount?: number;
 }
-
-type SelectListParams = {
-  keyword: string;
-  orderBy: "answerCount" | "createTime";
-  desc: boolean;
-};
 
 class SurveyMapper extends BaseMapper<Survey> {
   constructor() {

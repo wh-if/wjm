@@ -11,9 +11,9 @@ const controller: Controller[] = [
       const { id, surveyId } = ctx.query;
       let result: any;
       if (id) {
-        result = questionMapper.selectOne({ id: parseInt(id as string) });
+        result = await questionMapper.selectOne({ id: parseInt(id as string) });
       } else {
-        result = questionMapper.select({
+        result = await questionMapper.select({
           surveyId: parseInt(surveyId as string),
         });
       }
@@ -62,8 +62,8 @@ const controller: Controller[] = [
         description,
         required,
       };
-      const result = questionMapper.update(updateQuestion, { id });
-      ctx.body = AjaxResult.success(result);
+      const result = await questionMapper.update(updateQuestion, { id });
+      ctx.body = AjaxResult.success({ result });
     },
   },
   // 删除问题
@@ -72,8 +72,8 @@ const controller: Controller[] = [
     method: HttpMethodEnum.DELETE,
     handler: async (ctx) => {
       const { id } = ctx.params;
-      const result = questionMapper.remove({ id: parseInt(id) });
-      ctx.body = AjaxResult.success(result);
+      const result = await questionMapper.remove({ id: parseInt(id) });
+      ctx.body = AjaxResult.success({ result });
     },
   },
 ];
