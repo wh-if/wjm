@@ -2,9 +2,25 @@
   <div class="chartset">
     <div class="chartset-header">
       <ElButtonGroup>
-        <ElButton>饼图</ElButton>
-        <ElButton> 折线图 </ElButton>
-        <ElButton> 柱状图 </ElButton>
+        <ElButton
+          :type="chartState === 'bar' ? 'primary' : ''"
+          @click="handleChange('bar')"
+        >
+          柱状图
+        </ElButton>
+
+        <ElButton
+          :type="chartState === 'line' ? 'primary' : ''"
+          @click="handleChange('line')"
+        >
+          折线图
+        </ElButton>
+        <ElButton
+          :type="chartState === 'pie' ? 'primary' : ''"
+          @click="handleChange('pie')"
+        >
+          饼图
+        </ElButton>
       </ElButtonGroup>
     </div>
     <div ref="chartContainerRef" class="chartset-container"></div>
@@ -16,33 +32,71 @@ import { ElButton, ElButtonGroup } from "element-plus";
 import { onMounted, ref } from "vue";
 import * as echarts from "echarts";
 
+type ChartType = "bar" | "line" | "pie";
+
+const props = defineProps({
+  statData: {
+    type: Object,
+    required: true
+  }
+});
+
 const chartContainerRef = ref();
 
-function initLineChart() {
+const chartState = ref<ChartType>("bar");
+
+let chart: echarts.ECharts;
+function initChart() {
   // 基于准备好的dom，初始化echarts实例
-  const lineChart = echarts.init(chartContainerRef.value);
+  chart = echarts.init(chartContainerRef.value);
   // 绘制图表
-  lineChart.setOption({
-    // title: {
-    //   text: "ECharts 入门示例"
-    // },
-    tooltip: {},
+  handleChange("bar");
+}
+
+function handleChange(type: ChartType) {
+  chartState.value = type;
+  const options: echarts.EChartsOption = {
     xAxis: {
-      data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+      data: props.statData.options.map((item: any) => item.text)
     },
     yAxis: {},
     series: [
       {
-        name: "销量",
-        type: "bar",
-        data: [5, 20, 36, 10, 10, 20]
+        type: type,
+        data: props.statData.options.map((item: any) => item.count),
+        label: {
+          show: true
+        }
       }
     ]
-  });
+  };
+
+  if (type === "pie") {
+    chart.clear();
+    options.xAxis = undefined;
+    options.yAxis = undefined;
+    (options.legend = {
+      data: props.statData.options.map((item: any) => item.text),
+      orient: "vertical",
+      top: "center",
+      right: 20
+    }),
+      (options.series = [
+        {
+          type: "pie",
+          data: props.statData.options.map((item: any) => ({
+            name: item.text,
+            value: item.count
+          }))
+        }
+      ]);
+  }
+
+  chart.setOption(options);
 }
 
 onMounted(() => {
-  initLineChart();
+  initChart();
 });
 </script>
 

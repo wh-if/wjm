@@ -1,61 +1,164 @@
 <template>
   <div class="overview-box">
     <ElCard>
-      <div ref="lineRef" class="overview-line"></div>
+      <div ref="chartRef" class="overview-line"></div>
     </ElCard>
-    <ElCard style="margin-top: 25px;padding: 0 80px;" shadow="never">
-      <RadioStat></RadioStat>
+    <ElCard class="overview-questions" shadow="never">
+      <RadioStat
+        v-for="(item, index) in statFormattedData"
+        :key="item.questionId"
+        :stat-data="item"
+        :list-index="index"
+      ></RadioStat>
     </ElCard>
-    
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElCard, ElProgress } from "element-plus";
+import { ElCard } from "element-plus";
 
 import * as echarts from "echarts";
-import { onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref, shallowRef, toRaw } from "vue";
 import RadioStat from "./components/RadioStat.vue";
+import type { SurveyWithQuestions } from "@/api/survey";
+import type { Answer } from "@/api/answer";
 
-const lineRef = ref();
-function initLineChart() {
+const chartRef = ref();
+
+const statRawData = inject<{
+  survey: SurveyWithQuestions;
+  answerList: Answer[];
+}>("statRawData");
+
+const statFormattedData = shallowRef<any[]>([]);
+
+function initFormattedData() {
+  const result: any[] = [];
+  statRawData?.survey.questions?.forEach((questionItem) => {
+    const resultList: any[] = [];
+    // 选择题
+    if (questionItem.type === "radio") {
+      // 筛选出该问题的所有答卷
+      statRawData.answerList.forEach((answerItem) => {
+        answerItem.content?.find((answerQuestionItem) => {
+          if (answerQuestionItem == null) {
+            return false;
+          }
+          if (answerQuestionItem.questionId == questionItem.id) {
+            resultList.push(answerQuestionItem.resultValue);
+            return true;
+          } else {
+            return false;
+          }
+        });
+      });
+      // 统计各选项数据
+      const resultOptions: any[] = [];
+      questionItem.content.options.forEach((optionItem: any) => {
+        // 选该选项的个数
+        optionItem.count = 0;
+
+        resultList.forEach((item) => {
+          if (item == optionItem.id) {
+            optionItem.count++;
+          }
+        });
+        // 选项选择率
+        optionItem.rate = parseFloat(
+          (optionItem.count / resultList.length).toFixed(2)
+        );
+        if (isNaN(optionItem.rate)) optionItem.rate = 0;
+        resultOptions.push(toRaw(optionItem));
+      });
+      // 填写率
+      let answerRate: number | string =
+        (resultList.length * 100) / statRawData.answerList.length;
+      if (isNaN(answerRate)) {
+        answerRate = 0;
+      } else {
+        answerRate = answerRate.toFixed(2);
+      }
+      result.push({
+        // 题目ID
+        questionId: questionItem.id,
+        // 题目标题
+        questionTitle: questionItem.title,
+        // 答卷数据列表
+        answerResultList: resultList,
+        // 填写率
+        answerRate,
+        // 各选项数据
+        options: resultOptions
+      });
+    } else {
+      // 其它题目类型
+    }
+  });
+  console.log(result);
+  statFormattedData.value = result;
+}
+
+initFormattedData();
+
+function initChart() {
   // 基于准备好的dom，初始化echarts实例
-  const lineChart = echarts.init(lineRef.value);
+  const chart = echarts.init(chartRef.value);
+
+  // 回收趋势
+  let computedData: Record<string, number> = {};
+
+  for (let countTimes = 0, index = 1; countTimes < 10; index++) {
+    let countIndex = statRawData!.answerList.length - index;
+    if (countIndex < 0) {
+      break;
+    } else {
+      const element = statRawData!.answerList[countIndex];
+      const dateObj = new Date(parseInt(element.submitTime as string));
+      const keyFlag =
+        dateObj.toLocaleDateString() + " " + dateObj.getHours() + ":00";
+
+      if (computedData[keyFlag] === undefined) {
+        computedData[keyFlag] = 1;
+        countTimes++;
+      } else {
+        computedData[keyFlag]++;
+      }
+    }
+  }
+
   // 绘制图表
-  lineChart.setOption({
+  chart.setOption({
     title: {
-      text: "ECharts 入门示例"
+      text: "回收趋势"
     },
     tooltip: {},
     xAxis: {
-      data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+      data: Reflect.ownKeys(computedData).reverse()
     },
     yAxis: {},
     series: [
       {
-        name: "销量",
-        type: "bar",
-        data: [5, 20, 36, 10, 10, 20]
+        type: "line",
+        data: Object.values(computedData),
+        areaStyle: {}
       }
     ]
   });
 }
 
-
 onMounted(() => {
-  initLineChart();
+  initChart();
 });
 </script>
 
 <style lang="scss" scoped>
-.el-col {
-  text-align: center;
-}
-
 .overview-line {
   width: 100%;
   height: 500px;
 }
 
-
+.overview-questions {
+  margin-top: 25px;
+  padding: 0 80px;
+}
 </style>

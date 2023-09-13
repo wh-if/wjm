@@ -3,7 +3,7 @@ import { request } from ".";
 export interface Answer {
   id?: number;
   surveyId?: number;
-  content?: string;
+  content?: any[];
   submitTime?: string;
   expendDuration?: number;
   ip?: string;

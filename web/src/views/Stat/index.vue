@@ -2,16 +2,20 @@
   <div v-if="loading" v-loading.fullscreen.lock="loading"></div>
   <div v-else class="stat-box">
     <ElCard class="stat-sidebar" body-style="padding:0">
-      <ElMenu :router="true">
-        <ElMenuItem index="/stat/overview">数据概览</ElMenuItem>
-        <ElMenuItem index="/stat/detail">数据详情</ElMenuItem>
+      <ElMenu :default-active="`/stat/overview?surveyId=${$route.query.surveyId}`" :router="true">
+        <ElMenuItem :index="`/stat/overview?surveyId=${$route.query.surveyId}`"
+          >数据概览</ElMenuItem
+        >
+        <ElMenuItem :index="`/stat/detail?surveyId=${$route.query.surveyId}`"
+          >数据详情</ElMenuItem
+        >
         <!-- <ElMenuItem>统计图表</ElMenuItem>
         <ElMenuItem>交叉分析</ElMenuItem> -->
       </ElMenu>
     </ElCard>
     <div class="stat-main">
       <div class="stat-main-header">
-        <h1>问卷标题</h1>
+        <h1>{{ statRawData.survey.title }}</h1>
         <ElRow style="flex: 1">
           <ElCol v-for="item in headerInfo" :key="item.title" :span="6">
             <ElStatistic
@@ -34,13 +38,11 @@ import { getAnswerList, type Answer } from "@/api/answer";
 import { getSurveyWithQuestions, type SurveyWithQuestions } from "@/api/survey";
 import {
   ElStatistic,
-  ElIcon,
   ElCol,
   ElRow,
   ElCard,
   ElMenu,
-  ElMenuItem,
-  ElInput
+  ElMenuItem
 } from "element-plus";
 import { computed, provide, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -54,7 +56,7 @@ const headerInfo = computed(() => {
     rate = (statRawData.answerList.length * 100) / statRawData.survey.viewCount;
     averageTime =
       statRawData.answerList.reduce(
-        (prev, cur) => prev + (cur.expendDuration as number),
+        (prev, cur) => prev + new Number(cur.expendDuration).valueOf(),
         0
       ) / statRawData.answerList.length;
   }
@@ -77,10 +79,7 @@ const headerInfo = computed(() => {
       title: "平均完成时间",
       value: averageTime,
       formatter: (val: number) => {
-        return `${(val / (1000 * 60)).toFixed(0)}分${(
-          (val / 1000) %
-          60
-        ).toFixed(0)}秒`;
+        return `${(val / 60).toFixed(0)}分${(val % 60).toFixed(0)}秒`;
       }
     }
   ];

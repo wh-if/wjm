@@ -47,9 +47,8 @@ service.interceptors.response.use(
     return Promise.reject();
   }
 );
-
+let onlyOneMessage = false;
 const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
-  let onlyOneMessage = false;
   return new Promise<AjaxResult<T>>((resolve, reject) => {
     service(config).then((response) => {
       if (response.status === 200) {

@@ -4,7 +4,7 @@
       <span class="percentbar-name">{{ props.name }}</span>
       <span class="percentbar-count">{{ props.count }}</span>
 
-      <span class="percentbar-rate">{{ props.rate * 100 }}%</span>
+      <span class="percentbar-rate">{{ (props.rate * 100).toFixed(0) }}%</span>
     </div>
     <div class="percentbar-result" :style="{ width: `${props.rate * 100}%` }">
       <div
@@ -14,7 +14,7 @@
         <span class="percentbar-name">{{ props.name }}</span>
         <span class="percentbar-count">{{ props.count }}</span>
 
-        <span class="percentbar-rate">{{ props.rate * 100 }}%</span>
+        <span class="percentbar-rate">{{ (props.rate * 100).toFixed(0) }}%</span>
       </div>
     </div>
   </div>
@@ -43,6 +43,7 @@ const props = defineProps({
   position: relative;
   border-radius: 6px;
   border: 1px solid #e1e7f2;
+  margin: 10px 0;
   > * {
     height: 100%;
     line-height: 40px;
@@ -60,19 +61,21 @@ const props = defineProps({
 
   .percentbar-result {
     background-color: #008fff;
+    border-radius: 4px;
     color: white;
     position: absolute;
     top: 0;
     overflow: hidden;
   }
   .percentbar-name {
-    width: 70%;
+    padding-left: 20px;
+    width: 80%;
   }
   .percentbar-count {
-    width: 10%;
+    width: 8%;
   }
   .percentbar-rate {
-    width: 10%;
+    width: 8%;
   }
 }
 </style>
