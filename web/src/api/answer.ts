@@ -7,6 +7,9 @@ export interface Answer {
   submitTime?: string;
   expendDuration?: number;
   ip?: string;
+
+  status?: number;
+  ua?: string;
 }
 
 export function getAnswerList(surveyId: number) {
@@ -16,9 +19,9 @@ export function getAnswerList(surveyId: number) {
   });
 }
 
-export function updateAnswerData(surveyId: number, updateData: Answer) {
+export function updateAnswerData(answerId: number, updateData: Answer) {
   return request({
-    url: `/answer/${surveyId}`,
+    url: `/answer/${answerId}`,
     method: "put",
     data: updateData
   });

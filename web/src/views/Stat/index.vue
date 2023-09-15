@@ -2,13 +2,21 @@
   <div v-if="loading" v-loading.fullscreen.lock="loading"></div>
   <div v-else class="stat-box">
     <ElCard class="stat-sidebar" body-style="padding:0">
-      <ElMenu :default-active="`/stat/overview?surveyId=${$route.query.surveyId}`" :router="true">
-        <ElMenuItem :index="`/stat/overview?surveyId=${$route.query.surveyId}`"
-          >数据概览</ElMenuItem
+      <ElMenu
+        :default-active="`/stat/overview?surveyId=${$route.query.surveyId}`"
+        :router="true"
+      >
+        <ElMenuItem
+          class="stat-sidebar-menuitem"
+          :index="`/stat/overview?surveyId=${$route.query.surveyId}`"
         >
-        <ElMenuItem :index="`/stat/detail?surveyId=${$route.query.surveyId}`"
-          >数据详情</ElMenuItem
-        >
+          <ElIcon><Location /></ElIcon>
+          <span>数据概览</span>
+        </ElMenuItem>
+        <ElMenuItem class="stat-sidebar-menuitem" :index="`/stat/detail?surveyId=${$route.query.surveyId}`">
+          <ElIcon><Location /></ElIcon>
+          <span>数据详情</span>
+        </ElMenuItem>
         <!-- <ElMenuItem>统计图表</ElMenuItem>
         <ElMenuItem>交叉分析</ElMenuItem> -->
       </ElMenu>
@@ -36,13 +44,15 @@
 <script setup lang="ts">
 import { getAnswerList, type Answer } from "@/api/answer";
 import { getSurveyWithQuestions, type SurveyWithQuestions } from "@/api/survey";
+import { Location } from "@element-plus/icons-vue";
 import {
   ElStatistic,
   ElCol,
   ElRow,
   ElCard,
   ElMenu,
-  ElMenuItem
+  ElMenuItem,
+  ElIcon
 } from "element-plus";
 import { computed, provide, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -122,6 +132,19 @@ provide("statRawData", statRawData);
     top: 80px;
     bottom: 20px;
     left: 20px;
+    &-menuitem {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+      i {
+        flex: 1;
+      }
+      span {
+        // height: fit-content;
+        padding-bottom: 5px;
+        line-height: normal;
+      }
+    }
   }
   .stat-main {
     width: 70%;

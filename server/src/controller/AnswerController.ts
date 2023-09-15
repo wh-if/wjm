@@ -45,6 +45,7 @@ const controller: Controller[] = [
         ip: ctx.req.socket.remoteAddress,
         expendDuration,
         surveyId: parseInt(surveyId),
+        ua: ctx.request.headers['user-agent']
       };
 
       // TODO 问卷的创建者才有权查看这个问卷的所有答卷

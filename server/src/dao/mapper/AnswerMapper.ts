@@ -6,6 +6,9 @@ export interface Answer {
   submitTime?: string;
   expendDuration?: number;
   ip?: string;
+
+  status?: number;
+  ua?: string;
 }
 class AnswerMapper extends BaseMapper<Answer> {
   constructor() {
