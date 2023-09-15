@@ -52,16 +52,7 @@
           </ElSelect>
         </div>
       </div>
-      <ElTable
-        :data="
-          state.surveyList.slice(
-            (state.currentPage - 1) * state.pageSize,
-            state.currentPage * state.pageSize
-          )
-        "
-        max-height="700"
-        size="large"
-      >
+      <ElTable :data="state.surveyList" max-height="700" size="large">
         <ElTableColumn label="问卷ID" prop="id"> </ElTableColumn>
         <ElTableColumn label="标题" prop="title"></ElTableColumn>
         <ElTableColumn label="创建时间" prop="createTime">
@@ -131,8 +122,10 @@
         layout="total, sizes, prev, pager, next, jumper"
         v-model:page-size="state.pageSize"
         v-model:current-page="state.currentPage"
+        @update:current-page="getData()"
+        @update:page-size="getData()"
         :page-sizes="[10, 15, 20, 25]"
-        :total="state.surveyList.length"
+        :total="state.listTotal"
       />
       <ElDialog title="分享问卷" v-model="state.showShareDialog">
         <SharePane :survey-id="currentFocusSurvey"></SharePane>
@@ -170,7 +163,7 @@ import {
   ElMessage
 } from "element-plus";
 import { ArrowDown, Search, Setting } from "@element-plus/icons-vue";
-import { shallowReactive, reactive, ref } from "vue";
+import { shallowReactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import SharePane from "@/components/SharePane.vue";
 
@@ -181,6 +174,7 @@ const state = shallowReactive({
   searchDesc: true,
   currentPage: 1,
   pageSize: 10,
+  listTotal: 0,
   showShareDialog: false
 });
 
@@ -188,17 +182,20 @@ const currentFocusSurvey = ref<number>(0);
 
 const router = useRouter();
 
+// 处理创建新问卷
 function handleNewCreate() {
   createNewSurvey().then(({ data }) => {
     router.push(`/edit?surveyId=${data.surveyId}`);
   });
 }
 
+// 展示分享弹窗
 function showShareDialog(surveyId: number) {
   state.showShareDialog = true;
   currentFocusSurvey.value = surveyId;
 }
 
+// 更改问卷状态
 function handleChangeStatus(surveyId: number, status: 0 | 1) {
   updateSurvey({
     id: surveyId,
@@ -208,6 +205,7 @@ function handleChangeStatus(surveyId: number, status: 0 | 1) {
   });
 }
 
+// 删除问卷
 function handleRemoveSurvey(surveyId: number) {
   ElMessageBox.confirm("确定要删除该问卷吗？", "提示", {
     cancelButtonText: "取消",
@@ -222,13 +220,17 @@ function handleRemoveSurvey(surveyId: number) {
     .catch(() => {});
 }
 
+// 获取列表数据
 function getData() {
   getSurveyList({
     keyword: state.searchInputValue,
     orderBy: state.searchOrderBy,
-    desc: state.searchDesc
+    desc: state.searchDesc,
+    page: state.currentPage,
+    pageSize: state.pageSize
   }).then(({ data }) => {
     state.surveyList = data.list;
+    state.listTotal = data.total;
   });
 }
 getData();

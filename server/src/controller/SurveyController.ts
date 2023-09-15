@@ -11,15 +11,22 @@ const controller: Controller[] = [
     handler: async (ctx) => {
       const id = parseInt(ctx.body);
 
-      const { keyword, orderBy, desc } = ctx.query;
+      const { keyword, orderBy, desc, page, pageSize } = ctx.query;
+
+      const listTotal = await surveyMapper.selectTotalCount(
+        id,
+        keyword as string
+      );
 
       const result = await surveyMapper.selectListWithAnswerCount(
         id,
         keyword as string,
         orderBy as "answerCount" | "createTime",
-        desc == undefined || desc == "true"
+        desc == undefined || desc == "true",
+        parseInt(page as string),
+        parseInt(pageSize as string)
       );
-      ctx.body = AjaxResult.success({ list: result });
+      ctx.body = AjaxResult.success({ list: result, total: listTotal });
     },
   },
   // 获取问卷-带问题

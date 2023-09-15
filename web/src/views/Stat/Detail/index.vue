@@ -11,34 +11,27 @@
             end-placeholder="End date"
           />
         </ElFormItem>
-        <ElFormItem label="答题时长区间" prop="durationRange">
-          <ElTimePicker
+        <ElFormItem label="答题时长区间" style="flex: 1" prop="durationRange">
+          <ElSlider
+            style="width: 100%"
+            :format-tooltip="(val) => val + ' 秒'"
             v-model="filterState.durationRange"
-            is-range
-            range-separator="To"
-            start-placeholder="Start time"
-            end-placeholder="End time"
-          />
+            range
+          ></ElSlider>
         </ElFormItem>
-        <div style="display: flex; align-items: center;">
+        <div style="display: flex; align-items: center">
           <ElButton
             type="primary"
+            @click="getData()"
             size="large"
-            style="width: 150px;"
-          > 筛选
+            style="width: 150px"
+          >
+            筛选
           </ElButton>
         </div>
       </ElForm>
     </ElCard>
-    <ElTable
-      :data="
-        state.answerList.slice(
-          (state.currentPage - 1) * state.pageSize,
-          state.currentPage * state.pageSize
-        )
-      "
-      size="large"
-    >
+    <ElTable :data="state.answerList" size="large">
       <ElTableColumn label="编号" width="120" prop="id"> </ElTableColumn>
 
       <ElTableColumn label="提交时间" width="180" prop="submitTime">
@@ -86,8 +79,10 @@
       layout="total, sizes, prev, pager, next, jumper"
       v-model:page-size="state.pageSize"
       v-model:current-page="state.currentPage"
+      @update:current-page="getData()"
+      @update:page-size="getData()"
       :page-sizes="[10, 15, 20, 25]"
-      :total="state.answerList.length"
+      :total="state.listTotal"
     />
   </div>
 </template>
@@ -103,7 +98,7 @@ import {
   ElTableColumn,
   ElButton,
   ElDatePicker,
-  ElTimePicker
+  ElSlider
 } from "element-plus";
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
@@ -111,31 +106,40 @@ import { useRouter } from "vue-router";
 const state = reactive({
   pageSize: 10,
   currentPage: 1,
+  listTotal: 0,
   answerList: [] as Answer[]
 });
 
-const filterState = reactive({
-  durationRange: 0,
-  submitTimeRange: 0
+const filterState = reactive<{
+  durationRange: [number, number] | undefined;
+  submitTimeRange: [Date, Date] | undefined;
+}>({
+  durationRange: undefined,
+  submitTimeRange: undefined
 });
 
 const router = useRouter();
 
 function getData() {
-  getAnswerList(
-    parseInt(router.currentRoute.value.query.surveyId as string)
-  ).then(({ data }) => {
+  getAnswerList(parseInt(router.currentRoute.value.query.surveyId as string), {
+    durationRangeStart: filterState.durationRange?.[0],
+    durationRangeEnd: filterState.durationRange?.[1],
+    submitTimeRangeStart: filterState.submitTimeRange?.[0].valueOf(),
+    submitTimeRangeEnd: filterState.submitTimeRange?.[1].valueOf(),
+    page: state.currentPage,
+    pageSize: state.pageSize
+  }).then(({ data }) => {
     state.answerList = data.list;
+    state.listTotal = data.total;
   });
 }
-
-getData();
 
 function handleChangeStatus(answerId: number, status: 0 | 1) {
   updateAnswerData(answerId, { status }).then((res) => {
     getData();
   });
 }
+getData();
 </script>
 
 <style lang="scss" scoped>

@@ -2,18 +2,20 @@
   <div v-if="loading" v-loading.fullscreen.lock="loading"></div>
   <div v-else class="stat-box">
     <ElCard class="stat-sidebar" body-style="padding:0">
-      <ElMenu
-        :default-active="`/stat/overview?surveyId=${$route.query.surveyId}`"
-        :router="true"
-      >
+      <ElMenu :default-active="$route.path" router>
         <ElMenuItem
           class="stat-sidebar-menuitem"
-          :index="`/stat/overview?surveyId=${$route.query.surveyId}`"
+          index="/stat/overview"
+          :route="`/stat/overview?surveyId=${$route.query.surveyId}`"
         >
           <ElIcon><Location /></ElIcon>
           <span>数据概览</span>
         </ElMenuItem>
-        <ElMenuItem class="stat-sidebar-menuitem" :index="`/stat/detail?surveyId=${$route.query.surveyId}`">
+        <ElMenuItem
+          class="stat-sidebar-menuitem"
+          index="/stat/detail"
+          :route="`/stat/detail?surveyId=${$route.query.surveyId}`"
+        >
           <ElIcon><Location /></ElIcon>
           <span>数据详情</span>
         </ElMenuItem>
@@ -110,9 +112,11 @@ function getData() {
     statRawData.survey = reactive(data);
   });
 
-  const promise2 = getAnswerList(parseInt(surveyId)).then(({ data }) => {
-    statRawData.answerList = reactive(data.list);
-  });
+  const promise2 = getAnswerList(parseInt(surveyId), { status: 0 }).then(
+    ({ data }) => {
+      statRawData.answerList = reactive(data.list);
+    }
+  );
 
   Promise.all([promise1, promise2]).then(() => {
     loading.value = false;

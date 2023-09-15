@@ -61,8 +61,9 @@ const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
             confirmButtonText: "确认"
           })
             .then(() => {
-              onlyOneMessage = false;
               router.push("/login");
+              onlyOneMessage = false;
+              
             })
             .catch(() => {
               // router.back()

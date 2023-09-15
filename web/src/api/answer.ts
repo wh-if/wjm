@@ -12,10 +12,23 @@ export interface Answer {
   ua?: string;
 }
 
-export function getAnswerList(surveyId: number) {
+export function getAnswerList(
+  surveyId: number,
+  filterData: {
+    durationRangeStart?: number;
+    durationRangeEnd?: number;
+    submitTimeRangeStart?: number;
+    submitTimeRangeEnd?: number;
+    status?: number;
+    page?: number;
+    pageSize?: number;
+  }
+) {
+
   return request({
     url: `/answer/${surveyId}/list`,
-    method: "get"
+    method: "get",
+    params: filterData
   });
 }
 

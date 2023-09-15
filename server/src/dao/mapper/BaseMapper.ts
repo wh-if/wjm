@@ -25,7 +25,7 @@ export default class BaseMapper<T> {
   }
 
   select(whereValues: T, type?: SelectType) {
-    let sql = warpWhere(
+    let sql = this.warpWhere(
       `select * from \`${this.TABLE_NAME}\``,
       whereValues,
       type
@@ -33,8 +33,8 @@ export default class BaseMapper<T> {
     return this.selectBySql(sql);
   }
 
-  selectBySql(sql: string) {
-    return new Promise<T[]>((resolve, reject) => {
+  selectBySql<G = T[]>(sql: string) {
+    return new Promise<G>((resolve, reject) => {
       console.warn(sql);
       this.POOL.query(sql, function (error, results, fields) {
         if (error) throw error;
@@ -48,6 +48,10 @@ export default class BaseMapper<T> {
             results.forEach(
               (item: T) => (item[field.name] = !!item[field.name])
             );
+          }
+          // 如果为求总计数
+          if (field.name === "count(*)") {
+            resolve(results[0]["count(*)"]);
           }
         });
         resolve(results);
@@ -91,7 +95,7 @@ export default class BaseMapper<T> {
       }
       sqlBuilder = sqlBuilder.substring(0, sqlBuilder.length - 1);
 
-      const sql = warpWhere(sqlBuilder, whereValues);
+      const sql = this.warpWhere(sqlBuilder, whereValues);
       console.log(sql);
       this.POOL.query(sql, function (error, results, fields) {
         if (error) throw error;
@@ -102,7 +106,7 @@ export default class BaseMapper<T> {
 
   remove(whereValues: T) {
     return new Promise<number>((resolve, reject) => {
-      let sql = warpWhere(`delete from \`${this.TABLE_NAME}\``, whereValues);
+      let sql = this.warpWhere(`delete from \`${this.TABLE_NAME}\``, whereValues);
       console.warn(sql);
       this.POOL.query(sql, function (error, results, fields) {
         if (error) throw error;
@@ -110,34 +114,34 @@ export default class BaseMapper<T> {
       });
     });
   }
-}
-function warpWhere(
-  sql: string,
-  values: any,
-  whereType: SelectType = SelectType.EXACT_AND
-) {
-  if (!values) {
-    return sql;
-  }
-  let isFirstValue = true;
-  for (const key in values) {
-    if (Object.hasOwnProperty.call(values, key)) {
-      if (values[key]) {
-        if (isFirstValue) {
-          sql += " where";
-          isFirstValue = false;
-        } else {
-          sql += whereType !== SelectType.EXACT_AND ? " or" : " and";
-        }
-        if (whereType === SelectType.LIKE_OR) {
-          sql += ` ${"`" + key + "`"} like ${mysql.escape(
-            "%" + values[key] + "%"
-          )}`;
-        } else {
-          sql += ` ${"`" + key + "`"} = ${mysql.escape(values[key])}`;
+  warpWhere(
+    sql: string,
+    values: any,
+    whereType: SelectType = SelectType.EXACT_AND
+  ) {
+    if (!values) {
+      return sql;
+    }
+    let isFirstValue = true;
+    for (const key in values) {
+      if (Object.hasOwnProperty.call(values, key)) {
+        if (values[key]) {
+          if (isFirstValue) {
+            sql += " where";
+            isFirstValue = false;
+          } else {
+            sql += whereType !== SelectType.EXACT_AND ? " or" : " and";
+          }
+          if (whereType === SelectType.LIKE_OR) {
+            sql += ` ${"`" + key + "`"} like ${mysql.escape(
+              "%" + values[key] + "%"
+            )}`;
+          } else {
+            sql += ` ${"`" + key + "`"} = ${mysql.escape(values[key])}`;
+          }
         }
       }
     }
+    return sql;
   }
-  return sql;
 }

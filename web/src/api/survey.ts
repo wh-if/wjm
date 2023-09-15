@@ -5,6 +5,8 @@ type SearchSurveyParams = {
   keyword: string;
   orderBy: "answerCount" | "createTime";
   desc?: boolean;
+  page?: number;
+  pageSize?: number;
 };
 
 export interface SurveyWithQuestions {

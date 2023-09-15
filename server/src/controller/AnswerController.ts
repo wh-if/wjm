@@ -9,14 +9,32 @@ const controller: Controller[] = [
     method: HttpMethodEnum.GET,
     handler: async (ctx) => {
       const { surveyId } = ctx.params;
-      const {} = ctx.query;
-
-      // TODO 问卷的创建者才有权查看这个问卷的所有答卷
-      const result = await answerMapper.select({
+      const {
+        durationRangeStart,
+        durationRangeEnd,
+        submitTimeRangeStart,
+        submitTimeRangeEnd,
+        status,
+        page,
+        pageSize,
+      } = ctx.query;
+      let searchObj = {
         surveyId: parseInt(surveyId),
+        durationRangeStart: durationRangeStart as string,
+        durationRangeEnd: durationRangeEnd as string,
+        submitTimeRangeStart: submitTimeRangeStart as string,
+        submitTimeRangeEnd: submitTimeRangeEnd as string,
+        status: status as string,
+      };
+      // TODO 问卷的创建者才有权查看这个问卷的所有答卷
+      const listTotal = await answerMapper.selectAnswerList(true, searchObj);
+      const result = await answerMapper.selectAnswerList(false, {
+        ...searchObj,
+        page: parseInt(page as string),
+        pageSize: parseInt(pageSize as string),
       });
 
-      ctx.body = AjaxResult.success({ list: result });
+      ctx.body = AjaxResult.success({ list: result, total: listTotal });
     },
   },
   // 修改
@@ -45,7 +63,7 @@ const controller: Controller[] = [
         ip: ctx.req.socket.remoteAddress,
         expendDuration,
         surveyId: parseInt(surveyId),
-        ua: ctx.request.headers['user-agent']
+        ua: ctx.request.headers["user-agent"],
       };
 
       // TODO 问卷的创建者才有权查看这个问卷的所有答卷
