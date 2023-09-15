@@ -4,18 +4,16 @@ import axios from "axios";
 import type {
   AxiosInstance,
   AxiosError,
-  AxiosResponse,
-  AxiosRequestConfig
+  AxiosRequestConfig,
+  AxiosResponse
 } from "axios";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { useRouter } from "vue-router";
 
 type AjaxResult<T> = {
   message: string;
   code: 0 | 1;
   data: T;
 };
-
 const service: AxiosInstance = axios.create({
   baseURL: "/api",
   timeout: 5000
@@ -50,7 +48,7 @@ service.interceptors.response.use(
 let onlyOneMessage = false;
 const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
   return new Promise<AjaxResult<T>>((resolve, reject) => {
-    service(config).then((response) => {
+    service<any, AxiosResponse<AjaxResult<T>>>(config).then((response) => {
       if (response.status === 200) {
         const { code, message } = response.data;
         if (code === 1) {

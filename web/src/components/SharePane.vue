@@ -14,7 +14,7 @@
     <div class="share-method__item">
       <p class="share-method__item-info">二维码分享</p>
       <div>
-        <img width="120" height="120" src="@/assets/get_qrcode.png" />
+        <img width="120" height="120" src="@/assets/image/get_qrcode.png" />
       </div>
 
       <div>

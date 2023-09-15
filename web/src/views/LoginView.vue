@@ -71,7 +71,7 @@ function handleLogin() {
   left: 0;
   right: 0;
   z-index: 1;
-  background-image: url("@/assets/bacg.jpg");
+  background-image: url("@/assets/image/bacg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;

@@ -1,16 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import { useUserStore } from "@/stores/user";
 import { ElMessageBox } from "element-plus";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView
-    // },
+    {
+      path: "/",
+      name: "home",
+      redirect: "/login"
+    },
     {
       path: "/about",
       name: "about",
@@ -76,6 +75,11 @@ const router = createRouter({
     {
       path: "/s/:surveyId",
       name: "answer",
+      component: () => import("../views/AnswerView.vue")
+    },
+    {
+      path: "/a/:surveyId/:answerId",
+      name: "answer-result",
       component: () => import("../views/AnswerView.vue")
     },
     {

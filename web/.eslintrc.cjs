@@ -12,6 +12,9 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest'
   },
+  rules: {
+    "no-debugger": "off"
+  },
   overrides: [
     {
       "files": ["src/**/index.vue"], // 匹配views和二级目录中的index.vue
