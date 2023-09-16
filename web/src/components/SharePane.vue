@@ -14,19 +14,21 @@
     <div class="share-method__item">
       <p class="share-method__item-info">二维码分享</p>
       <div>
-        <img width="120" height="120" src="@/assets/image/get_qrcode.png" />
+        <img width="120" height="120" :src="qrcodeImg" />
       </div>
 
       <div>
-        <ElLink :underline="false">下载</ElLink>
+        <ElLink :underline="false" download :href="qrcodeImg">下载</ElLink>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElCard, ElDivider, ElImage, ElLink } from "element-plus";
-import { computed } from "vue";
+import { ElDivider, ElLink, ElMessage } from "element-plus";
+import { computed, ref } from "vue";
+import { useClipboard } from "@/hooks/useClipboard";
+import QRCode from "qrcode";
 
 const props = defineProps({
   surveyId: {
@@ -35,9 +37,30 @@ const props = defineProps({
   }
 });
 
+const { copy, copied } = useClipboard();
+
 const linkUrl = computed(() => location.origin + "/s/" + props.surveyId);
 
-function handleCopy() {}
+const qrcodeImg = ref();
+
+function generateQRCode() {
+  QRCode.toDataURL(linkUrl.value)
+    .then((url: string) => {
+      qrcodeImg.value = url;
+    })
+    .catch((err: any) => {
+      console.error(err);
+    });
+}
+generateQRCode();
+
+function handleCopy() {
+  copy(linkUrl.value).then(() => {
+    if (copied.value) {
+      ElMessage.success("复制成功！");
+    }
+  });
+}
 </script>
 
 <style lang="scss" scoped>

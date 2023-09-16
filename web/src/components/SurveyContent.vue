@@ -51,7 +51,12 @@ import {
 import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
 import RadioQuestion from "@/components/RadioQuestion.vue";
-import { ElButton, ElCard, ElInput, ElMessage } from "element-plus";
+import {
+  ElButton,
+  ElCard,
+  ElMessage,
+  ElMessageBox
+} from "element-plus";
 import { inject, ref, watch, type Ref, provide } from "vue";
 import { useRouter } from "vue-router";
 
@@ -92,9 +97,16 @@ function initData() {
     getSurveyWithQuestions(
       router.currentRoute.value.params.surveyId as string
     ).then(({ data }) => {
-      surveyData.value = ref(data);
-      provideData.value = surveyData.value.value;
-      updateViewCount();
+      if (data.status == 0) {
+        ElMessageBox.alert("当前问卷已停止接收答卷！", "提示", {
+          showConfirmButton: false,
+          showClose: false,
+        });
+      } else {
+        surveyData.value = ref(data);
+        provideData.value = surveyData.value.value;
+        updateViewCount();
+      }
     });
     provide("surveyData", provideData);
   }

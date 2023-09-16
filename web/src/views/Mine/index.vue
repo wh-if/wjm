@@ -98,7 +98,10 @@
               </ElButton>
               <template #dropdown>
                 <ElDropdownMenu>
-                  <ElDropdownItem @click="(e) => showShareDialog(scope.row.id)"
+                  <ElDropdownItem
+                    @click="
+                      (e) => showShareDialog(scope.row.id, scope.row.status)
+                    "
                     >分享</ElDropdownItem
                   >
                   <ElDropdownItem
@@ -190,7 +193,12 @@ function handleNewCreate() {
 }
 
 // 展示分享弹窗
-function showShareDialog(surveyId: number) {
+function showShareDialog(surveyId: number, surveyStatus: number) {
+  if (surveyStatus == 0) {
+    ElMessage.warning("此问卷当前为停止状态，无法分享作答。");
+    return;
+  }
+
   state.showShareDialog = true;
   currentFocusSurvey.value = surveyId;
 }
@@ -249,7 +257,7 @@ getData();
 
 .tool-bar {
   display: flex;
-  padding: 10px 5px 20px;
+  padding: 20px 5px 40px;
 
   .right {
     flex: 1;

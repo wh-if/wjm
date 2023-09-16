@@ -3,10 +3,20 @@
   <div v-else class="stat-box">
     <ElCard class="stat-sidebar" body-style="padding:0">
       <ElMenu :default-active="$route.path" router>
+        <ElMenuItem class="stat-sidebar-menuitem" index="/mine" route="/mine">
+          <ElIcon><ArrowLeftBold /></ElIcon>
+          <span>返回</span>
+        </ElMenuItem>
         <ElMenuItem
           class="stat-sidebar-menuitem"
           index="/stat/overview"
-          :route="`/stat/overview?surveyId=${$route.query.surveyId}`"
+          :route="{
+            path: `/stat/overview`,
+            replace: true,
+            query: {
+              surveyId: $route.query.surveyId
+            }
+          }"
         >
           <ElIcon><Location /></ElIcon>
           <span>数据概览</span>
@@ -14,7 +24,13 @@
         <ElMenuItem
           class="stat-sidebar-menuitem"
           index="/stat/detail"
-          :route="`/stat/detail?surveyId=${$route.query.surveyId}`"
+          :route="{
+            path: `/stat/detail`,
+            replace: true,
+            query: {
+              surveyId: $route.query.surveyId
+            }
+          }"
         >
           <ElIcon><Location /></ElIcon>
           <span>数据详情</span>
@@ -46,7 +62,7 @@
 <script setup lang="ts">
 import { getAnswerList, type Answer } from "@/api/answer";
 import { getSurveyWithQuestions, type SurveyWithQuestions } from "@/api/survey";
-import { Location } from "@element-plus/icons-vue";
+import { ArrowLeftBold, Location } from "@element-plus/icons-vue";
 import {
   ElStatistic,
   ElCol,
