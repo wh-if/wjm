@@ -1,16 +1,17 @@
 <template>
   <div class="content-box">
-    <SurveyContent></SurveyContent>
+    <SurveyContent
+      :type="$route.name === 'answer' ? 'Answer' : 'Review'"
+    ></SurveyContent>
   </div>
-  
 </template>
 
 <script setup lang="ts">
-import SurveyContent from '@/components/SurveyContent.vue';
+import SurveyContent from "@/components/SurveyContent.vue";
 </script>
 
-<style lang='scss' scoped>
-.content-box{
+<style lang="scss" scoped>
+.content-box {
   margin: 150px auto 50px;
   width: 70%;
 }

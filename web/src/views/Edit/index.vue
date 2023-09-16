@@ -1,15 +1,13 @@
 <template>
-  <div v-loading.fullscreen.lock="loading">
-    <template v-if="!loading">
-      <TopNav class="top-nav"></TopNav>
-      
-      <div class="main-box">
-        <LeftMenuCard class="left"></LeftMenuCard>
-        <EditContent class="content"></EditContent>
-        <RightSettingCard class="right"></RightSettingCard>
+  <div>
+    <TopNav class="top-nav"></TopNav>
+    <div class="main-box">
+      <LeftMenuCard class="left"></LeftMenuCard>
+      <div class="content">
+        <SurveyContent ref="surveyContentRef" type="Edit"></SurveyContent>
       </div>
-    </template>
-    
+      <RightSettingCard class="right"></RightSettingCard>
+    </div>
   </div>
 </template>
 
@@ -17,25 +15,13 @@
 import TopNav from "./components/TopNav.vue";
 import LeftMenuCard from "./components/LeftMenuCard.vue";
 import RightSettingCard from "./components/RightSettingCard.vue";
-import EditContent from "./components/EditContent.vue";
+import SurveyContent from "@/components/SurveyContent.vue";
 
-import { ref, provide, reactive } from "vue";
-import { useRouter } from "vue-router";
-import { getSurveyWithQuestions, type SurveyWithQuestions } from "@/api/survey";
+import { ref, provide } from "vue";
 
-const state = ref<SurveyWithQuestions>();
-const loading = ref(true);
-const router = useRouter();
-const surveyId = router.currentRoute.value.query.surveyId as string;
-const activeQuestionIndex = ref<number>();
+const surveyContentRef = ref();
 
-getSurveyWithQuestions(surveyId).then(({ data }) => {
-  state.value = reactive(data);
-  loading.value = false;
-});
-
-provide("surveyData", state);
-provide("activeQuestionIndex", activeQuestionIndex);
+provide("surveyContentRef", surveyContentRef);
 </script>
 
 <style lang="scss" scoped>
@@ -61,6 +47,7 @@ provide("activeQuestionIndex", activeQuestionIndex);
   .content {
     margin: 0 250px 20px;
     // height: 1500px;
+    padding: 100px 0 0;
   }
 
   .right {

@@ -37,6 +37,18 @@ const controller: Controller[] = [
       ctx.body = AjaxResult.success({ list: result, total: listTotal });
     },
   },
+  {
+    path: "/answer/:answerId",
+    method: HttpMethodEnum.GET,
+    handler: async (ctx) => {
+      const { answerId } = ctx.params;
+      const result = await answerMapper.selectOne({
+        id: parseInt(answerId),
+      });
+
+      ctx.body = AjaxResult.success(result);
+    },
+  },
   // 修改
   {
     path: "/answer/:answerId",

@@ -36,7 +36,7 @@ const router = createRouter({
           component: () => import("../views/Mine/index.vue")
         },
         {
-          path: "/edit",
+          path: "/edit/:surveyId",
           name: "edit",
           meta: {
             needLogin: true
@@ -79,7 +79,7 @@ const router = createRouter({
     },
     {
       path: "/a/:surveyId/:answerId",
-      name: "answer-result",
+      name: "answer-review",
       component: () => import("../views/AnswerView.vue")
     },
     {

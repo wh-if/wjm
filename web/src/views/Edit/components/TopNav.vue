@@ -23,18 +23,19 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElSteps,
-  ElStep,
-  ElButton,
-  ElDialog,
-  ElPageHeader
-} from "element-plus";
+import { ElButton, ElDialog, ElPageHeader } from "element-plus";
 import SharePane from "@/components/SharePane.vue";
-import { inject, ref } from "vue";
+import { computed, inject, ref, type Ref } from "vue";
 import { type SurveyWithQuestions } from "@/api/survey";
 const showShareDialog = ref(false);
-const surveyData = inject<SurveyWithQuestions>("surveyData");
+const surveyContentRef = inject<Ref>("surveyContentRef");
+const surveyData = computed(() => {
+  if (surveyContentRef?.value?.surveyState) {
+    return surveyContentRef.value.surveyState.data as SurveyWithQuestions;
+  } else {
+    return {} as SurveyWithQuestions;
+  }
+});
 </script>
 
 <style lang="scss" scoped>

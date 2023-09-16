@@ -1,5 +1,5 @@
 <template>
-  <div :class="['question-card', isEdit ? 'question-card-activity' : '']">
+  <div :class="['question-card', active ? 'question-card-activity' : '']">
     <div class="question-card-body">
       <slot />
     </div>
@@ -7,9 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
 
-const isEdit = inject<boolean>("isEdit");
+const active = computed(() => route.name === "edit");
 </script>
 
 <style lang="scss" scoped>

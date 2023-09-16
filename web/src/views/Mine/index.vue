@@ -85,7 +85,7 @@
               link
               type="primary"
               size="large"
-              @click="$router.push(`/edit?surveyId=${scope.row.id}`)"
+              @click="$router.push(`/edit/${scope.row.id}`)"
               >编辑</ElButton
             >
 
@@ -188,7 +188,7 @@ const router = useRouter();
 // 处理创建新问卷
 function handleNewCreate() {
   createNewSurvey().then(({ data }) => {
-    router.push(`/edit?surveyId=${data.surveyId}`);
+    router.push(`/edit/${data.surveyId}`);
   });
 }
 

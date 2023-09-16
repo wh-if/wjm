@@ -1,6 +1,6 @@
 <template>
   <div
-    :id="$props.listIndex.toString()"
+    :id="$props.index.toString()"
     @click="handleClickQuestion"
     class="radio-question"
   >
@@ -9,11 +9,12 @@
     </div>
     <h2 class="question-title">
       <span v-if="questionData.required" class="question-required-tag">*</span>
-      <span style="margin-right: 15px">{{ listIndex + 1 }}</span>
+      <span style="margin-right: 15px">{{ index + 1 }}</span>
       <EditInput
         style="flex: 1"
         v-model="questionData.title"
         placeholder="请输入题目标题"
+        :edit="props.edit"
       ></EditInput>
     </h2>
 
@@ -21,9 +22,14 @@
       class="question-description"
       v-model="questionData.description"
       placeholder="请输入题目说明（选填）"
+      :edit="props.edit"
     ></EditInput>
 
-    <ElRadioGroup v-model="radioValue" style="width: 100%; font-size: inherit">
+    <ElRadioGroup
+      v-model="radioValue"
+      :disabled="reviewFlag"
+      style="width: 100%; font-size: inherit"
+    >
       <div class="options-box">
         <div
           v-for="item in questionData.content.options"
@@ -34,15 +40,16 @@
             :model-value="false"
             :label="item.id"
             class="option-radio"
-            :disabled="isEdit"
+            :disabled="props.edit"
           >
-            {{ isEdit ? "" : item.text }}
+            {{ props.edit ? "" : item.text }}
           </ElRadio>
           <EditInput
-            v-if="isEdit"
+            v-if="props.edit"
             class="option-text"
             v-model="item.text"
             placeholder="请输入选项内容"
+            :edit="props.edit"
           ></EditInput>
         </div>
       </div>
@@ -53,48 +60,57 @@
 <script setup lang="ts">
 import { ElTag, ElRadio, ElRadioGroup } from "element-plus";
 import EditInput from "./EditInput.vue";
-import { inject, ref, watch, type Ref, reactive } from "vue";
-import type { SurveyWithQuestions } from "@/api/survey";
-import { updateQuestion } from "@/api/question";
+import { ref, watch, reactive, type PropType, computed } from "vue";
+import { updateQuestion, type Question } from "@/api/question";
+
+export type RadioAnswerType = {
+  questionId: number;
+  resultValue: string | number;
+};
 
 const props = defineProps({
-  listIndex: {
+  index: {
     type: Number,
     required: true
+  },
+  edit: {
+    type: Boolean,
+    defalut: false
+  },
+  questionData: {
+    type: Object as PropType<Question>,
+    required: true
+  },
+  answerData: {
+    type: Object as PropType<RadioAnswerType>
   }
 });
-// 问题内容
-const questionData =
-  inject<Ref<SurveyWithQuestions>>("surveyData")?.value.questions![
-    props.listIndex
-  ]!;
 
-const isEdit = inject<boolean>("isEdit");
-const activeQuestionIndex =
-  isEdit && inject<Ref<number>>("activeQuestionIndex");
-const questionAnswer =
-  !isEdit && inject<Ref<Record<string, any>[]>>("questionAnswer");
-const radioValue = ref();
+const reviewFlag = props.answerData !== undefined;
+const emit = defineEmits(["answer-change", "focus"]);
+
+const questionData = reactive<Question>(props.questionData);
+
+const radioValue = ref(props.answerData?.resultValue);
 
 watch(radioValue, (val) => {
-  (questionAnswer as Ref<Record<string, any>[]>).value[props.listIndex] = {
-    questionId: questionData.id,
-    resultValue: val
-  };
+  emit("answer-change", {
+    index: props.index,
+    data: {
+      questionId: questionData.id,
+      resultValue: val
+    }
+  });
 });
 
 // 给右侧面板用
 function handleClickQuestion() {
-  if (isEdit) {
-    (activeQuestionIndex as Ref<number>).value = props.listIndex;
-  }
+  emit("focus", { index: props.index });
 }
 
 watch(questionData, (newVal) => {
   updateQuestion(newVal);
 });
-
-// 修改后的保存
 </script>
 
 <style lang="scss" scoped>

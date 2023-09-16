@@ -24,11 +24,17 @@ export function getAnswerList(
     pageSize?: number;
   }
 ) {
-
   return request({
     url: `/answer/${surveyId}/list`,
     method: "get",
     params: filterData
+  });
+}
+
+export function getAnswerById(answerId: number) {
+  return request({
+    url: `/answer/${answerId}`,
+    method: "get"
   });
 }
 

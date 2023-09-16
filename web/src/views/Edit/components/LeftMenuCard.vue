@@ -23,9 +23,16 @@
 import { addQuestionToSurvey } from "@/api/question";
 import type { SurveyWithQuestions } from "@/api/survey";
 import { ElCard, ElTabs, ElTabPane, ElButton } from "element-plus";
-import { type Ref, inject } from "vue";
+import { type Ref, inject, computed } from "vue";
 
-const surveyData = inject<Ref<SurveyWithQuestions>>("surveyData");
+const surveyContentRef = inject<Ref>("surveyContentRef");
+const surveyData = computed(() => {
+  if (surveyContentRef?.value?.surveyState) {
+    return surveyContentRef.value.surveyState.data as SurveyWithQuestions;
+  } else {
+    return {} as SurveyWithQuestions;
+  }
+});
 
 function handleClick(type: string) {
   addQuestionToSurvey(surveyData!.value.id!, type).then(({ data }) => {
