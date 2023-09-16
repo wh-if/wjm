@@ -100,7 +100,7 @@ import {
   ElDatePicker,
   ElSlider
 } from "element-plus";
-import { reactive } from "vue";
+import { inject, reactive } from "vue";
 import { useRouter } from "vue-router";
 
 const state = reactive({
@@ -119,6 +119,7 @@ const filterState = reactive<{
 });
 
 const router = useRouter();
+const updateStatRawData = inject<() => void>("updateStatRawData");
 
 function getData() {
   getAnswerList(parseInt(router.currentRoute.value.query.surveyId as string), {
@@ -137,6 +138,7 @@ function getData() {
 function handleChangeStatus(answerId: number, status: 0 | 1) {
   updateAnswerData(answerId, { status }).then((res) => {
     getData();
+    updateStatRawData?.();
   });
 }
 getData();

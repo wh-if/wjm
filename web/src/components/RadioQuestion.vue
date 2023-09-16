@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElTag, ElRadio, ElRadioGroup } from "element-plus";
+import { ElTag, ElRadio, ElRadioGroup, ElNotification } from "element-plus";
 import EditInput from "./EditInput.vue";
 import { ref, watch, reactive, type PropType, computed } from "vue";
 import { updateQuestion, type Question } from "@/api/question";
@@ -108,8 +108,18 @@ function handleClickQuestion() {
   emit("focus", { index: props.index });
 }
 
+let timer = 0;
 watch(questionData, (newVal) => {
-  updateQuestion(newVal);
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(() => {
+    updateQuestion(newVal).then(() => {
+      ElNotification.success({
+        message: "保存成功！",
+        duration: 2000
+      });
+    });
+    clearTimeout(timer);
+  }, 5000);
 });
 </script>
 

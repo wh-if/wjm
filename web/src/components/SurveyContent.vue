@@ -118,14 +118,21 @@ init();
 
 function onUpdateSurveyData() {
   if (editFlag.value) {
-    watch(surveyState.data, (val) => {
-      updateSurvey({
-        title: val.title,
-        description: val.description,
-        status: val.status,
-        id: surveyState.data.id
-      });
-    });
+    watch(
+      () => [
+        surveyState.data.title,
+        surveyState.data.description,
+        surveyState.data.status
+      ],
+      () => {
+        updateSurvey({
+          title: surveyState.data.title,
+          description: surveyState.data.description,
+          status: surveyState.data.status,
+          id: surveyState.data.id
+        });
+      }
+    );
   }
 }
 

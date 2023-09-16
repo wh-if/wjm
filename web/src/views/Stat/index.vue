@@ -141,6 +141,7 @@ function getData() {
 
 getData();
 provide("statRawData", statRawData);
+provide("updateStatRawData", getData);
 </script>
 
 <style lang="scss" scoped>

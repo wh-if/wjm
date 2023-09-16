@@ -1,14 +1,8 @@
 <template>
   <div class="nav-main">
-    <!-- <ElSteps simple :active="1" style="width: 620px;background-color: transparent;"> -->
-    <!-- <ElStep title="编辑" status="process"></ElStep> -->
-    <!-- <ElStep title="设置" status="process"></ElStep> -->
-    <!-- <ElStep title="分享" status="finish"></ElStep>
-      <ElStep title="统计" status="process"></ElStep>
-    </ElSteps> -->
-    <ElPageHeader class="nav-left" @back="$router.back()">
+    <ElPageHeader class="nav-left" title="返回" @back="$router.back()">
       <template #content>
-        <span class="text-large font-600 mr-3"> 编辑问卷 </span>
+        <span> 编辑问卷 </span>
       </template>
     </ElPageHeader>
     <div class="nav-right">
