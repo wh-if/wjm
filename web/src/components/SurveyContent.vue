@@ -29,14 +29,14 @@
       v-for="(item, index) in surveyState.data.questions"
       :key="item.id"
     >
-      <RadioQuestion
+      <QuestionRender
         :question-data="item"
         :index="index"
         :edit="editFlag"
         @focus="(e) => (focusQuestionIndex = e.index)"
         @answer-change="(e) => (answerResult[e.index] = e.data)"
         :answer-data="answerResult[index]"
-      ></RadioQuestion>
+      ></QuestionRender>
     </QuestionCard>
     <div class="submit-box" v-if="props.type === 'Answer'">
       <ElButton
@@ -59,12 +59,13 @@ import {
 } from "@/api/survey";
 import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
-import RadioQuestion, {
-  type RadioAnswerType
-} from "@/components/RadioQuestion.vue";
 import { ElButton, ElCard, ElMessage, ElMessageBox } from "element-plus";
 import { ref, watch, type PropType, computed, reactive } from "vue";
 import { useRouter } from "vue-router";
+import QuestionRender, {
+  type AnswerData
+} from "./questions/QuestionRender.vue";
+import { useAutoSave } from "@/hooks/useAutoSave";
 
 type SurveyContentType = "Edit" | "Review" | "Answer";
 
@@ -83,10 +84,11 @@ const surveyState = reactive({
 });
 
 const editFlag = computed(() => props.type === "Edit");
+const { addSaveItem } = useAutoSave();
 
 const router = useRouter();
 
-const answerResult = ref([] as RadioAnswerType[]);
+const answerResult = ref([] as AnswerData[]);
 
 // 开始时间
 const startTime = Date.now();
@@ -118,6 +120,7 @@ init();
 
 function onUpdateSurveyData() {
   if (editFlag.value) {
+    const saveKey = Symbol("survey");
     watch(
       () => [
         surveyState.data.title,
@@ -125,12 +128,14 @@ function onUpdateSurveyData() {
         surveyState.data.status
       ],
       () => {
-        updateSurvey({
-          title: surveyState.data.title,
-          description: surveyState.data.description,
-          status: surveyState.data.status,
-          id: surveyState.data.id
-        });
+        addSaveItem(saveKey, () =>
+          updateSurvey({
+            title: surveyState.data.title,
+            description: surveyState.data.description,
+            status: surveyState.data.status,
+            id: surveyState.data.id
+          })
+        );
       }
     );
   }
@@ -168,6 +173,7 @@ function updateViewCount() {
     });
   }
 }
+
 defineExpose({
   surveyState: surveyState,
   focusQuestionIndex
