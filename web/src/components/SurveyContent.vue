@@ -33,6 +33,7 @@
         :question-data="item"
         :index="index"
         :edit="editFlag"
+        :disabled="disabledFlag"
         @focus="(e) => (focusQuestionIndex = e.index)"
         @answer-change="(e) => (answerResult[e.index] = e.data)"
         :answer-data="answerResult[index]"
@@ -85,6 +86,7 @@ const surveyState = reactive({
 });
 
 const editFlag = computed(() => props.type === "Edit");
+const disabledFlag = computed(() => props.type === "Review");
 const { addSaveItem } = useAutoSave();
 
 const router = useRouter();

@@ -5,6 +5,7 @@
         
       </template> -->
       <template v-for="(item, index) in computedList" :key="index">
+        <!-- TODO -->
         <ElTag v-if="props.tag" :type="tagTypes[Math.floor(Math.random() * 4)]"
           >{{ item }}
         </ElTag>
@@ -44,7 +45,7 @@ const computedList = computed(() => props.list.slice(0, count.value));
 
 <style lang="scss" scoped>
 .infinite-list {
-  height: 500px;
+  height: 400px;
   padding: 0;
   margin: 0;
   list-style: none;

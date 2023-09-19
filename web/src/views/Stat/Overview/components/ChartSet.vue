@@ -72,26 +72,25 @@ function handleChange(type: ChartType) {
   };
 
   if (type === "pie") {
-    chart.clear();
     options.xAxis = undefined;
     options.yAxis = undefined;
-    (options.legend = {
+    options.legend = {
       data: props.statData.options.map((item: any) => item.text),
       orient: "vertical",
       top: "center",
       right: 20
-    }),
-      (options.series = [
-        {
-          type: "pie",
-          data: props.statData.options.map((item: any) => ({
-            name: item.text,
-            value: item.count
-          }))
-        }
-      ]);
+    };
+    options.series = [
+      {
+        type: "pie",
+        data: props.statData.options.map((item: any) => ({
+          name: item.text,
+          value: item.count
+        }))
+      }
+    ];
   }
-
+  chart.clear();
   chart.setOption(options);
 }
 

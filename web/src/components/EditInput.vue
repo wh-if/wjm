@@ -38,7 +38,7 @@ const props = defineProps({
   },
   edit: {
     type: Boolean,
-    default: false
+    default: true
   }
 });
 const showFlag = computed(() => props.edit || props.modelValue !== "");
@@ -76,6 +76,11 @@ function handleInput(e: Event) {
 <style lang="scss" scoped>
 .editable-box {
   border: 1px solid transparent;
+
+  // 覆盖checkboxgroup、radiogroup样式的影响
+  font-size: initial;
+  line-height: normal;
+
   & :hover {
     border: 1px dashed rgb(64, 160, 220);
   }

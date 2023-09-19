@@ -29,6 +29,7 @@
       :is="dynamicComponent!.component"
       :question-content="questionData.content"
       :edit="props.edit"
+      :disabled="props.disabled"
       v-model:answer-value="answerValue"
     ></component>
   </div>
@@ -40,7 +41,7 @@ import EditInput from "../EditInput.vue";
 import { ref, watch, reactive, type PropType, computed } from "vue";
 import { updateQuestion, type Question } from "@/api/question";
 import { useAutoSave } from "@/hooks/useAutoSave";
-import { QuestionTypeEnum, QuestionTypeList } from "@/constants";
+import { QuestionTypeObj } from "@/constants";
 
 export interface AnswerData {
   questionId: number;
@@ -53,6 +54,10 @@ const props = defineProps({
     required: true
   },
   edit: {
+    type: Boolean,
+    defalut: false
+  },
+  disabled: {
     type: Boolean,
     defalut: false
   },
@@ -71,10 +76,6 @@ const { addSaveItem } = useAutoSave();
 const questionData = reactive<Question>(props.questionData);
 const answerValue = ref<any>(props.answerData?.resultValue);
 
-const QuestionTypeObj: Partial<
-  Record<QuestionTypeEnum, { name: string; component: any }>
-> = {};
-QuestionTypeList.forEach((item) => Object.assign(QuestionTypeObj, item.items));
 const dynamicComponent = computed(() => QuestionTypeObj[questionData.type]);
 
 watch(answerValue, (val) => {

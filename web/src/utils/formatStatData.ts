@@ -10,6 +10,7 @@ type StatRawData = {
 };
 
 export function formatStatData(statRawData: StatRawData) {
+  statRawData = toRaw(statRawData);
   const formatStatResult: FormatStatResult[] = [];
   statRawData?.survey.questions?.forEach((questionItem) => {
     // 筛选出该问题的所有答卷
@@ -28,6 +29,7 @@ export function formatStatData(statRawData: StatRawData) {
 
     switch (questionItem.type) {
       case QuestionTypeEnum.Radio:
+      case QuestionTypeEnum.MultiRadio:
         handleRadio(formatStatResultItem);
         break;
       default:
@@ -65,7 +67,7 @@ function computeAnswerRate(statRawData: StatRawData, resultList: any[]) {
     (resultList.length * 100) / statRawData.answerList.length;
   return isNaN(rate) ? "0" : rate.toFixed(2);
 }
-// 处理单选题
+// 处理选择题
 function handleRadio(formatStatResultItem: FormatStatResult) {
   // 统计各选项数据
   const resultOptions: any[] = [];
@@ -73,7 +75,8 @@ function handleRadio(formatStatResultItem: FormatStatResult) {
     (optionItem: RadioOptionFormatStatResult) => {
       // 选该选项的个数
       optionItem.count = 0;
-      formatStatResultItem.answerResultList.forEach((item) => {
+      // flat 兼容多选
+      formatStatResultItem.answerResultList.flat(2).forEach((item) => {
         if (item == optionItem.id) {
           optionItem.count!++;
         }
@@ -85,7 +88,7 @@ function handleRadio(formatStatResultItem: FormatStatResult) {
         ).toFixed(2)
       );
       if (isNaN(optionItem.rate)) optionItem.rate = 0;
-      resultOptions.push(toRaw(optionItem));
+      resultOptions.push(optionItem);
     }
   );
   formatStatResultItem.options = resultOptions;

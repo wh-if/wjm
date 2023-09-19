@@ -1,8 +1,7 @@
 <template>
-  <ElRadioGroup
-    v-model="radioValue"
+  <ElCheckboxGroup
+    v-model="inputValue"
     :disabled="props.disabled || props.edit"
-    style="width: 100%"
   >
     <div class="options-box">
       <div
@@ -10,32 +9,34 @@
         :key="item.id"
         class="option-item"
       >
-        <ElRadio :model-value="false" :label="item.id" class="option-radio">
+        <ElCheckbox :label="item.id">
           {{ props.edit ? "" : item.text }}
-        </ElRadio>
+        </ElCheckbox>
         <EditInput
           v-if="props.edit"
           class="option-text"
           v-model="item.text"
           placeholder="请输入选项内容"
-        ></EditInput>
+        >
+        </EditInput>
       </div>
     </div>
-  </ElRadioGroup>
+  </ElCheckboxGroup>
 </template>
 
 <script setup lang="ts">
-import { ElRadio, ElRadioGroup } from "element-plus";
-import EditInput from "../EditInput.vue";
+import { ElCheckbox, ElCheckboxGroup } from "element-plus";
 import { ref, watch } from "vue";
-import type { QuestionProps, RadioAnswer, RadioContent } from "./types";
+import type { CheckboxAnswer, CheckboxContent, QuestionProps } from "./types";
+import EditInput from "../EditInput.vue";
 
-const props = defineProps<QuestionProps<RadioContent, RadioAnswer>>();
+const props = defineProps<QuestionProps<CheckboxContent, CheckboxAnswer>>();
+
 const emit = defineEmits(["update:answerValue"]);
 
-const radioValue = ref(props.answerValue as number);
+const inputValue = ref(props.answerValue);
 
-watch(radioValue, (val) => {
+watch(inputValue, (val) => {
   emit("update:answerValue", val);
 });
 </script>
