@@ -17,7 +17,11 @@
       </ElTabPane>
       <ElTabPane label="题型" :name="1">
         <div class="scroll-box">
-          <div v-for="item in QuestionTypeList" :key="item.groupTitle" style="margin-bottom: 10px;">
+          <div
+            v-for="item in QuestionTypeList"
+            :key="item.groupTitle"
+            style="margin-bottom: 10px"
+          >
             <p class="question-group-title">{{ item.groupTitle }}</p>
             <ElButton
               v-for="(i, index) in item.items"
@@ -40,7 +44,11 @@
 <script setup lang="ts">
 import { addQuestionToSurvey } from "@/api/question";
 import type { SurveyWithQuestions } from "@/api/survey";
-import { QuestionTypeList, type QuestionTypeEnum } from "@/constants";
+import {
+  QuestionTypeList,
+  type QuestionTypeEnum,
+  getDefaultContent
+} from "@/constants";
 import { ElCard, ElTabs, ElTabPane, ElButton, ElText } from "element-plus";
 import { type Ref, inject, computed, ref } from "vue";
 
@@ -56,7 +64,11 @@ const surveyData = computed(() => {
 });
 
 function handleAddQuestion(type: QuestionTypeEnum) {
-  addQuestionToSurvey(surveyData!.value.id!, type).then(({ data }) => {
+  addQuestionToSurvey(
+    surveyData!.value.id!,
+    type,
+    getDefaultContent(type)
+  ).then(({ data }) => {
     surveyData!.value.questions!.push(data);
   });
 }

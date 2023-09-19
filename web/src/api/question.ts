@@ -13,13 +13,18 @@ export interface Question {
   index: number;
 }
 
-export function addQuestionToSurvey(surveyId: number, questionType: QuestionTypeEnum) {
+export function addQuestionToSurvey(
+  surveyId: number,
+  questionType: QuestionTypeEnum,
+  content: Record<string, any>
+) {
   return request<Question>({
     url: "/question",
     method: "post",
     data: {
       surveyId,
-      questionType
+      questionType,
+      content
     }
   });
 }

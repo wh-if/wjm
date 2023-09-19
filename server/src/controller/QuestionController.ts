@@ -25,11 +25,11 @@ const controller: Controller[] = [
     path: "/question",
     method: HttpMethodEnum.POST,
     handler: async (ctx) => {
-      const { surveyId, questionType } = ctx.request.body;
+      const { surveyId, questionType, content } = ctx.request.body;
       const newQuestion: Question = {
         title: "请输入题目标题",
         type: questionType,
-        content: getDefaultContent(questionType),
+        content: JSON.stringify(content),
         index: 1,
         userId: ctx.body,
         required: false,
@@ -70,22 +70,5 @@ const controller: Controller[] = [
     },
   },
 ];
-
-function getDefaultContent(type: string) {
-  let content: Record<string, any> = {};
-  switch (type) {
-    case "radio":
-      content.options = [
-        { text: "选项1", id: 1 },
-        { text: "选项2", id: 2 },
-        { text: "选项3", id: 3 },
-        { text: "选项4", id: 4 },
-      ];
-      break;
-    default:
-      break;
-  }
-  return JSON.stringify(content);
-}
 
 export default controller;

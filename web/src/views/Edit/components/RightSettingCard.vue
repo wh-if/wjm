@@ -24,8 +24,17 @@
       <ElTabPane label="题目设置">
         <ElForm v-if="!!questionData">
           <ElFormItem>
-            <ElSelect v-model="questionData!.type" placeholder="题目类型">
-              <ElOption :label="'单选'" :value="'radio'" />
+            <ElSelect
+              v-model="questionData!.type"
+              @click.once="handleFocusChangeType"
+              placeholder="题目类型"
+            >
+              <ElOption
+                v-for="(item, index) in QuestionTypeObj"
+                :key="index"
+                :label="item?.name"
+                :value="index"
+              />
             </ElSelect>
           </ElFormItem>
           <ElFormItem>
@@ -56,10 +65,15 @@ import {
   ElFormItem,
   ElOption,
   ElTabs,
-  ElSelect
+  ElSelect,
+  ElMessageBox
 } from "element-plus";
-import { computed, inject, type Ref } from "vue";
-
+import { computed, inject, watch, type Ref } from "vue";
+import {
+  QuestionTypeEnum,
+  QuestionTypeObj,
+  getDefaultContent
+} from "@/constants";
 const surveyContentRef = inject<Ref>("surveyContentRef");
 
 const surveyData = computed(() => {
@@ -81,6 +95,29 @@ const questionData = computed(() => {
     return undefined;
   }
 });
+
+function handleFocusChangeType() {
+  ElMessageBox.alert("更改题目类型可能导致丢失部分信息，请谨慎修改。", "提示", {
+    type: "warning"
+  });
+}
+
+watch(
+  () => questionData.value?.type,
+  (newVal, oldVal) => {
+    const arr = [QuestionTypeEnum.MultiRadio, QuestionTypeEnum.Radio];
+    if (
+      arr.includes(newVal as QuestionTypeEnum) &&
+      arr.includes(oldVal as QuestionTypeEnum)
+    ) {
+      return;
+    } else {
+      questionData.value!.content = getDefaultContent(
+        newVal as QuestionTypeEnum
+      );
+    }
+  }
+);
 </script>
 
 <style lang="scss" scoped>
