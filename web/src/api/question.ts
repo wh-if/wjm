@@ -1,9 +1,10 @@
+import type { QuestionTypeEnum } from "@/constants";
 import { request } from ".";
 
 export interface Question {
   id: number;
   title: string;
-  type: string;
+  type: QuestionTypeEnum;
   content: Record<string, any>;
   surveyId: number;
   description: string;
@@ -12,7 +13,7 @@ export interface Question {
   index: number;
 }
 
-export function addQuestionToSurvey(surveyId: number, questionType: string) {
+export function addQuestionToSurvey(surveyId: number, questionType: QuestionTypeEnum) {
   return request<Question>({
     url: "/question",
     method: "post",

@@ -4,12 +4,13 @@
       <div ref="chartRef" class="overview-line"></div>
     </ElCard>
     <ElCard class="overview-questions" shadow="never">
-      <RadioStat
+      <StatRender
         v-for="(item, index) in statFormattedData"
-        :key="item.questionId"
+        :key="item.questionRaw.id"
         :stat-data="item"
         :list-index="index"
-      ></RadioStat>
+        :type="item.questionRaw.type"
+      ></StatRender>
     </ElCard>
   </div>
 </template>
@@ -18,10 +19,11 @@
 import { ElCard } from "element-plus";
 
 import * as echarts from "echarts";
-import { computed, inject, onMounted, ref, shallowRef, toRaw } from "vue";
-import RadioStat from "./components/RadioStat.vue";
+import { inject, onMounted, ref, shallowRef } from "vue";
+import StatRender from "./components/StatRender.vue";
 import type { SurveyWithQuestions } from "@/api/survey";
 import type { Answer } from "@/api/answer";
+import { formatStatData, type FormatStatResult } from "@/utils/formatStatData";
 
 const chartRef = ref();
 
@@ -30,75 +32,9 @@ const statRawData = inject<{
   answerList: Answer[];
 }>("statRawData");
 
-const statFormattedData = shallowRef<any[]>([]);
+const statFormattedData = shallowRef<FormatStatResult[]>([]);
 
-function initFormattedData() {
-  const result: any[] = [];
-  statRawData?.survey.questions?.forEach((questionItem) => {
-    const resultList: any[] = [];
-    // 选择题
-    if (questionItem.type === "radio") {
-      // 筛选出该问题的所有答卷
-      statRawData.answerList.forEach((answerItem) => {
-        answerItem.content?.find((answerQuestionItem) => {
-          if (answerQuestionItem == null) {
-            return false;
-          }
-          if (answerQuestionItem.questionId == questionItem.id) {
-            resultList.push(answerQuestionItem.resultValue);
-            return true;
-          } else {
-            return false;
-          }
-        });
-      });
-      // 统计各选项数据
-      const resultOptions: any[] = [];
-      questionItem.content.options.forEach((optionItem: any) => {
-        // 选该选项的个数
-        optionItem.count = 0;
-
-        resultList.forEach((item) => {
-          if (item == optionItem.id) {
-            optionItem.count++;
-          }
-        });
-        // 选项选择率
-        optionItem.rate = parseFloat(
-          (optionItem.count / resultList.length).toFixed(2)
-        );
-        if (isNaN(optionItem.rate)) optionItem.rate = 0;
-        resultOptions.push(toRaw(optionItem));
-      });
-      // 填写率
-      let answerRate: number | string =
-        (resultList.length * 100) / statRawData.answerList.length;
-      if (isNaN(answerRate)) {
-        answerRate = 0;
-      } else {
-        answerRate = answerRate.toFixed(2);
-      }
-      result.push({
-        // 题目ID
-        questionId: questionItem.id,
-        // 题目标题
-        questionTitle: questionItem.title,
-        // 答卷数据列表
-        answerResultList: resultList,
-        // 填写率
-        answerRate,
-        // 各选项数据
-        options: resultOptions
-      });
-    } else {
-      // 其它题目类型
-    }
-  });
-  console.log(result);
-  statFormattedData.value = result;
-}
-
-initFormattedData();
+statFormattedData.value = formatStatData(statRawData!);
 
 function initChart() {
   // 基于准备好的dom，初始化echarts实例
@@ -140,7 +76,8 @@ function initChart() {
       {
         type: "line",
         data: Object.values(computedData),
-        areaStyle: {}
+        areaStyle: {},
+        smooth: true
       }
     ]
   });

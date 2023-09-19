@@ -3,7 +3,7 @@
     <ElTabs v-model="currentTab" tab-position="left">
       <ElTabPane label="大纲" :name="0">
         <div class="scroll-box">
-          <ElText size="large" style="font-weight: bold;" truncated>
+          <ElText size="large" style="font-weight: bold" truncated>
             {{ surveyData.title }}
           </ElText>
           <ElText
@@ -18,12 +18,14 @@
       <ElTabPane label="题型" :name="1">
         <div class="scroll-box">
           <ElButton
-            @click="handleClick('radio')"
-            style="width: 90%; margin: 10px auto"
+            v-for="(item, index) in QuestionTypeObj"
+            :key="index"
+            @click="handleAddQuestion(index)"
+            style="margin: 6px 0 0 8px"
             bg
             text
           >
-            单选
+            {{ item.name }}
           </ElButton>
         </div>
       </ElTabPane>
@@ -35,6 +37,7 @@
 <script setup lang="ts">
 import { addQuestionToSurvey } from "@/api/question";
 import type { SurveyWithQuestions } from "@/api/survey";
+import { QuestionTypeObj, type QuestionTypeEnum } from "@/constants";
 import { ElCard, ElTabs, ElTabPane, ElButton, ElText } from "element-plus";
 import { type Ref, inject, computed, ref } from "vue";
 
@@ -49,7 +52,7 @@ const surveyData = computed(() => {
   }
 });
 
-function handleClick(type: string) {
+function handleAddQuestion(type: QuestionTypeEnum) {
   addQuestionToSurvey(surveyData!.value.id!, type).then(({ data }) => {
     surveyData!.value.questions!.push(data);
   });
@@ -70,7 +73,7 @@ function handleClick(type: string) {
   .scroll-box {
     overflow-y: auto;
     height: 100%;
-    .el-text{
+    .el-text {
       width: 100%;
     }
   }

@@ -10,5 +10,6 @@ export interface RadioContent {
     text: string;
   }[];
 }
-
 export type RadioAnswer = number | number[];
+export type TextContent = string;
+export type TextAnswer = string;

@@ -37,9 +37,8 @@ import { ref, watch } from "vue";
 import type { QuestionProps, RadioAnswer, RadioContent } from "./types";
 
 const props = defineProps<QuestionProps<RadioContent, RadioAnswer>>();
-
 const reviewFlag = props.answerValue !== undefined;
-const emit = defineEmits(["update:answerValue", "focus"]);
+const emit = defineEmits(["update:answerValue"]);
 
 const radioValue = ref(props.answerValue as number);
 

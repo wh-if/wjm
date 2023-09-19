@@ -38,9 +38,10 @@
         :answer-data="answerResult[index]"
       ></QuestionRender>
     </QuestionCard>
-    <div class="submit-box" v-if="props.type === 'Answer'">
+    <div class="submit-box">
       <ElButton
         @click="handleSubmit"
+        v-if="props.type === 'Answer'"
         type="primary"
         size="large"
         style="width: 200px"

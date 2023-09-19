@@ -5,7 +5,7 @@
     class="radio-question"
   >
     <div>
-      <ElTag>单选</ElTag>
+      <ElTag>{{ dynamicComponent.name }}</ElTag>
     </div>
     <h2 class="question-title">
       <span v-if="questionData.required" class="question-required-tag">*</span>
@@ -25,22 +25,22 @@
       ></EditInput>
     </div>
 
-    <RadioQuestion
-      :question-content="questionData.content as RadioContent"
+    <component
+      :is="dynamicComponent.component"
+      :question-content="questionData.content"
       :edit="props.edit"
       v-model:answer-value="answerValue"
-    ></RadioQuestion>
+    ></component>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { ElTag } from "element-plus";
 import EditInput from "../EditInput.vue";
-import { ref, watch, reactive, type PropType } from "vue";
+import { ref, watch, reactive, type PropType, computed } from "vue";
 import { updateQuestion, type Question } from "@/api/question";
-import RadioQuestion from "./RadioQuestion.vue";
 import { useAutoSave } from "@/hooks/useAutoSave";
-import type { RadioContent } from "./types";
+import { QuestionTypeObj } from "@/constants";
 
 export interface AnswerData {
   questionId: number;
@@ -70,6 +70,8 @@ const { addSaveItem } = useAutoSave();
 
 const questionData = reactive<Question>(props.questionData);
 const answerValue = ref<any>(props.answerData?.resultValue);
+
+const dynamicComponent = computed(() => QuestionTypeObj[questionData.type]);
 
 watch(answerValue, (val) => {
   emit("answer-change", {
