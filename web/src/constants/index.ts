@@ -7,26 +7,35 @@ export enum SurveyStatus {
 export enum QuestionTypeEnum {
   Radio = "radio",
   Text = "text",
-  MultiRadio = "multi_radio"
+  MultiRadio = "multi_radio",
 }
 
 // 题目类型
 import RadioQuestion from "@/components/questions/RadioQuestion.vue";
 import TextQuestion from "@/components/questions/TextQuestion.vue";
-export const QuestionTypeObj = {
-  // 单选
-  [QuestionTypeEnum.Radio]: {
-    name: "单选",
-    component: RadioQuestion
+export const QuestionTypeList = [
+  {
+    groupTitle: "选择",
+    items: {
+      [QuestionTypeEnum.Radio]: {
+        name: "单选",
+        component: RadioQuestion
+      },
+      // 多选
+      [QuestionTypeEnum.MultiRadio]: {
+        name: "多选",
+        component: RadioQuestion
+      }
+    } // 单选
   },
-  // 文本
-  [QuestionTypeEnum.Text]: {
-    name: "文本",
-    component: TextQuestion
-  },
-  // 多选
-  [QuestionTypeEnum.MultiRadio]: {
-    name: "多选",
-    component: RadioQuestion
+  {
+    groupTitle: "文本输入",
+    items: {
+      // 文本
+      [QuestionTypeEnum.Text]: {
+        name: "单行文本",
+        component: TextQuestion
+      }
+    }
   }
-};
+];
