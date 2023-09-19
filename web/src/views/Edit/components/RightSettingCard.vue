@@ -25,8 +25,8 @@
         <ElForm v-if="!!questionData">
           <ElFormItem>
             <ElSelect
-              v-model="questionData!.type"
-              @click.once="handleFocusChangeType"
+              :model-value="questionTypeValue"
+              @update:model-value="handleUpdateQuestionTypeValue"
               placeholder="题目类型"
             >
               <ElOption
@@ -68,7 +68,7 @@ import {
   ElSelect,
   ElMessageBox
 } from "element-plus";
-import { computed, inject, watch, type Ref } from "vue";
+import { computed, inject, watch, type Ref, ref } from "vue";
 import {
   QuestionTypeEnum,
   QuestionTypeObj,
@@ -96,28 +96,36 @@ const questionData = computed(() => {
   }
 });
 
-function handleFocusChangeType() {
-  ElMessageBox.alert("更改题目类型可能导致丢失部分信息，请谨慎修改。", "提示", {
-    type: "warning"
-  });
+const questionTypeValue = ref(questionData.value?.type);
+
+function handleUpdateQuestionTypeValue(val: QuestionTypeEnum | undefined) {
+  ElMessageBox.confirm(
+    "更改题目类型可能导致丢失部分信息，确认要修改吗？",
+    "提示",
+    {
+      type: "warning",
+      cancelButtonText: "取消",
+      confirmButtonText: "确认"
+    }
+  )
+    .then(() => {
+      questionTypeValue.value = val;
+    })
+    .catch(() => {});
 }
 
-watch(
-  () => questionData.value?.type,
-  (newVal, oldVal) => {
-    const arr = [QuestionTypeEnum.MultiRadio, QuestionTypeEnum.Radio];
-    if (
-      arr.includes(newVal as QuestionTypeEnum) &&
-      arr.includes(oldVal as QuestionTypeEnum)
-    ) {
-      return;
-    } else {
-      questionData.value!.content = getDefaultContent(
-        newVal as QuestionTypeEnum
-      );
-    }
+watch(questionTypeValue, (newVal, oldVal) => {
+  questionData.value!.type = newVal as QuestionTypeEnum;
+  const arr = [QuestionTypeEnum.MultiRadio, QuestionTypeEnum.Radio];
+  if (
+    arr.includes(newVal as QuestionTypeEnum) &&
+    arr.includes(oldVal as QuestionTypeEnum)
+  ) {
+    return;
+  } else {
+    questionData.value!.content = getDefaultContent(newVal as QuestionTypeEnum);
   }
-);
+});
 </script>
 
 <style lang="scss" scoped>
