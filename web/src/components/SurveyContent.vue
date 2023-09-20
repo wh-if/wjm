@@ -3,12 +3,8 @@
     v-if="surveyState.loading"
     v-loading.fullscreen.lock="surveyState.loading"
   ></div>
-  <ElCard
-    v-else
-    body-style="padding: 0;"
-    style="margin: 0 70px; overflow: visible"
-  >
-    <QuestionCard>
+  <div v-else>
+    <QuestionCard :tool="false">
       <EditInput
         v-model="surveyState.data.title"
         placeholder="请输入问卷标题"
@@ -17,7 +13,7 @@
       >
       </EditInput>
     </QuestionCard>
-    <QuestionCard>
+    <QuestionCard :tool="false">
       <EditInput
         v-model="surveyState.data.description"
         :edit="editFlag"
@@ -28,6 +24,10 @@
     <QuestionCard
       v-for="(item, index) in surveyState.data.questions"
       :key="item.id"
+      :stared="item.stared"
+      @star="handleStar(item.id!, item.stared)"
+      @delete="handleDelete(item.id!)"
+      @copy="handleCopy(item)"
     >
       <QuestionRender
         :question-data="item"
@@ -39,17 +39,16 @@
         :answer-data="answerResult[index]"
       ></QuestionRender>
     </QuestionCard>
-    <div class="submit-box">
+    <div v-if="props.type === 'Answer'" class="submit-box">
       <ElButton
         @click="handleSubmit"
-        v-if="props.type === 'Answer'"
         type="primary"
         size="large"
         style="width: 200px"
         >提交</ElButton
       >
     </div>
-  </ElCard>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -68,6 +67,12 @@ import QuestionRender, {
   type AnswerData
 } from "./questions/QuestionRender.vue";
 import { useAutoSave } from "@/hooks/useAutoSave";
+import { addCollect, removeCollect } from "@/api/collect";
+import {
+  removeQuestion,
+  type Question,
+  addQuestionToSurvey
+} from "@/api/question";
 
 type SurveyContentType = "Edit" | "Review" | "Answer";
 
@@ -130,15 +135,24 @@ function onUpdateSurveyData() {
         surveyState.data.description,
         surveyState.data.status
       ],
-      () => {
-        addSaveItem(saveKey, () =>
-          updateSurvey({
-            title: surveyState.data.title,
-            description: surveyState.data.description,
-            status: surveyState.data.status,
-            id: surveyState.data.id
-          })
-        );
+      (newVal, oldVal) => {
+        let changed = false;
+        for (let index = 0; index < newVal.length; index++) {
+          if (newVal[index] != oldVal[index]) {
+            changed = true;
+            break;
+          }
+        }
+        if (changed) {
+          addSaveItem(saveKey, () =>
+            updateSurvey({
+              title: surveyState.data.title,
+              description: surveyState.data.description,
+              status: surveyState.data.status,
+              id: surveyState.data.id
+            })
+          );
+        }
       }
     );
   }
@@ -177,13 +191,68 @@ function updateViewCount() {
   }
 }
 
+// 收藏题目
+function handleStar(questionId: number, stared: boolean = false) {
+  if (stared) {
+    ElMessageBox.confirm("确定要取消收藏吗？", "取消收藏", {
+      cancelButtonText: "取消",
+      confirmButtonText: "确定",
+      type: "warning"
+    })
+      .then(() => {
+        removeCollect(questionId).then(() => {
+          ElMessage.success("取消成功！");
+          init();
+        });
+      })
+      .catch(() => {});
+  } else {
+    addCollect(questionId).then(() => {
+      ElMessage.success("收藏成功！");
+      init();
+    });
+  }
+}
+
+// 删除题目
+function handleDelete(questionId: number) {
+  ElMessageBox.confirm("确定要删除吗？", "删除问卷", {
+    cancelButtonText: "取消",
+    confirmButtonText: "确定",
+    type: "error"
+  })
+    .then(() => {
+      removeQuestion(questionId).then(() => {
+        ElMessage.success("删除成功！");
+        init();
+      });
+    })
+    .catch(() => {});
+}
+
+// 复制题目
+function handleCopy(question: Question) {
+  addQuestionToSurvey({
+    surveyId: surveyState.data.id,
+    type: question.type,
+    content: question.content,
+    required: question.required,
+    index: question.index! + 1,
+    description: question.description,
+    title: question.title
+  }).then(() => {
+    ElMessage.success("复制成功！");
+    init();
+  });
+}
+
 defineExpose({
   surveyState: surveyState,
   focusQuestionIndex
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .submit-box {
   text-align: center;
   padding: 25px 0 40px;

@@ -25,14 +25,23 @@ const controller: Controller[] = [
     path: "/question",
     method: HttpMethodEnum.POST,
     handler: async (ctx) => {
-      const { surveyId, questionType, content } = ctx.request.body;
+      const {
+        title = "请输入题目标题",
+        description = "",
+        surveyId,
+        type,
+        content,
+        required,
+        index,
+      } = ctx.request.body;
       const newQuestion: Question = {
-        title: "请输入题目标题",
-        type: questionType,
+        title,
+        description,
+        type,
         content: JSON.stringify(content),
-        index: 1,
+        index,
         userId: ctx.body,
-        required: false,
+        required,
         surveyId: surveyId,
       };
       const questionId = await questionMapper.insert(newQuestion);

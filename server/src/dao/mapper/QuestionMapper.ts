@@ -1,5 +1,6 @@
 import BaseMapper from "./BaseMapper";
 export interface Question {
+  [x: string]: any;
   id?: number;
   title?: string;
   type?: string;

@@ -2,12 +2,14 @@
   <ElCard class="right-setting-box">
     <ElTabs>
       <ElTabPane label="问卷设置">
-        <ElForm v-if="!!surveyData" label-position="top">
-          <ElFormItem label="问卷状态">
-            <ElSelect v-model="surveyData.status" placeholder="题目类型">
-              <ElOption label="停止" value="0" />
-              <ElOption label="开启" value="1" />
-            </ElSelect>
+        <ElForm v-if="!!surveyData">
+          <ElFormItem label="允许作答">
+            <el-switch
+              v-model="surveyData.status"
+              style="--el-switch-on-color: #13ce66"
+              active-value="1"
+              inactive-value="0"
+            />
           </ElFormItem>
           <!-- <ElFormItem>
             <ElCheckbox
@@ -22,8 +24,8 @@
         </div> -->
       </ElTabPane>
       <ElTabPane label="题目设置">
-        <ElForm v-if="!!questionData">
-          <ElFormItem>
+        <ElForm v-if="!!questionData" label-position="top">
+          <ElFormItem label="题目类型">
             <ElSelect
               :model-value="questionTypeValue"
               @update:model-value="handleUpdateQuestionTypeValue"
@@ -68,7 +70,7 @@ import {
   ElSelect,
   ElMessageBox
 } from "element-plus";
-import { computed, inject, watch, type Ref, ref } from "vue";
+import { computed, inject, watch, type Ref, ref, watchEffect } from "vue";
 import {
   QuestionTypeEnum,
   QuestionTypeObj,
@@ -96,7 +98,11 @@ const questionData = computed(() => {
   }
 });
 
-const questionTypeValue = ref(questionData.value?.type);
+const questionTypeValue = ref();
+
+watchEffect(() => {
+  questionTypeValue.value = questionData.value?.type;
+});
 
 function handleUpdateQuestionTypeValue(val: QuestionTypeEnum | undefined) {
   ElMessageBox.confirm(

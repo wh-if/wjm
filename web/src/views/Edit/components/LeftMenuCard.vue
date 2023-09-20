@@ -26,7 +26,7 @@
             <ElButton
               v-for="(i, index) in item.items"
               :key="index"
-              @click="handleAddQuestion(index)"
+              @click="addQuestionByType(index)"
               style="margin: 6px 0 0 8px"
               bg
               text
@@ -36,23 +36,75 @@
           </div>
         </div>
       </ElTabPane>
-      <ElTabPane label="题库" :name="2"></ElTabPane>
+      <ElTabPane label="题库" :name="2">
+        <div class="collect-container">
+          <ElRadioGroup v-model="collect.isPublic" size="small">
+            <ElRadioButton :label="true">公共题库</ElRadioButton>
+            <ElRadioButton :label="false">我的收藏</ElRadioButton>
+          </ElRadioGroup>
+          <div class="collect-list">
+            <ElPopconfirm
+              confirm-button-text="添加此题"
+              v-for="item in collect.list"
+              :key="item.id"
+              cancel-button-text="取消收藏"
+              cancel-button-type="danger"
+              :icon="InfoFilled"
+              icon-color="#626AEF"
+              width="200"
+              title="请选择操作类型"
+              @confirm="addQuestionByCollect(item)"
+              @cancel="handleRemoveCollect(item.id!)"
+            >
+              <template #reference>
+                <ElButton style="margin: 6px 0 0" text>{{
+                  item.title
+                }}</ElButton>
+              </template>
+            </ElPopconfirm>
+          </div>
+        </div>
+      </ElTabPane>
     </ElTabs>
   </ElCard>
 </template>
 
 <script setup lang="ts">
-import { addQuestionToSurvey } from "@/api/question";
+import { getCollectList, removeCollect } from "@/api/collect";
+import { addQuestionToSurvey, type Question } from "@/api/question";
 import type { SurveyWithQuestions } from "@/api/survey";
 import {
   QuestionTypeList,
   type QuestionTypeEnum,
   getDefaultContent
 } from "@/constants";
-import { ElCard, ElTabs, ElTabPane, ElButton, ElText } from "element-plus";
-import { type Ref, inject, computed, ref } from "vue";
+import { InfoFilled } from "@element-plus/icons-vue";
+import {
+  ElCard,
+  ElTabs,
+  ElTabPane,
+  ElButton,
+  ElPopconfirm,
+  ElText,
+  ElRadioButton,
+  ElMessage,
+  ElMessageBox
+} from "element-plus";
+import { type Ref, inject, computed, ref, reactive, watch } from "vue";
 
 const currentTab = ref<0 | 1 | 2>(1);
+
+const collect = reactive({
+  list: [] as Question[],
+  isPublic: true
+});
+
+watch(
+  () => collect.isPublic,
+  () => {
+    getCollectData();
+  }
+);
 
 const surveyContentRef = inject<Ref>("surveyContentRef");
 const surveyData = computed(() => {
@@ -63,15 +115,54 @@ const surveyData = computed(() => {
   }
 });
 
-function handleAddQuestion(type: QuestionTypeEnum) {
-  addQuestionToSurvey(
-    surveyData!.value.id!,
+function addQuestionByType(type: QuestionTypeEnum) {
+  addQuestionToSurvey({
+    surveyId: surveyData!.value.id!,
     type,
-    getDefaultContent(type)
-  ).then(({ data }) => {
+    content: getDefaultContent(type)
+  }).then(({ data }) => {
     surveyData!.value.questions!.push(data);
   });
 }
+
+function addQuestionByCollect(item: Question) {
+  addQuestionToSurvey({
+    surveyId: surveyData!.value.id!,
+    type: item.type,
+    content: item.content,
+    required: item.required,
+    index: item.index! + 1,
+    description: item.description,
+    title: item.title
+  }).then(({ data }) => {
+    ElMessage.success("添加成功！");
+    surveyData!.value.questions!.push(data);
+  });
+}
+
+// 取消收藏
+function handleRemoveCollect(questionId: number) {
+  ElMessageBox.confirm("确定要取消收藏吗？", "取消收藏", {
+    cancelButtonText: "取消",
+    confirmButtonText: "确定",
+    type: "warning"
+  })
+    .then(() => {
+      removeCollect(questionId).then(() => {
+        ElMessage.success("取消成功！");
+        getCollectData();
+      });
+    })
+    .catch(() => {});
+}
+
+function getCollectData() {
+  getCollectList(collect.isPublic).then(({ data }) => {
+    collect.list = data.resultList;
+  });
+}
+
+getCollectData();
 </script>
 
 <style lang="scss">
@@ -104,5 +195,12 @@ function handleAddQuestion(type: QuestionTypeEnum) {
   margin-bottom: 0;
 
   color: #333;
+}
+
+.collect-container {
+  .collect-list {
+    margin-top: 10px;
+    text-align: center;
+  }
 }
 </style>

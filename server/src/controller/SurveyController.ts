@@ -2,6 +2,7 @@ import { AjaxResult } from "../util/AjaxResult";
 import { Controller, HttpMethodEnum } from "../model";
 import { Survey, surveyMapper } from "../dao/mapper/SurveyMapper";
 import { Question, questionMapper } from "../dao/mapper/QuestionMapper";
+import { collectMapper } from "../dao/mapper/CollectMapper";
 
 const controller: Controller[] = [
   // 获取问卷列表
@@ -49,6 +50,14 @@ const controller: Controller[] = [
 
       const questionResult = await questionMapper.select({
         surveyId: parseInt(surveyId),
+      });
+
+      const collectResult = await collectMapper.getCollectList(ctx.body);
+      collectResult.map((item) => {
+        const collectQuestion = questionResult.find((i) => i.id == item.id);
+        if (collectQuestion) {
+          collectQuestion.stared = true;
+        }
       });
 
       ctx.body = AjaxResult.success({

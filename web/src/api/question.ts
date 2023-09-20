@@ -2,30 +2,23 @@ import type { QuestionTypeEnum } from "@/constants";
 import { request } from ".";
 
 export interface Question {
-  id: number;
-  title: string;
-  type: QuestionTypeEnum;
-  content: Record<string, any>;
-  surveyId: number;
-  description: string;
-  required: boolean;
-  userId: number;
-  index: number;
+  [x: string]: any;
+  id?: number;
+  title?: string;
+  type?: QuestionTypeEnum;
+  content?: Record<string, any>;
+  surveyId?: number;
+  description?: string;
+  required?: boolean;
+  userId?: number;
+  index?: number;
 }
 
-export function addQuestionToSurvey(
-  surveyId: number,
-  questionType: QuestionTypeEnum,
-  content: Record<string, any>
-) {
-  return request<Question>({
+export function addQuestionToSurvey(question: Question) {
+  return request({
     url: "/question",
     method: "post",
-    data: {
-      surveyId,
-      questionType,
-      content
-    }
+    data: question
   });
 }
 export function updateQuestion(data: Question) {
@@ -33,5 +26,11 @@ export function updateQuestion(data: Question) {
     url: "/question",
     method: "put",
     data
+  });
+}
+export function removeQuestion(questionId: number) {
+  return request({
+    url: "/question/" + questionId,
+    method: "delete"
   });
 }
