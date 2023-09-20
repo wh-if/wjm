@@ -9,24 +9,31 @@ const controller: Controller[] = [
     path: "/survey",
     method: HttpMethodEnum.GET,
     handler: async (ctx) => {
-      const id = parseInt(ctx.body);
+      const userId = parseInt(ctx.body);
 
-      const { keyword, orderBy, desc, page, pageSize } = ctx.query;
+      const {
+        keyword,
+        orderBy,
+        desc,
+        page = 1,
+        pageSize = 10,
+        folderId,
+        status,
+      } = ctx.query;
+      const selectParams = {
+        userId,
+        folderId: parseInt(folderId as string),
+        keyword: keyword as string,
+        status: parseInt(status as string),
+        orderBy: orderBy as "answerCount" | "createTime",
+        desc: desc == undefined || desc == "true",
+        page: parseInt(page as string),
+        pageSize: parseInt(pageSize as string),
+      };
 
-      const listTotal = await surveyMapper.selectTotalCount(
-        id,
-        keyword as string
-      );
-
-      const result = await surveyMapper.selectListWithAnswerCount(
-        id,
-        keyword as string,
-        orderBy as "answerCount" | "createTime",
-        desc == undefined || desc == "true",
-        parseInt(page as string),
-        parseInt(pageSize as string)
-      );
-      ctx.body = AjaxResult.success({ list: result, total: listTotal });
+      const { resultList, total } =
+        await surveyMapper.selectListWithAnswerCount(selectParams);
+      ctx.body = AjaxResult.success({ resultList, total });
     },
   },
   // 获取问卷-带问题
@@ -61,7 +68,8 @@ const controller: Controller[] = [
         title: "问卷标题",
         createTime: currentTime,
         updateTime: currentTime,
-        status: "0",
+        folderIds: JSON.stringify([]),
+        status: 0,
         userId: ctx.body,
         description:
           "为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧!",
@@ -95,9 +103,16 @@ const controller: Controller[] = [
     path: "/survey/:surveyId",
     method: HttpMethodEnum.PUT,
     handler: async (ctx) => {
-      const { title, description, viewCount, status } = ctx.request.body;
+      const { title, description, viewCount, status, folderIds } =
+        ctx.request.body;
 
-      const updateSurvey: Survey = { title, description, viewCount, status };
+      const updateSurvey: Survey = {
+        title,
+        description,
+        viewCount,
+        status,
+        folderIds: JSON.stringify(folderIds),
+      };
 
       const result = await surveyMapper.update(updateSurvey, {
         id: parseInt(ctx.params.surveyId),

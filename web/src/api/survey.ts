@@ -1,21 +1,24 @@
+import type { SurveyStatus } from "@/constants";
 import { request } from ".";
 import type { Question } from "./question";
 
-type SearchSurveyParams = {
-  keyword: string;
-  orderBy: "answerCount" | "createTime";
+export type SearchSurveyParams = {
+  keyword?: string;
+  status?: number;
+  orderBy?: "answerCount" | "createTime";
   desc?: boolean;
   page?: number;
   pageSize?: number;
+  folderId?: number;
 };
 
 export interface SurveyWithQuestions {
   id?: number;
   title?: string;
-  status?: number;
+  status?: SurveyStatus;
   createTime?: string;
   updateTime?: string;
-  linkUrl?: string;
+  folderIds?: number[];
   qrCode?: string;
   description?: string;
   userId?: number;

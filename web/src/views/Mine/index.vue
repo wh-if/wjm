@@ -9,20 +9,21 @@
           style="width: 80%"
         >
           新建问卷
+          <ElIcon style="margin-left: 6px" size="18"><Plus /></ElIcon>
         </ElButton>
       </div>
 
-      <ElMenu default-active="all">
+      <ElMenu @select="handleMenuSelect" default-active="all">
         <ElMenuItem index="all">
-          <ElIcon><Setting /></ElIcon>
+          <ElIcon><Files /></ElIcon>
           全部
         </ElMenuItem>
-        <ElMenuItem index="important">
-          <ElIcon><Setting /></ElIcon>
-          重要
+        <ElMenuItem index="folder">
+          <ElIcon><Folder /></ElIcon>
+          文件夹
         </ElMenuItem>
         <ElMenuItem index="recycle">
-          <ElIcon><Setting /></ElIcon>
+          <ElIcon><Delete /></ElIcon>
           回收站
         </ElMenuItem>
       </ElMenu>
@@ -30,6 +31,7 @@
     <ElMain>
       <div class="tool-bar">
         <ElInput
+          v-if="!inFolderMenu"
           v-model="state.searchInputValue"
           style="width: 300px"
           size="large"
@@ -40,86 +42,162 @@
             <ElButton @click="getData" :icon="Search" />
           </template>
         </ElInput>
-        <!-- <ElButton size="large">搜索</ElButton> -->
         <div class="right">
-          <ElSelect @change="getData" v-model="state.searchOrderBy">
-            <ElOption key="answerCount" label="答卷数量" value="answerCount" />
-            <ElOption key="createTime" label="创建时间" value="createTime" />
-          </ElSelect>
-          <ElSelect @change="getData" v-model="state.searchDesc">
-            <ElOption key="true" label="降序" :value="true" />
-            <ElOption key="false" label="升序" :value="false" />
-          </ElSelect>
+          <ElButton type="success" @click="handleFolder()" v-if="inFolderMenu">
+            新建文件夹
+          </ElButton>
+          <template v-else>
+            <ElSelect @change="getData" v-model="state.searchOrderBy">
+              <ElOption
+                key="answerCount"
+                label="答卷数量"
+                value="answerCount"
+              />
+              <ElOption key="createTime" label="创建时间" value="createTime" />
+            </ElSelect>
+            <ElSelect @change="getData" v-model="state.searchDesc">
+              <ElOption key="true" label="降序" :value="true" />
+              <ElOption key="false" label="升序" :value="false" />
+            </ElSelect>
+          </template>
         </div>
       </div>
-      <ElTable :data="state.surveyList" max-height="700" size="large">
-        <ElTableColumn label="问卷ID" prop="id"> </ElTableColumn>
-        <ElTableColumn label="标题" prop="title"></ElTableColumn>
-        <ElTableColumn label="创建时间" prop="createTime">
+      <ElTable
+        :data="inFolderMenu ? state.folderList : state.surveyList"
+        ref="tableRef"
+        :row-key="inFolderMenu ? 'idInFolder' : 'id'"
+        :load="loadSurveyListOfFolder"
+        :lazy="inFolderMenu"
+        :max-height="inFolderMenu ? '' : 700"
+        size="large"
+      >
+        <ElTableColumn label="ID" prop="id">
+          <!-- scope.row.folderIds !== undefined 判断该条数据是文件夹还是问卷 -->
           <template #default="scope">
-            {{ new Date(parseInt(scope.row.createTime)).toLocaleString() }}
+            {{
+              scope.row.folderIds !== undefined
+                ? scope.row.id
+                : scope.row.idInFolder
+            }}
           </template>
         </ElTableColumn>
-        <ElTableColumn label="答卷数量" prop="answerCount"></ElTableColumn>
+        <ElTableColumn label="名称" prop="title"></ElTableColumn>
+        <ElTableColumn label="创建时间" width="200" prop="createTime">
+          <template #default="scope">
+            <span v-if="scope.row.folderIds !== undefined">
+              {{ new Date(parseInt(scope.row.createTime)).toLocaleString() }}
+            </span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn label="答卷数量" prop="answerCount">
+          <template #default="scope">
+            <span v-if="scope.row.folderIds !== undefined">
+              {{ scope.row.answerCount }}个
+            </span>
+          </template>
+        </ElTableColumn>
         <ElTableColumn label="状态" prop="status">
           <template #default="scope">
-            {{ scope.row.status == 1 ? "答题中" : "已停止" }}
+            <ElTag
+              v-if="scope.row.folderIds !== undefined"
+              :type="
+                scope.row.status == SurveyStatus.Running ? 'success' : 'info'
+              "
+            >
+              {{ ["已停止", "答题中", "已回收"][scope.row.status] }}
+            </ElTag>
           </template>
         </ElTableColumn>
         <ElTableColumn fixed="right" label="操作" width="250">
           <template #default="scope">
-            <ElButton
-              link
-              :type="scope.row.status == 1 ? 'danger' : 'success'"
-              size="large"
-              @click="
-                () =>
-                  handleChangeStatus(
-                    scope.row.id,
-                    scope.row.status == 1 ? 0 : 1
-                  )
-              "
-              >{{ scope.row.status == 1 ? "停止答题" : "开始答题" }}</ElButton
-            >
-            <ElButton
-              link
-              type="primary"
-              size="large"
-              @click="$router.push(`/edit/${scope.row.id}`)"
-              >编辑</ElButton
-            >
+            <template v-if="scope.row.folderIds === undefined">
+              <!-- 修改名称 -->
+              <ElButton
+                link
+                type="primary"
+                size="large"
+                @click="handleFolder(scope.row.id)"
+                >修改名称</ElButton
+              >
 
-            <ElDropdown trigger="click">
-              <ElButton text plain>
-                更多操作
-                <ElIcon class="el-icon--right">
-                  <ArrowDown />
-                </ElIcon>
+              <!-- 删除文件夹 -->
+              <ElButton
+                link
+                type="danger"
+                size="large"
+                @click="handleRemove('folder', scope.row.id)"
+                >删除</ElButton
+              >
+            </template>
+            <template v-else>
+              <ElButton
+                link
+                type="warning"
+                size="large"
+                @click="() => handleChangeStatus(scope.row)"
+              >
+                {{ ["开始答题", "停止答题", "恢复"][scope.row.status] }}
               </ElButton>
-              <template #dropdown>
-                <ElDropdownMenu>
-                  <ElDropdownItem
-                    @click="
-                      (e) => showShareDialog(scope.row.id, scope.row.status)
-                    "
-                    >分享</ElDropdownItem
-                  >
-                  <ElDropdownItem
-                    @click="
-                      $router.push('/stat/overview?surveyId=' + scope.row.id)
-                    "
-                    >统计</ElDropdownItem
-                  >
-                  <ElDropdownItem @click="handleRemoveSurvey(scope.row.id)"
-                    >删除问卷</ElDropdownItem
-                  >
-                </ElDropdownMenu>
-              </template>
-            </ElDropdown>
+              <ElButton
+                v-if="currentMenuItem === 'recycle'"
+                link
+                type="danger"
+                size="large"
+                @click="handleRemove('survey', scope.row.id)"
+                >彻底删除</ElButton
+              >
+              <ElButton
+                v-if="scope.row.status != SurveyStatus.Removed"
+                link
+                type="primary"
+                size="large"
+                @click="$router.push(`/edit/${scope.row.id}`)"
+                >编辑</ElButton
+              >
+              <ElDropdown
+                v-if="scope.row.status != SurveyStatus.Removed"
+                trigger="click"
+              >
+                <ElButton text plain>
+                  更多操作
+                  <ElIcon class="el-icon--right">
+                    <ArrowDown />
+                  </ElIcon>
+                </ElButton>
+                <template #dropdown>
+                  <ElDropdownMenu>
+                    <ElDropdownItem
+                      @click="
+                        (e) => showShareDialog(scope.row.id, scope.row.status)
+                      "
+                      >分享</ElDropdownItem
+                    >
+                    <ElDropdownItem
+                      @click="
+                        $router.push('/stat/overview?surveyId=' + scope.row.id)
+                      "
+                      >统计</ElDropdownItem
+                    >
+                    <ElDropdownItem @click="handleAddSurveyToFolder(scope.row)"
+                      >添加到文件夹</ElDropdownItem
+                    >
+                    <ElDropdownItem
+                      v-if="inFolderMenu"
+                      @click="handleMoveSurveyOutFolder(scope)"
+                      >移出当前文件夹</ElDropdownItem
+                    >
+                    <ElDropdownItem @click="handleChangeStatus(scope.row, true)"
+                      >移动到回收站</ElDropdownItem
+                    >
+                  </ElDropdownMenu>
+                </template>
+              </ElDropdown>
+            </template>
           </template>
         </ElTableColumn>
       </ElTable>
       <ElPagination
+        v-if="!inFolderMenu"
         class="pagination"
         background
         layout="total, sizes, prev, pager, next, jumper"
@@ -142,8 +220,16 @@ import {
   getSurveyList,
   createNewSurvey,
   updateSurvey,
-  removeSurvey
+  removeSurvey,
+  type SearchSurveyParams,
+  type SurveyWithQuestions
 } from "@/api/survey";
+import {
+  addFolder,
+  getFolderList,
+  removeFolder,
+  updateFolderName
+} from "@/api/folder";
 import {
   ElAside,
   ElButton,
@@ -163,12 +249,21 @@ import {
   ElDropdownItem,
   ElDialog,
   ElMessageBox,
-  ElMessage
+  ElMessage,
+  ElTag
 } from "element-plus";
-import { ArrowDown, Search, Setting } from "@element-plus/icons-vue";
-import { shallowReactive, ref } from "vue";
+import {
+  ArrowDown,
+  Delete,
+  Files,
+  Folder,
+  Plus,
+  Search
+} from "@element-plus/icons-vue";
+import { shallowReactive, ref, h, computed } from "vue";
 import { useRouter } from "vue-router";
 import SharePane from "@/components/SharePane.vue";
+import { SurveyStatus } from "@/constants";
 
 const state = shallowReactive({
   surveyList: [] as Array<Record<string, any>>,
@@ -178,23 +273,70 @@ const state = shallowReactive({
   currentPage: 1,
   pageSize: 10,
   listTotal: 0,
-  showShareDialog: false
+  showShareDialog: false,
+  folderList: [] as Array<Record<string, any>>
 });
-
 const currentFocusSurvey = ref<number>(0);
 
 const router = useRouter();
+type MenuItemType = "all" | "folder" | "recycle";
+const currentMenuItem = ref<MenuItemType>("all");
+const inFolderMenu = computed(() => currentMenuItem.value === "folder");
+
+// 处理菜单变化
+function handleMenuSelect(menuKey: string) {
+  currentMenuItem.value = menuKey as MenuItemType;
+  getData();
+}
+
+// 文件夹页列表数据加载与更新
+const tableRef = ref();
+const refreshFolderDataMap = new Map<
+  number,
+  { row: any; treeNode: any; resolve: (data: Record<string, any>[]) => void }
+>();
+function loadSurveyListOfFolder(
+  row: any,
+  treeNode: unknown,
+  resolve: (data: Record<string, any>[]) => void
+) {
+  const folderId = row.id;
+  refreshFolderDataMap.set(folderId, { row, treeNode, resolve });
+  getSurveyList({
+    folderId
+  }).then(({ data }) => {
+    if (data.resultList.length === 0) {
+      // 更新列表数据补丁
+      tableRef.value.store.states.lazyTreeNodeMap.value[row.id] = [];
+    }
+    resolve(
+      data.resultList.map((item: any) => ({
+        ...item,
+        idInFolder: folderId + "-" + item.id,
+        currentFolder: folderId
+      }))
+    );
+  });
+}
+// 刷新文件夹内容数据
+function refreshSurveyListOfFolder(folderId: number) {
+  if (folderId) {
+    const { row, treeNode, resolve } = refreshFolderDataMap.get(folderId)!;
+    loadSurveyListOfFolder(row, treeNode, resolve);
+  }
+}
 
 // 处理创建新问卷
 function handleNewCreate() {
   createNewSurvey().then(({ data }) => {
+    ElMessage.success("创建成功！");
     router.push(`/edit/${data.surveyId}`);
   });
 }
 
 // 展示分享弹窗
-function showShareDialog(surveyId: number, surveyStatus: number) {
-  if (surveyStatus == 0) {
+function showShareDialog(surveyId: number, surveyStatus: SurveyStatus) {
+  if (surveyStatus == SurveyStatus.Stopping) {
     ElMessage.warning("此问卷当前为停止状态，无法分享作答。");
     return;
   }
@@ -204,40 +346,167 @@ function showShareDialog(surveyId: number, surveyStatus: number) {
 }
 
 // 更改问卷状态
-function handleChangeStatus(surveyId: number, status: 0 | 1) {
+function handleChangeStatus(row: any, toRecycle: boolean = false) {
+  const { id: surveyId, status: curStatus, currentFolder } = row;
+  let changeStatus: SurveyStatus;
+  if (toRecycle) {
+    changeStatus = SurveyStatus.Removed;
+  } else if (
+    curStatus == SurveyStatus.Running ||
+    curStatus == SurveyStatus.Removed
+  ) {
+    changeStatus = SurveyStatus.Stopping;
+  } else {
+    changeStatus = SurveyStatus.Running;
+  }
   updateSurvey({
     id: surveyId,
-    status: status
+    status: changeStatus
   }).then(() => {
+    ElMessage.success("操作成功！");
+    currentFolder && refreshSurveyListOfFolder(currentFolder);
     getData();
   });
 }
 
-// 删除问卷
-function handleRemoveSurvey(surveyId: number) {
-  ElMessageBox.confirm("确定要删除该问卷吗？", "提示", {
+// 添加问卷到文件夹
+function handleAddSurveyToFolder(row: SurveyWithQuestions) {
+  const selectValue = ref<number>();
+  const filterFolders = state.folderList.filter(
+    (item) => !row.folderIds?.includes(item.id)
+  );
+  const childrenVNodes = filterFolders.map((item) => {
+    return h(ElOption, {
+      key: item.id,
+      label: item.title,
+      value: item.id
+    });
+  });
+  ElMessageBox({
+    title: "添加到文件夹",
+    // Should pass a function if VNode contains dynamic props
+    message: () =>
+      h(
+        ElSelect,
+        {
+          modelValue: selectValue.value,
+          "onUpdate:modelValue": (val: number) => {
+            selectValue.value = val;
+          },
+          placeholder: "选择文件夹"
+        },
+        () => childrenVNodes
+      ),
+    showCancelButton: true,
     cancelButtonText: "取消",
-    confirmButtonText: "确认"
+    confirmButtonText: "确定"
   })
     .then(() => {
-      removeSurvey(surveyId).then(() => {
+      if (selectValue.value) {
+        updateSurvey({
+          id: row.id,
+          folderIds: [...(row.folderIds as number[]), selectValue.value]
+        }).then(() => {
+          if (inFolderMenu.value) {
+            refreshSurveyListOfFolder(selectValue.value!);
+          }
+
+          ElMessage.success("添加成功！");
+        });
+      } else {
+        ElMessage.warning("未选择文件夹，添加失败！");
+      }
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+}
+
+// 移出当前文件夹
+function handleMoveSurveyOutFolder(scope: any) {
+  updateSurvey({
+    id: scope.row.id,
+    folderIds: scope.row.folderIds.filter(
+      (i: number) => i != scope.row.currentFolder
+    )
+  }).then(() => {
+    refreshSurveyListOfFolder(scope.row.currentFolder);
+    ElMessage.success("操作成功！");
+  });
+}
+
+// 添加和修改文件夹
+function handleFolder(folderId?: number) {
+  ElMessageBox.prompt(
+    "请输入文件夹名称",
+    folderId ? "修改文件夹名称" : "新建文件夹",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消"
+    }
+  )
+    .then(({ value }) => {
+      if (!folderId) {
+        addFolder(value).then(() => {
+          ElMessage.success("新建成功！");
+          getData();
+        });
+      } else {
+        updateFolderName(folderId, value).then(() => {
+          ElMessage.success("修改成功！");
+          getData();
+        });
+      }
+    })
+    .catch(() => {});
+}
+
+// 删除问卷或文件夹
+function handleRemove(type: "survey" | "folder", id: number) {
+  ElMessageBox.confirm(
+    `确定要删除该${type === "survey" ? "问卷" : "文件夹"}吗？`,
+    "提示",
+    {
+      cancelButtonText: "取消",
+      confirmButtonText: "确认"
+    }
+  )
+    .then(() => {
+      const cb = () => {
         ElMessage.success("删除成功！");
         getData();
-      });
+      };
+      if (type === "survey") {
+        removeSurvey(id).then(cb);
+      } else if (type === "folder") {
+        removeFolder(id).then(cb);
+      }
     })
     .catch(() => {});
 }
 
 // 获取列表数据
 function getData() {
-  getSurveyList({
+  getFolderList().then(({ data }) => {
+    state.folderList = data.resultList.map((item: any) => ({
+      id: item.id,
+      idInFolder: "F" + item.id,
+      title: item.name,
+      hasChildren: true
+    }));
+  });
+  const searchParams: SearchSurveyParams = {
     keyword: state.searchInputValue,
     orderBy: state.searchOrderBy,
     desc: state.searchDesc,
     page: state.currentPage,
     pageSize: state.pageSize
-  }).then(({ data }) => {
-    state.surveyList = data.list;
+  };
+  if (currentMenuItem.value === "recycle") {
+    searchParams.status = SurveyStatus.Removed;
+  }
+  getSurveyList(searchParams).then(({ data }) => {
+    state.surveyList = data.resultList;
     state.listTotal = data.total;
   });
 }

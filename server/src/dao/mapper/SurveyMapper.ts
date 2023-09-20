@@ -4,9 +4,9 @@ export interface Survey {
   title?: string;
   userId?: number;
   description?: string;
-  status?: string;
+  status?: number;
   qrCode?: string;
-  linkUrl?: string;
+  folderIds?: string; // number[]
   createTime?: string;
   updateTime?: string;
   viewCount?: number;
@@ -16,28 +16,52 @@ class SurveyMapper extends BaseMapper<Survey> {
   constructor() {
     super("survey");
   }
-  selectListWithAnswerCount(
-    userId: number,
-    keyword: string,
-    orderBy: "answerCount" | "createTime" = "createTime",
-    desc: boolean = true,
-    page: number = 1,
-    pageSize: number = 10
+  async selectListWithAnswerCount(
+    options: {
+      userId: number;
+      folderId: number;
+      keyword?: string;
+      status: number;
+      orderBy?: "answerCount" | "createTime";
+      desc?: boolean;
+      page?: number;
+      pageSize?: number;
+    },
+    noPage: boolean = false
   ) {
-    const sql = `SELECT *, (SELECT COUNT(1) from answer where answer.surveyId=survey.id) as answerCount FROM survey where userId=${userId} and survey.title like ${this.POOL.escape(
+    const {
+      userId,
+      folderId,
+      keyword = "",
+      status,
+      orderBy = "createTime",
+      desc = true,
+      page = 1,
+      pageSize = 10,
+    } = options;
+    let sql = `SELECT *, (SELECT COUNT(1) from answer where answer.surveyId=survey.id) as answerCount`;
+    const sqlOfCommon = ` FROM survey where userId=${userId} and status${
+      isNaN(status) ? "!=2" : "=" + status
+    } ${
+      isNaN(folderId)
+        ? ""
+        : " and folderIds like " + this.POOL.escape("%" + folderId + "%")
+    } and (survey.id like ${this.POOL.escape(
       "%" + keyword + "%"
-    )} order by ${orderBy} ${desc ? "desc" : ""} limit ${
-      (page - 1) * pageSize
-    },${pageSize}`;
-    return this.selectBySql(sql);
-  }
-
-  // 问卷总数量计数
-  async selectTotalCount(userId: number, keyword: string) {
-    const sql = `SELECT count(*) FROM survey where userId=${userId} and survey.title like ${this.POOL.escape(
-      "%" + keyword + "%"
-    )}`;
-    return this.selectBySql<number>(sql);
+    )} or survey.title like ${this.POOL.escape("%" + keyword + "%")})`;
+    const total = await this.selectBySql<number>(
+      "SELECT count(*)" + sqlOfCommon
+    );
+    sql += sqlOfCommon;
+    sql += ` order by ${orderBy} ${desc ? "desc" : ""}`;
+    if (!noPage) {
+      sql += ` limit ${(page - 1) * pageSize},${pageSize}`;
+    }
+    const resultList = await this.selectBySql(sql);
+    return {
+      total,
+      resultList,
+    };
   }
 }
 

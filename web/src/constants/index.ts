@@ -1,7 +1,8 @@
 // 问卷状态
 export enum SurveyStatus {
   Running = 1,
-  Stopping = 0
+  Stopping = 0,
+  Removed = 2
 }
 
 export enum QuestionTypeEnum {
