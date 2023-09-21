@@ -76,7 +76,7 @@ const { addSaveItem } = useAutoSave();
 const questionData = reactive<Question>(props.questionData);
 const answerValue = ref<any>(props.answerData?.resultValue);
 
-const dynamicComponent = computed(() => QuestionTypeObj[questionData.type]);
+const dynamicComponent = computed(() => QuestionTypeObj[questionData.type!]);
 
 watch(answerValue, (val) => {
   emit("answer-change", {

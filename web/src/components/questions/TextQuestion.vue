@@ -1,5 +1,8 @@
 <template>
-  <ElInput v-model="inputValue" :disabled="reviewFlag || props.edit"></ElInput>
+  <ElInput
+    v-model="inputValue"
+    :disabled="props.disabled || props.edit"
+  ></ElInput>
 </template>
 
 <script setup lang="ts">
@@ -9,7 +12,6 @@ import type { QuestionProps, TextAnswer, TextContent } from "./types";
 
 const props = defineProps<QuestionProps<TextContent, TextAnswer>>();
 
-const reviewFlag = props.answerValue !== undefined;
 const emit = defineEmits(["update:answerValue"]);
 
 const inputValue = ref(props.answerValue);
