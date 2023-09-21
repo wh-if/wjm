@@ -11,7 +11,6 @@ export interface Question {
   description?: string;
   required?: boolean;
   userId?: number;
-  index?: number;
 }
 
 export function addQuestionToSurvey(question: Question) {

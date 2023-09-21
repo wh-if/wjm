@@ -76,6 +76,7 @@ function handleInput(e: Event) {
 <style lang="scss" scoped>
 .editable-box {
   border: 1px solid transparent;
+  cursor: text;
 
   // 覆盖checkboxgroup、radiogroup样式的影响
   font-size: initial;

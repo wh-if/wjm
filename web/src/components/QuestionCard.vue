@@ -1,12 +1,12 @@
 <template>
   <div class="question-card-container">
-    <div :class="['question-card', active ? 'question-card-activity' : '']">
+    <div :class="['question-card', isEdit ? 'question-card-activity' : '']">
       <div class="question-card-body">
         <slot />
       </div>
     </div>
     <ElCard
-      v-if="props.tool"
+      v-if="isEdit && props.tool"
       class="question-card-tool"
       body-style="padding: 8px;"
     >
@@ -77,7 +77,7 @@ const emit = defineEmits(["prev-add", "star", "copy", "delete", "next-add"]);
 
 const route = useRoute();
 
-const active = computed(() => route.name === "edit");
+const isEdit = computed(() => route.name === "edit");
 </script>
 
 <style lang="scss" scoped>
@@ -106,6 +106,7 @@ const active = computed(() => route.name === "edit");
     transform: translateY(-50%);
   }
   &:hover .question-card-activity {
+    cursor: move;
     transition: transform 150ms linear;
     transform: scale(1.02);
     transform-origin: center;

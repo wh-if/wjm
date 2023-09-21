@@ -3,7 +3,7 @@
     v-if="surveyState.loading"
     v-loading.fullscreen.lock="surveyState.loading"
   ></div>
-  <div v-else>
+  <div v-else class="survey-content">
     <QuestionCard :tool="false">
       <EditInput
         v-model="surveyState.data.title"
@@ -21,24 +21,52 @@
       >
       </EditInput>
     </QuestionCard>
-    <QuestionCard
-      v-for="(item, index) in surveyState.data.questions"
-      :key="item.id"
-      :stared="item.stared"
-      @star="handleStar(item.id!, item.stared)"
-      @delete="handleDelete(item.id!)"
-      @copy="handleCopy(item)"
+    <Draggable
+      v-model="surveyState.data.questions"
+      :move="editFlag ? undefined : () => false"
+      @end="handleDragEnd"
+      item-key="id"
     >
-      <QuestionRender
-        :question-data="item"
-        :index="index"
-        :edit="editFlag"
-        :disabled="disabledFlag"
-        @focus="(e) => (focusQuestionIndex = e.index)"
-        @answer-change="(e) => (answerResult[e.index] = e.data)"
-        :answer-data="answerResult[index]"
-      ></QuestionRender>
-    </QuestionCard>
+      <template #item="{ element: item, index }">
+        <QuestionCard
+          :stared="item.stared"
+          @star="handleStar(item.id!, item.stared)"
+          @delete="handleDelete(item.id!)"
+          @copy="handleCopy(item)"
+        >
+          <QuestionRender
+            :question-data="item"
+            :index="index"
+            :edit="editFlag"
+            :disabled="disabledFlag"
+            @focus="(e) => (focusQuestionIndex = e.index)"
+            @answer-change="(e) => (answerResult[e.index] = e.data)"
+            :answer-data="answerResult[index]"
+          ></QuestionRender>
+        </QuestionCard>
+      </template>
+    </Draggable>
+    <!-- <template v-else>
+      <QuestionCard
+        v-for="(item, index) in surveyState.data.questions"
+        :key="item.id"
+        :stared="item.stared"
+        @star="handleStar(item.id!, item.stared)"
+        @delete="handleDelete(item.id!)"
+        @copy="handleCopy(item)"
+      >
+        <QuestionRender
+          :question-data="item"
+          :index="index"
+          :edit="editFlag"
+          :disabled="disabledFlag"
+          @focus="(e) => (focusQuestionIndex = e.index)"
+          @answer-change="(e) => (answerResult[e.index] = e.data)"
+          :answer-data="answerResult[index]"
+        ></QuestionRender>
+      </QuestionCard>
+    </template> -->
+
     <div v-if="props.type === 'Answer'" class="submit-box">
       <ElButton
         @click="handleSubmit"
@@ -60,8 +88,8 @@ import {
 } from "@/api/survey";
 import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
-import { ElButton, ElCard, ElMessage, ElMessageBox } from "element-plus";
-import { ref, watch, type PropType, computed, reactive } from "vue";
+import { ElButton, ElMessage, ElMessageBox } from "element-plus";
+import { ref, watch, type PropType, computed, reactive, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import QuestionRender, {
   type AnswerData
@@ -73,6 +101,7 @@ import {
   type Question,
   addQuestionToSurvey
 } from "@/api/question";
+import Draggable from "vuedraggable-es";
 
 type SurveyContentType = "Edit" | "Review" | "Answer";
 
@@ -111,18 +140,26 @@ function init() {
       });
     } else {
       surveyState.data = data;
-      surveyState.loading = false;
-      updateViewCount();
-      onUpdateSurveyData();
+
+      if (props.type === "Answer") {
+        updateViewCount();
+      }
+
+      if (props.type === "Review") {
+        const answerId = router.currentRoute.value.params.answerId as string;
+        getAnswerById(parseInt(answerId)).then(({ data }) => {
+          answerResult.value = surveyState.data.questionSort!.map(
+            (item) =>
+              (data.content as AnswerData[]).find((i) => i.questionId == item)!
+          );
+          surveyState.loading = false;
+        });
+      }
+      if (props.type === "Edit") {
+        onUpdateSurveyData();
+      }
     }
   });
-
-  if (props.type === "Review") {
-    const answerId = router.currentRoute.value.params.answerId as string;
-    getAnswerById(parseInt(answerId)).then(({ data }) => {
-      answerResult.value = data.content;
-    });
-  }
 }
 init();
 
@@ -237,7 +274,6 @@ function handleCopy(question: Question) {
     type: question.type,
     content: question.content,
     required: question.required,
-    index: question.index! + 1,
     description: question.description,
     title: question.title
   }).then(() => {
@@ -246,15 +282,30 @@ function handleCopy(question: Question) {
   });
 }
 
+// 处理拖动
+function handleDragEnd() {
+  surveyState.data.questionSort = surveyState.data.questions?.map(
+    (item) => item.id!
+  );
+  updateSurvey({
+    questionSort: surveyState.data.questionSort,
+    id: surveyState.data.id
+  });
+}
+
 defineExpose({
   surveyState: surveyState,
-  focusQuestionIndex
+  focusQuestionIndex,
+  init
 });
 </script>
 
 <style lang="scss" scoped>
-.submit-box {
-  text-align: center;
-  padding: 25px 0 40px;
+.survey-content {
+  padding-bottom: 50px;
+  .submit-box {
+    text-align: center;
+    padding: 25px 0 40px;
+  }
 }
 </style>

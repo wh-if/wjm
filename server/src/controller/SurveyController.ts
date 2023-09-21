@@ -52,6 +52,7 @@ const controller: Controller[] = [
         surveyId: parseInt(surveyId),
       });
 
+      // 标记已收藏的问题
       const collectResult = await collectMapper.getCollectList(ctx.body);
       collectResult.map((item) => {
         const collectQuestion = questionResult.find((i) => i.id == item.id);
@@ -60,9 +61,26 @@ const controller: Controller[] = [
         }
       });
 
+      // 根据questionSort字段排序（更新questionSort字段，移除不存在的ID）
+      const sortQuestionResult: Question[] = [];
+      const newQuestionSort: number[] = [];
+      let index = 0;
+      (surveyResult.questionSort as unknown as number[]).forEach((item) => {
+        const q = questionResult.find((i) => i.id == item);
+        if (q) {
+          sortQuestionResult[index++] = q;
+          newQuestionSort.push(item);
+        }
+      });
+      surveyResult.questionSort = newQuestionSort as unknown as string;
+      surveyMapper.update(
+        { questionSort: JSON.stringify(newQuestionSort) },
+        { id: surveyResult.id }
+      );
+
       ctx.body = AjaxResult.success({
         ...surveyResult,
-        questions: questionResult,
+        questions: sortQuestionResult,
       });
     },
   },
@@ -78,6 +96,7 @@ const controller: Controller[] = [
         createTime: currentTime,
         updateTime: currentTime,
         folderIds: JSON.stringify([]),
+        questionSort: JSON.stringify([]),
         status: 0,
         userId: ctx.body,
         description:
@@ -97,12 +116,15 @@ const controller: Controller[] = [
             { text: "选项4", id: 4 },
           ],
         }),
-        index: 1,
         surveyId: resultSurveyId,
         required: false,
         userId: ctx.body,
       };
-      questionMapper.insert(question);
+      const resultQuestionId = await questionMapper.insert(question);
+      surveyMapper.update(
+        { questionSort: JSON.stringify([resultQuestionId]) },
+        { id: resultSurveyId }
+      );
 
       ctx.body = AjaxResult.success({ surveyId: resultSurveyId });
     },
@@ -112,7 +134,7 @@ const controller: Controller[] = [
     path: "/survey/:surveyId",
     method: HttpMethodEnum.PUT,
     handler: async (ctx) => {
-      const { title, description, viewCount, status, folderIds } =
+      const { title, description, viewCount, status, folderIds, questionSort } =
         ctx.request.body;
 
       const updateSurvey: Survey = {
@@ -121,6 +143,7 @@ const controller: Controller[] = [
         viewCount,
         status,
         folderIds: JSON.stringify(folderIds),
+        questionSort: JSON.stringify(questionSort),
       };
 
       const result = await surveyMapper.update(updateSurvey, {

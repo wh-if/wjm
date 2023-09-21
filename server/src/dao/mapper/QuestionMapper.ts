@@ -9,8 +9,6 @@ export interface Question {
   description?: string;
   required?: boolean;
   userId?: number;
-  index?: number;
-  
 }
 class QuestionMapper extends BaseMapper<Question> {
   constructor() {

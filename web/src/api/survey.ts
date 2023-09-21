@@ -19,7 +19,7 @@ export interface SurveyWithQuestions {
   createTime?: string;
   updateTime?: string;
   folderIds?: number[];
-  qrCode?: string;
+  questionSort?: number[];
   description?: string;
   userId?: number;
   endOfSurvey?: string;

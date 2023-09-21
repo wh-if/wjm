@@ -120,8 +120,8 @@ function addQuestionByType(type: QuestionTypeEnum) {
     surveyId: surveyData!.value.id!,
     type,
     content: getDefaultContent(type)
-  }).then(({ data }) => {
-    surveyData!.value.questions!.push(data);
+  }).then(() => {
+    surveyContentRef?.value.init();
   });
 }
 
@@ -131,12 +131,11 @@ function addQuestionByCollect(item: Question) {
     type: item.type,
     content: item.content,
     required: item.required,
-    index: item.index! + 1,
     description: item.description,
     title: item.title
-  }).then(({ data }) => {
+  }).then(() => {
     ElMessage.success("添加成功！");
-    surveyData!.value.questions!.push(data);
+    surveyContentRef?.value.init();
   });
 }
 
@@ -151,7 +150,7 @@ function handleRemoveCollect(questionId: number) {
       removeCollect(questionId).then(() => {
         ElMessage.success("取消成功！");
         getCollectData();
-      });
+      }); 
     })
     .catch(() => {});
 }

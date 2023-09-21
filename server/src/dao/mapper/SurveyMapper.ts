@@ -5,7 +5,7 @@ export interface Survey {
   userId?: number;
   description?: string;
   status?: number;
-  qrCode?: string;
+  questionSort?: string; // questionId[]
   folderIds?: string; // number[]
   createTime?: string;
   updateTime?: string;

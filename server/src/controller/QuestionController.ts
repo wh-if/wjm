@@ -1,6 +1,7 @@
 import { AjaxResult } from "../util/AjaxResult";
 import { Controller, HttpMethodEnum } from "../model";
 import { Question, questionMapper } from "../dao/mapper/QuestionMapper";
+import { surveyMapper } from "../dao/mapper/SurveyMapper";
 
 const controller: Controller[] = [
   // 获取问题列表
@@ -32,20 +33,28 @@ const controller: Controller[] = [
         type,
         content,
         required,
-        index,
       } = ctx.request.body;
       const newQuestion: Question = {
         title,
         description,
         type,
         content: JSON.stringify(content),
-        index,
         userId: ctx.body,
         required,
         surveyId: surveyId,
       };
       const questionId = await questionMapper.insert(newQuestion);
       const result = await questionMapper.selectOne({ id: questionId });
+      const surveyData = await surveyMapper.selectOne({ id: surveyId });
+      surveyMapper.update(
+        {
+          questionSort: JSON.stringify([
+            ...surveyData.questionSort,
+            questionId,
+          ]),
+        },
+        { id: surveyId }
+      );
       ctx.body = AjaxResult.success(result);
     },
   },
