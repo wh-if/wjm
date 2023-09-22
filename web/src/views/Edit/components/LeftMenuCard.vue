@@ -166,6 +166,7 @@ getCollectData();
 
 <style lang="scss">
 .edit-left-menu-card {
+  z-index: 3;
   .el-card__body {
     height: 100%;
     padding: 20px 0;

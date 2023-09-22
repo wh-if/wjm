@@ -1,5 +1,5 @@
 <template>
-  <div class="question-card-container">
+  <div :class="['question-card-container', isAnswer ? 'reactive' : '']">
     <div :class="['question-card', isEdit ? 'question-card-activity' : '']">
       <div class="question-card-body">
         <slot />
@@ -78,6 +78,7 @@ const emit = defineEmits(["prev-add", "star", "copy", "delete", "next-add"]);
 const route = useRoute();
 
 const isEdit = computed(() => route.name === "edit");
+const isAnswer = computed(() => route.name === "answer");
 </script>
 
 <style lang="scss" scoped>
@@ -121,6 +122,22 @@ const isEdit = computed(() => route.name === "edit");
   .question-card-body {
     width: 86%;
     margin: 0 auto;
+    height: 100%;
+  }
+}
+@media (max-width: 860px) {
+  .reactive {
+    .question-card {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .question-card-body {
+      padding: 64px 0;
+    }
   }
 }
 </style>

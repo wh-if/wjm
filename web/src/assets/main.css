@@ -1,7 +1,6 @@
 @import './base.css';
 
 #app {
-  min-width: 1280px;
   /* margin: 0 auto; */
   /* padding: 2rem; */
 
@@ -10,6 +9,10 @@
 
 html,body{
   background: #f4f6f9;
+}
+
+body{
+  min-width: 1280px;
 }
 
 /* a,

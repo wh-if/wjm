@@ -136,6 +136,7 @@ watch(questionTypeValue, (newVal, oldVal) => {
 
 <style lang="scss" scoped>
 .right-setting-box {
+  z-index: 3;
   .el-card__body {
     height: 100%;
     padding: 20px 0;

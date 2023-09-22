@@ -12,7 +12,7 @@
     <p
       :style="
         props.modelValue?.length! > 0
-          ? props.textBoxStyle
+          ? [props.textBoxStyle, { padding: '8px' }]
           : [props.textBoxStyle, { color: 'gray' }]
       "
       v-html="inputValue"
@@ -34,7 +34,7 @@ const props = defineProps({
   },
   textBoxStyle: {
     type: Object as PropType<StyleValue>,
-    default: () => ({ padding: "8px" })
+    default: () => ({})
   },
   edit: {
     type: Boolean,

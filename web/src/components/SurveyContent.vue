@@ -4,7 +4,10 @@
     v-loading.fullscreen.lock="surveyState.loading"
   ></div>
   <div v-else class="survey-content">
-    <QuestionCard :tool="false">
+    <QuestionCard
+      :style="0 == currentQuestionIndex ? 'z-index: 2' : ''"
+      :tool="false"
+    >
       <EditInput
         v-model="surveyState.data.title"
         placeholder="请输入问卷标题"
@@ -12,12 +15,12 @@
         :text-box-style="{ fontSize: '2.5rem', textAlign: 'center' }"
       >
       </EditInput>
-    </QuestionCard>
-    <QuestionCard :tool="false">
       <EditInput
         v-model="surveyState.data.description"
         :edit="editFlag"
         placeholder="请输入问卷描述信息"
+        style="margin: 10px 0"
+        :text-box-style="{ fontSize: '0.9rem' }"
       >
       </EditInput>
     </QuestionCard>
@@ -33,6 +36,7 @@
           @star="handleStar(item.id!, item.stared)"
           @delete="handleDelete(item.id!)"
           @copy="handleCopy(item)"
+          :style="index + 1 == currentQuestionIndex ? 'z-index: 2' : ''"
         >
           <QuestionRender
             :question-data="item"
@@ -69,10 +73,30 @@
 
     <div v-if="props.type === 'Answer'" class="submit-box">
       <ElButton
+        v-show="currentQuestionIndex == 0"
+        @click="currentQuestionIndex = 1"
+        class="begin-answer-button"
+        type="primary"
+        size="large"
+        style="width: 80%"
+        >开始答题</ElButton
+      >
+      <ElPagination
+        v-show="currentQuestionIndex != 0"
+        class="survey-content-pagination"
+        v-model:current-page="currentQuestionIndex"
+        :default-page-size="1"
+        :total="surveyState.data.questions!.length"
+        layout="prev, pager, next"
+        background
+        small
+      >
+      </ElPagination>
+      <ElButton
         @click="handleSubmit"
         type="primary"
         size="large"
-        style="width: 200px"
+        style="width: 240px"
         >提交</ElButton
       >
     </div>
@@ -88,8 +112,8 @@ import {
 } from "@/api/survey";
 import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
-import { ElButton, ElMessage, ElMessageBox } from "element-plus";
-import { ref, watch, type PropType, computed, reactive, nextTick } from "vue";
+import { ElButton, ElMessage, ElMessageBox, ElPagination } from "element-plus";
+import { ref, watch, type PropType, computed, reactive } from "vue";
 import { useRouter } from "vue-router";
 import QuestionRender, {
   type AnswerData
@@ -113,6 +137,9 @@ const props = defineProps({
 });
 // 聚焦的问题卡片的问题索引
 const focusQuestionIndex = ref();
+
+// 用于移动端答题-题目分页
+const currentQuestionIndex = ref(0);
 
 const surveyState = reactive({
   data: {} as SurveyWithQuestions,
@@ -154,6 +181,8 @@ function init() {
           );
           surveyState.loading = false;
         });
+      } else {
+        surveyState.loading = false;
       }
       if (props.type === "Edit") {
         onUpdateSurveyData();
@@ -298,6 +327,11 @@ defineExpose({
   focusQuestionIndex,
   init
 });
+
+// 适配移动端答题
+if (props.type == "Answer") {
+  document.body.style.minWidth = "auto";
+}
 </script>
 
 <style lang="scss" scoped>
@@ -306,6 +340,31 @@ defineExpose({
   .submit-box {
     text-align: center;
     padding: 25px 0 40px;
+  }
+}
+@media (min-width: 860px) {
+  .survey-content-pagination,
+  .begin-answer-button {
+    display: none;
+  }
+}
+@media (max-width: 860px) {
+  .submit-box {
+    z-index: 2;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+
+    .survey-content-pagination {
+      justify-content: center;
+      padding: 15px 0;
+    }
+    .begin-answer-button {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }
 </style>
