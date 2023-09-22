@@ -38,6 +38,9 @@ importers:
       mysql:
         specifier: ^2.18.1
         version: registry.npmmirror.com/mysql@2.18.1
+      nodemailer:
+        specifier: ^6.9.5
+        version: registry.npmmirror.com/nodemailer@6.9.5
     devDependencies:
       '@types/jsonwebtoken':
         specifier: ^9.0.2
@@ -3617,6 +3620,13 @@ packages:
     name: nice-try
     version: 1.0.5
     dev: true
+
+  registry.npmmirror.com/nodemailer@6.9.5:
+    resolution: {integrity: sha512-/dmdWo62XjumuLc5+AYQZeiRj+PRR8y8qKtFCOyuOl1k/hckZd8durUUHs/ucKx6/8kN+wFxqKJlQ/LK/qR5FA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/nodemailer/-/nodemailer-6.9.5.tgz}
+    name: nodemailer
+    version: 6.9.5
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   registry.npmmirror.com/nodemon@3.0.1:
     resolution: {integrity: sha512-g9AZ7HmkhQkqXkRc20w+ZfQ73cHLbE8hnPbtaFbFtCumZsjyMhKk9LajQ07U5Ux28lvFjZ5X7HvWR1xzU8jHVw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/nodemon/-/nodemon-3.0.1.tgz}
