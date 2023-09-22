@@ -1,7 +1,7 @@
 <template>
   <ElHeader class="main-header">
     <div class="logo">
-      <h1 >问卷猫</h1>
+      <h1>问卷猫</h1>
     </div>
     <ElDropdown>
       <ElLink :underline="false">
@@ -12,8 +12,8 @@
       </ElLink>
       <template #dropdown>
         <ElDropdownMenu>
-          <ElDropdownItem>Action 1</ElDropdownItem>
-          <ElDropdownItem>Action 2</ElDropdownItem>
+          <ElDropdownItem>个人资料</ElDropdownItem>
+          <ElDropdownItem>修改密码</ElDropdownItem>
           <ElDropdownItem @click="handleLogout" divided
             >退出登录</ElDropdownItem
           >
@@ -54,17 +54,17 @@ function handleLogout() {
   border-bottom: 1px solid #dcdfe6;
   z-index: 99;
 
-  .logo{
+  .logo {
     width: 130px;
     height: 80%;
     align-self: center;
     position: absolute;
     left: 150px;
-    background-image: url('@/assets/image/ghost.png');
+    background-image: url("@/assets/image/ghost.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: left;
-    h1{
+    h1 {
       text-align: right;
       font-size: 1.5rem;
       height: 100%;

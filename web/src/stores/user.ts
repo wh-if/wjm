@@ -1,27 +1,31 @@
 import { reactive } from "vue";
 import { defineStore } from "pinia";
-import { login, logout } from "@/api/user";
+import { login, logout, type LoginParams } from "@/api/user";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
 
 export const useUserStore = defineStore("user", () => {
   const user = reactive({
-    id:"",
+    id: "",
     name: "",
     email: "",
-    token: ""
+    token: "",
+    refresh_token: ""
   });
   const router = useRouter();
 
-  function loginAction(loginInfo: Record<string, any>) {
-    login(loginInfo).then(({ data: { id,name, email, token }, message }) => {
-      user.id = id
-      user.name = name;
-      user.email = email;
-      user.token = token;
-      ElMessage.success(message);
-      router.replace("mine");
-    });
+  function loginAction(loginInfo: LoginParams) {
+    login(loginInfo).then(
+      ({ data: { id, name, email, token, refresh_token }, message }) => {
+        user.id = id;
+        user.name = name;
+        user.email = email;
+        user.token = token;
+        user.refresh_token = refresh_token;
+        ElMessage.success(message);
+        router.replace("mine");
+      }
+    );
   }
 
   function logoutAction() {
@@ -30,10 +34,10 @@ export const useUserStore = defineStore("user", () => {
       user.name = "";
       user.email = "";
       user.token = "";
+      user.refresh_token = "";
       ElMessage.success(message);
       router.replace("login");
-    })
+    });
   }
-
-  return { user, loginAction,logoutAction };
+  return { user, loginAction, logoutAction };
 });

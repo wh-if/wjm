@@ -2,11 +2,12 @@ export class AjaxResult<T = Record<string, any>> {
   /**
    * 0 成功
    * 1 失败
+   * 2 token 失效
    *  */
-  code: 0 | 1;
+  code: 0 | 1 | 2;
   message: string;
   data: T;
-  constructor(code: 0 | 1, message: string, data: T) {
+  constructor(code: 0 | 1 | 2, message: string, data: T) {
     this.code = code;
     this.message = message;
     this.data = data;
@@ -25,7 +26,7 @@ export class AjaxResult<T = Record<string, any>> {
     if (!!arg_1) arg_1 = "成功";
     return new AjaxResult(0, arg_1, arg_2);
   }
-  static error(message = "失败") {
-    return new AjaxResult(1, message, null);
+  static error(message = "失败", code: 1 | 2 = 1) {
+    return new AjaxResult(code, message, null);
   }
 }
