@@ -13,8 +13,15 @@ export interface RadioContent {
 }
 export type RadioAnswer = number;
 // 文本
-export type TextContent = string;
+export type TextContent = {};
 export type TextAnswer = string;
 // 多选
 export type CheckboxContent = RadioContent;
 export type CheckboxAnswer = number[];
+// 图片/文件
+export type FileContent = {};
+export type FileAnswer = {
+  filename: string;
+  mimetype: string;
+  originalFilename: string;
+}[];

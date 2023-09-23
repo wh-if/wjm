@@ -6,7 +6,7 @@ import send from "koa-send";
 const controller: Controller[] = [
   // 需要访问权限
   {
-    path: "/upload",
+    path: "/file/upload",
     method: HttpMethodEnum.POST,
     handler: [
       koaBody({
@@ -18,8 +18,28 @@ const controller: Controller[] = [
         },
       }),
       (ctx) => {
-        // console.log(ctx.request.files);
-        ctx.body = AjaxResult.success();
+        const file = ctx.request.files.file as any;
+        ctx.body = AjaxResult.success({
+          mimetype: file.mimetype,
+          filename: file.newFilename,
+          originalFilename: file.originalFilename,
+        });
+      },
+    ],
+  },
+  // 需要访问权限
+  {
+    path: "/file/target/:id",
+    method: HttpMethodEnum.GET,
+    handler: [
+      async (ctx, next) => {
+        const srcPath = "/" + ctx.params.id;
+        const opts: send.SendOptions = {
+          root: path.join(__dirname, "../upload"),
+        };
+        await send(ctx, srcPath, opts);
+        ctx.set("Content-Type", ctx.request.header["accept"]);
+        next();
       },
     ],
   },

@@ -8,13 +8,15 @@ export enum SurveyStatus {
 export enum QuestionTypeEnum {
   Radio = "radio",
   Text = "text",
-  MultiRadio = "multi_radio"
+  MultiRadio = "multi_radio",
+  File = 'file'
 }
 
 // 题目类型
 import RadioQuestion from "@/components/questions/RadioQuestion.vue";
 import TextQuestion from "@/components/questions/TextQuestion.vue";
 import CheckboxQuestion from "@/components/questions/CheckboxQuestion.vue";
+import FileQuestion from "@/components/questions/FileQuestion.vue";
 export const QuestionTypeList = [
   {
     groupTitle: "选择",
@@ -38,6 +40,15 @@ export const QuestionTypeList = [
       [QuestionTypeEnum.Text]: {
         name: "单行文本",
         component: TextQuestion
+      }
+    }
+  },
+  {
+    groupTitle: '高级题型',
+    items: {
+      [QuestionTypeEnum.File]: {
+        name: '图片/文件',
+        component: FileQuestion
       }
     }
   }
