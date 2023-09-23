@@ -12,14 +12,46 @@
       </ElLink>
       <template #dropdown>
         <ElDropdownMenu>
-          <ElDropdownItem>个人资料</ElDropdownItem>
-          <ElDropdownItem>修改密码</ElDropdownItem>
+          <ElDropdownItem
+            @click="
+              () => {
+                dialogState.visible = true;
+                dialogState.type = 'userinfo';
+              }
+            "
+            >个人资料</ElDropdownItem
+          >
+          <ElDropdownItem
+            @click="
+              () => {
+                dialogState.visible = true;
+                dialogState.type = 'password';
+              }
+            "
+            >修改密码</ElDropdownItem
+          >
           <ElDropdownItem @click="handleLogout" divided
             >退出登录</ElDropdownItem
           >
         </ElDropdownMenu>
       </template>
     </ElDropdown>
+    <ElDialog
+      v-model="dialogState.visible"
+      :title="dialogState.type == 'userinfo' ? '个人信息' : '修改密码'"
+      destroy-on-close
+      width="520px"
+    >
+      <UserInfoForm
+        v-if="dialogState.type == 'userinfo'"
+        :close="() => (dialogState.visible = false)"
+      ></UserInfoForm>
+      <UserAccountForm
+        v-if="dialogState.type == 'password'"
+        type="password"
+        :close="() => (dialogState.visible = false)"
+      ></UserAccountForm>
+    </ElDialog>
   </ElHeader>
   <div class="main-content">
     <RouterView></RouterView>
@@ -29,15 +61,23 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user";
 import {
-  ElAffix,
   ElDropdown,
   ElDropdownItem,
   ElDropdownMenu,
   ElIcon,
-  ElLink
+  ElLink,
+  ElDialog
 } from "element-plus";
+import UserInfoForm from "./components/UserInfoForm.vue";
+import { reactive, ref } from "vue";
+import UserAccountForm from "./components/UserAccountForm.vue";
 
 const userStore = useUserStore();
+
+const dialogState = reactive({
+  visible: false,
+  type: "userinfo"
+});
 
 function handleLogout() {
   userStore.logoutAction();

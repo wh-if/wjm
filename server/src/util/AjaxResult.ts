@@ -23,7 +23,7 @@ export class AjaxResult<T = Record<string, any>> {
       arg_2 = arg_1;
       arg_1 = "成功";
     }
-    if (!!arg_1) arg_1 = "成功";
+    if (!arg_1) arg_1 = "成功";
     return new AjaxResult(0, arg_1, arg_2);
   }
   static error(message = "失败", code: 1 | 2 = 1) {

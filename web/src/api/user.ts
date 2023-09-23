@@ -21,7 +21,6 @@ export function login(data: LoginParams) {
     data
   });
 }
-
 export function logout() {
   return request({
     url: "/logout",
@@ -37,7 +36,7 @@ export function register(data: LoginParams) {
   });
 }
 
-export function forgetOrUpdatePassword(data: LoginParams) {
+export function updatePassword(data: LoginParams) {
   return request({
     url: "/password",
     method: "post",
@@ -46,7 +45,7 @@ export function forgetOrUpdatePassword(data: LoginParams) {
 }
 export function updateUserData(data: Pick<User, "name" | "status">) {
   return request({
-    url: "/register",
+    url: "/user",
     method: "put",
     data
   });

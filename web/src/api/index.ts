@@ -60,13 +60,15 @@ const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
         if (response.status === 200) {
           const { code, message } = response.data;
           if (code === 1) {
+            // 一般错误
             if (onlyOneMessage) {
               return;
             }
             onlyOneMessage = true;
             ElMessageBox.confirm(message, "提示", {
               showCancelButton: false,
-              confirmButtonText: "确认"
+              confirmButtonText: "确认",
+              type: "warning"
             })
               .then(() => {
                 router.push("/login");
@@ -76,6 +78,7 @@ const request = <T = Record<string, any>>(config: AxiosRequestConfig) => {
                 // router.back()
               });
           } else if (code === 2) {
+            // token 失效可刷新
             const refreshResponse = (await handleRefresh(
               response
             )) as AxiosResponse;

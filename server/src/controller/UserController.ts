@@ -42,8 +42,6 @@ const controller: Controller[] = [
         compareResult = password === user.password;
       }
 
-      console.log("-----------------------------------------------");
-
       if (compareResult) {
         // Reflect.deleteProperty(user, "id");
         Reflect.deleteProperty(user, "password");
@@ -68,7 +66,7 @@ const controller: Controller[] = [
     handler: async (ctx) => {
       // 退出登录后，对之前已经签发的token的处理
       setLogoutToken(ctx.headers.token as string);
-      setLogoutToken(ctx.headers.refresh_token as string);
+      // setLogoutToken(ctx.headers.refresh_token as string);
       ctx.body = AjaxResult.success("登出成功！");
     },
   },
@@ -78,6 +76,12 @@ const controller: Controller[] = [
     method: HttpMethodEnum.POST,
     handler: async (ctx) => {
       const { email, password, vcode } = ctx.request.body;
+      const user = await userMapper.selectOne({ email });
+      if (user) {
+        ctx.body = AjaxResult.error(email + "邮箱用户已存在，请更换后重试。");
+        return;
+      }
+
       if (checkCode(email, vcode)) {
         const result = await userMapper.insert({
           name: email,
@@ -100,9 +104,9 @@ const controller: Controller[] = [
 
       if (checkCode(email, vcode)) {
         const result = await userMapper.update({ password }, { email });
-        AjaxResult.success({ result });
+        ctx.body = AjaxResult.success({ result });
       } else {
-        ctx.body = AjaxResult.error("验证码错误或已经过期！");
+        ctx.body = AjaxResult.success("验证码错误或已经过期！");
       }
     },
   },
@@ -127,13 +131,6 @@ const controller: Controller[] = [
     handler: async (ctx) => {
       const { email } = ctx.query;
       const { type } = ctx.params;
-      const user = await userMapper.selectOne({ email: email as string });
-      if (!user) {
-        ctx.body = AjaxResult.error(
-          "该用户不存在，请确认输入是否正确或先注册！"
-        );
-        return;
-      }
 
       const codeText = generateCode(email as string);
 

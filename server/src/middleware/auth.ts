@@ -23,10 +23,14 @@ export const auth: () => Koa.Middleware<
     const findIndex = whiteList.findIndex((item) => ctx.path.startsWith(item));
     if (findIndex === -1) {
       try {
-        const { id } = jwt.verify(ctx.headers.token as string, "WJM") as Record<
-          string,
-          any
-        >;
+        const token = ctx.headers.token as string;
+        // 用户已经退出登录，但token过期时间没到
+        if (logoutedTokenSet.has(token)) {
+          ctx.body = AjaxResult.error("token 已过期或不存在, 请重新登录", 1);
+          return;
+        }
+
+        const { id } = jwt.verify(token, "WJM") as Record<string, any>;
         // 提供当前的用户信息给后面的路由使用
         ctx.body = id;
       } catch (error) {

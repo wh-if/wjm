@@ -63,7 +63,7 @@ ElMenuItem
           </div>
 
           <div>
-            <ElLink :underline="false">注册账号</ElLink>
+            <ElLink @click="visible = true" :underline="false">注册账号</ElLink>
           </div>
         </div>
       </ElFormItem>
@@ -90,6 +90,12 @@ ElMenuItem
       </ElFormItem>
     </ElForm>
   </ElCard>
+  <ElDialog v-model="visible" title="注册" destroy-on-close width="520px">
+    <UserAccountForm
+      type="register"
+      :close="() => (visible = false)"
+    ></UserAccountForm>
+  </ElDialog>
 </template>
 
 <script setup lang="ts">
@@ -110,6 +116,7 @@ import {
 } from "element-plus";
 import { reactive, ref } from "vue";
 import { type LoginParams, getVerifyData } from "@/api/user";
+import UserAccountForm from "./components/UserAccountForm.vue";
 
 const isPasswordType = ref<boolean>(true);
 
@@ -118,6 +125,8 @@ const inputState = reactive({
   password: "", // 密码或验证码
   vcode: ""
 });
+
+const visible = ref(false);
 
 // 验证码倒计时
 const verifyCodeState = reactive({
