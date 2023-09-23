@@ -1,7 +1,7 @@
 <template>
   <ElRadioGroup
     v-model="radioValue"
-    :disabled="props.disabled || props.edit"
+    :disabled="props.disabled"
     style="width: 100%"
   >
     <div class="options-box">

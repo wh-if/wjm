@@ -1,8 +1,5 @@
 <template>
-  <ElCheckboxGroup
-    v-model="inputValue"
-    :disabled="props.disabled || props.edit"
-  >
+  <ElCheckboxGroup v-model="inputValue" :disabled="props.disabled">
     <div class="options-box">
       <div
         v-for="item in props.questionContent.options"

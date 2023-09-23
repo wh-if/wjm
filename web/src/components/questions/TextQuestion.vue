@@ -1,8 +1,5 @@
 <template>
-  <ElInput
-    v-model="inputValue"
-    :disabled="props.disabled || props.edit"
-  ></ElInput>
+  <ElInput v-model="inputValue" :disabled="props.disabled"></ElInput>
 </template>
 
 <script setup lang="ts">

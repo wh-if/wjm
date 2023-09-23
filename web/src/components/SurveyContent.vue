@@ -147,7 +147,7 @@ const surveyState = reactive({
 });
 
 const editFlag = computed(() => props.type === "Edit");
-const disabledFlag = computed(() => props.type === "Review");
+const disabledFlag = computed(() => editFlag.value || props.type === "Review");
 const { addSaveItem } = useAutoSave();
 
 const router = useRouter();
@@ -177,7 +177,9 @@ function init() {
         getAnswerById(parseInt(answerId)).then(({ data }) => {
           answerResult.value = surveyState.data.questionSort!.map(
             (item) =>
-              (data.content as AnswerData[]).find((i) => i.questionId == item)!
+              (data.content as AnswerData[]).find(
+                (i) => i && i.questionId == item
+              )!
           );
           surveyState.loading = false;
         });

@@ -9,14 +9,7 @@
     @blur="handleBlur"
     :contenteditable="props.edit"
   >
-    <p
-      :style="
-        props.modelValue?.length! > 0
-          ? [props.textBoxStyle, { padding: '8px' }]
-          : [props.textBoxStyle, { color: 'gray' }]
-      "
-      v-html="inputValue"
-    ></p>
+    <p :style="stylesOfP" v-html="inputValue"></p>
   </div>
 </template>
 
@@ -43,6 +36,17 @@ const props = defineProps({
 });
 const showFlag = computed(() => props.edit || props.modelValue !== "");
 const inputValue = ref(props.modelValue || props.placeholder);
+
+const stylesOfP = computed(() => {
+  let styles = [props.textBoxStyle, { padding: "8px" }] as StyleValue[];
+
+  if (!(props.modelValue?.length! > 0)) {
+    // placeholder
+    styles.push({ color: "gray" });
+  }
+
+  return styles;
+});
 
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Enter") {
