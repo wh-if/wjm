@@ -32,6 +32,9 @@ export function formatStatData(statRawData: StatRawData) {
       case QuestionTypeEnum.MultiRadio:
         handleRadio(formatStatResultItem);
         break;
+      case QuestionTypeEnum.MultiText:
+        handleMultiText(formatStatResultItem);
+        break;
       default:
         break;
     }
@@ -99,7 +102,15 @@ function handleRadio(formatStatResultItem: FormatStatResult) {
   );
   formatStatResultItem.options = resultOptions;
 }
-
+// 处理多项填空
+function handleMultiText(formatStatResultItem: FormatStatResult) {
+  const arr = formatStatResultItem.questionRaw.content!.textArray.filter(
+    (it: any) => typeof it == "number"
+  );
+  formatStatResultItem.answerResultList.forEach((item) => {
+    item.resultValue = arr.map((it: any) => item.resultValue[it]).join("；");
+  });
+}
 export interface FormatStatResult {
   // 题目源数据
   questionRaw: Question;

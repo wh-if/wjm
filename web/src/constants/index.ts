@@ -9,7 +9,8 @@ export enum QuestionTypeEnum {
   Radio = "radio",
   Text = "text",
   MultiRadio = "multi_radio",
-  File = 'file'
+  File = "file",
+  MultiText = "multi_text"
 }
 
 // 题目类型
@@ -17,6 +18,7 @@ import RadioQuestion from "@/components/questions/RadioQuestion.vue";
 import TextQuestion from "@/components/questions/TextQuestion.vue";
 import CheckboxQuestion from "@/components/questions/CheckboxQuestion.vue";
 import FileQuestion from "@/components/questions/FileQuestion.vue";
+import MultiTextQuestion from "@/components/questions/MultiTextQuestion.vue";
 export const QuestionTypeList = [
   {
     groupTitle: "选择",
@@ -24,7 +26,7 @@ export const QuestionTypeList = [
       // 单选
       [QuestionTypeEnum.Radio]: {
         name: "单选",
-        component: RadioQuestion,
+        component: RadioQuestion
       },
       // 多选
       [QuestionTypeEnum.MultiRadio]: {
@@ -40,14 +42,18 @@ export const QuestionTypeList = [
       [QuestionTypeEnum.Text]: {
         name: "单行文本",
         component: TextQuestion
+      },
+      [QuestionTypeEnum.MultiText]: {
+        name: "多项填空",
+        component: MultiTextQuestion
       }
     }
   },
   {
-    groupTitle: '高级题型',
+    groupTitle: "高级题型",
     items: {
       [QuestionTypeEnum.File]: {
-        name: '图片/文件',
+        name: "图片/文件",
         component: FileQuestion
       }
     }
@@ -62,8 +68,11 @@ export function getDefaultContent(type: QuestionTypeEnum) {
         { text: "选项1", id: 1 },
         { text: "选项2", id: 2 },
         { text: "选项3", id: 3 },
-        { text: "选项4", id: 4 },
+        { text: "选项4", id: 4 }
       ];
+      break;
+    case QuestionTypeEnum.MultiText:
+      content.textArray = [""];
       break;
     default:
       break;

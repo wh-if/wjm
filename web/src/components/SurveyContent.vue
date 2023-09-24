@@ -158,6 +158,7 @@ const answerResult = ref([] as AnswerData[]);
 const startTime = Date.now();
 
 function init() {
+  focusQuestionIndex.value = undefined;
   const surveyId = router.currentRoute.value.params.surveyId as string;
   getSurveyWithQuestions(surveyId).then(({ data }) => {
     if (props.type === "Answer" && data.status == 0) {

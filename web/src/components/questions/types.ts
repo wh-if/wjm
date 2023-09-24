@@ -25,3 +25,10 @@ export type FileAnswer = {
   mimetype: string;
   originalFilename: string;
 }[];
+// 多项填空
+export type MultiTextContent = {
+  textArray: (string | number)[];
+};
+export type MultiTextAnswer = {
+  [x: number]: string;
+};

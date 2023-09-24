@@ -55,7 +55,11 @@ const props = defineProps({
 const ifShowStatus = computed(() => {
   const ifShowList = {
     PercentBar: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio],
-    CommonTable: [QuestionTypeEnum.Text, QuestionTypeEnum.File],
+    CommonTable: [
+      QuestionTypeEnum.Text,
+      QuestionTypeEnum.File,
+      QuestionTypeEnum.MultiText
+    ],
     ChartSet: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio]
   };
   const ifShowStatus: Partial<Record<keyof typeof ifShowList, boolean>> = {};
