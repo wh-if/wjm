@@ -284,6 +284,10 @@ function handleStar(questionId: number, stared: boolean = false) {
 
 // 删除题目
 function handleDelete(questionId: number) {
+  if (surveyState.data.questions?.length == 1) {
+    ElMessage.warning("问卷至少需要一个题目。");
+    return;
+  }
   ElMessageBox.confirm("确定要删除吗？", "删除问卷", {
     cancelButtonText: "取消",
     confirmButtonText: "确定",

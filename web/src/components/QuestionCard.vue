@@ -20,6 +20,7 @@
         <ElButton
           :type="$props.stared ? 'warning' : 'default'"
           :icon="Star"
+          title="收藏"
           @click="emit('star')"
           circle
           size="small"
@@ -28,6 +29,7 @@
         <ElButton
           :icon="CopyDocument"
           @click="emit('copy')"
+          title="复制"
           circle
           size="small"
         ></ElButton>
@@ -35,6 +37,7 @@
         <ElButton
           :icon="Delete"
           @click="emit('delete')"
+          title="删除"
           circle
           size="small"
         ></ElButton>

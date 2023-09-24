@@ -39,6 +39,12 @@ const props = defineProps({
 const router = useRouter();
 
 const tableState = computed(() => {
+  if (props.list.length == 0) {
+    return {
+      list: [],
+      columns: []
+    };
+  }
   const arr: FormatStatResult["answerResultList"] = [];
   props.list.forEach((item) => {
     if (Array.isArray(item.resultValue)) {

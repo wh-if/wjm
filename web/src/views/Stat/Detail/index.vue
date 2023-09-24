@@ -62,8 +62,12 @@
         </template>
       </ElTableColumn>
       <ElTableColumn label="IP" width="120" prop="ip"></ElTableColumn>
-      <ElTableColumn label="User-Agent" width="400" prop="ua"></ElTableColumn>
-      <ElTableColumn fixed="right" label="操作">
+      <ElTableColumn
+        label="User-Agent"
+        min-width="400"
+        prop="ua"
+      ></ElTableColumn>
+      <ElTableColumn fixed="right" label="操作" width="200">
         <template #default="scope">
           <ElButton
             link
