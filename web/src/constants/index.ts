@@ -11,7 +11,8 @@ export enum QuestionTypeEnum {
   MultiRadio = "multi_radio",
   File = "file",
   MultiText = "multi_text",
-  DateTime = "datetime"
+  DateTime = "datetime",
+  Sign = "sign"
 }
 
 // 题目类型
@@ -21,6 +22,7 @@ import CheckboxQuestion from "@/components/questions/CheckboxQuestion.vue";
 import FileQuestion from "@/components/questions/FileQuestion.vue";
 import MultiTextQuestion from "@/components/questions/MultiTextQuestion.vue";
 import DateTimeQuestion from "@/components/questions/DateTimeQuestion.vue";
+import SignQuestion from "@/components/questions/SignQuestion.vue";
 export const QuestionTypeList = [
   {
     groupTitle: "选择",
@@ -61,6 +63,10 @@ export const QuestionTypeList = [
       [QuestionTypeEnum.DateTime]: {
         name: "日期/时间",
         component: DateTimeQuestion
+      },
+      [QuestionTypeEnum.Sign]: {
+        name: "签名",
+        component: SignQuestion
       }
     }
   }

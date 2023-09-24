@@ -20,6 +20,7 @@
     "qrcode": "^1.5.3",
     "sass": "^1.66.1",
     "vue": "^3.3.4",
+    "vue-esign": "^1.1.4",
     "vue-router": "^4.2.4",
     "vuedraggable-es": "^4.1.1"
   },

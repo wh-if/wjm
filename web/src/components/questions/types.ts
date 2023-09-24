@@ -36,3 +36,6 @@ export type MultiTextAnswer = {
 // 日期/时间
 export type DateTimeContent = {};
 export type DateTimeAnswer = string;
+// 签名
+export type SignContent = {};
+export type SignAnswer = string;

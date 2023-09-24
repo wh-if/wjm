@@ -23,8 +23,4 @@ watch(inputValue, (val) => {
 });
 </script>
 
-<style lang="scss">
-.test {
-  display: block;
-}
-</style>
+<style lang="scss"></style>
