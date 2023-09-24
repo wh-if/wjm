@@ -10,6 +10,7 @@ const controller: Controller[] = [
     handler: async (ctx) => {
       const { surveyId } = ctx.params;
       const {
+        answerId,
         durationRangeStart,
         durationRangeEnd,
         submitTimeRangeStart,
@@ -20,6 +21,7 @@ const controller: Controller[] = [
       } = ctx.query;
       let searchObj = {
         surveyId: parseInt(surveyId),
+        answerId: parseInt(answerId as string),
         durationRangeStart: durationRangeStart as string,
         durationRangeEnd: durationRangeEnd as string,
         submitTimeRangeStart: submitTimeRangeStart as string,

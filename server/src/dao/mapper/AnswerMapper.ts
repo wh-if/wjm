@@ -19,6 +19,7 @@ class AnswerMapper extends BaseMapper<Answer> {
     selectTotalCount: boolean,
     options: {
       surveyId: number;
+      answerId: number;
       durationRangeStart?: string;
       durationRangeEnd?: string;
       submitTimeRangeStart?: string;
@@ -30,6 +31,7 @@ class AnswerMapper extends BaseMapper<Answer> {
   ) {
     const {
       surveyId,
+      answerId,
       durationRangeStart,
       durationRangeEnd,
       submitTimeRangeStart,
@@ -42,6 +44,9 @@ class AnswerMapper extends BaseMapper<Answer> {
       `select ${selectTotalCount ? "count(*)" : "*"} from answer`,
       { surveyId, status }
     );
+    if (answerId) {
+      sql += ` and id like ${this.POOL.escape("%" + answerId + "%")}`;
+    }
     if (durationRangeStart) {
       sql += ` and expendDuration>${durationRangeStart}`;
     }

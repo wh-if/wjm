@@ -18,7 +18,10 @@
       ></PercentBar>
     </template>
 
-    <InfiniteList :list="props.statData.answerResultList" v-if="ifShowStatus.InfiniteList"></InfiniteList>
+    <CommonTable
+      :list="props.statData.answerResultList"
+      v-if="ifShowStatus.CommonTable"
+    ></CommonTable>
     <ChartSet
       v-if="ifShowStatus.ChartSet"
       :stat-data="props.statData"
@@ -29,7 +32,7 @@
 <script setup lang="ts">
 import PercentBar from "./PercentBar.vue";
 import ChartSet from "./ChartSet.vue";
-import InfiniteList from "./InfiniteList.vue";
+import CommonTable from "./CommonTable.vue";
 import { computed, type PropType } from "vue";
 import type { FormatStatResult } from "@/utils/formatStatData";
 import { QuestionTypeEnum } from "@/constants";
@@ -52,7 +55,7 @@ const props = defineProps({
 const ifShowStatus = computed(() => {
   const ifShowList = {
     PercentBar: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio],
-    InfiniteList: [QuestionTypeEnum.Text],
+    CommonTable: [QuestionTypeEnum.Text, QuestionTypeEnum.File],
     ChartSet: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio]
   };
   const ifShowStatus: Partial<Record<keyof typeof ifShowList, boolean>> = {};
@@ -61,7 +64,7 @@ const ifShowStatus = computed(() => {
     if (Object.prototype.hasOwnProperty.call(ifShowList, key)) {
       let tKey = key as keyof typeof ifShowList;
       const element = ifShowList[tKey];
-      ifShowStatus[tKey] = element.includes(props.statData.questionRaw.type);
+      ifShowStatus[tKey] = element.includes(props.statData.questionRaw.type!);
     }
   }
   return ifShowStatus;

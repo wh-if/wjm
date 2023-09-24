@@ -5,7 +5,7 @@
     </div>
     <ElDropdown>
       <ElLink :underline="false">
-        {{ userStore.user.email }}
+        {{ userStore.user.name }}
         <ElIcon class="el-icon--right">
           <ArrowDown />
         </ElIcon>

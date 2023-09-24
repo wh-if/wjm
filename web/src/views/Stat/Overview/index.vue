@@ -9,7 +9,7 @@
         :key="item.questionRaw.id"
         :stat-data="item"
         :list-index="index"
-        :type="item.questionRaw.type"
+        :type="item.questionRaw.type!"
       ></StatRender>
     </ElCard>
   </div>

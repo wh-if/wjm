@@ -45,14 +45,17 @@ function filterResultList(
   statRawData: StatRawData,
   questionItem: Question
 ): any[] {
-  const resultList: any[] = [];
+  const resultList: ResultList = [];
   statRawData.answerList.forEach((answerItem) => {
     answerItem.content?.find((answerQuestionItem) => {
       if (answerQuestionItem == null) {
         return false;
       }
       if (answerQuestionItem.questionId == questionItem.id) {
-        resultList.push(answerQuestionItem.resultValue);
+        resultList.push({
+          answerId: answerItem.id!,
+          resultValue: answerQuestionItem.resultValue
+        });
         return true;
       } else {
         return false;
@@ -62,7 +65,7 @@ function filterResultList(
   return resultList;
 }
 // 填写率
-function computeAnswerRate(statRawData: StatRawData, resultList: any[]) {
+function computeAnswerRate(statRawData: StatRawData, resultList: ResultList) {
   const rate: number =
     (resultList.length * 100) / statRawData.answerList.length;
   return isNaN(rate) ? "0" : rate.toFixed(2);
@@ -71,16 +74,19 @@ function computeAnswerRate(statRawData: StatRawData, resultList: any[]) {
 function handleRadio(formatStatResultItem: FormatStatResult) {
   // 统计各选项数据
   const resultOptions: any[] = [];
-  formatStatResultItem.questionRaw.content.options?.forEach(
+  formatStatResultItem.questionRaw.content!.options?.forEach(
     (optionItem: RadioOptionFormatStatResult) => {
       // 选该选项的个数
       optionItem.count = 0;
       // flat 兼容多选
-      formatStatResultItem.answerResultList.flat(2).forEach((item) => {
-        if (item == optionItem.id) {
-          optionItem.count!++;
-        }
-      });
+      formatStatResultItem.answerResultList
+        .map((s) => s.resultValue)
+        .flat(2)
+        .forEach((item) => {
+          if (item == optionItem.id) {
+            optionItem.count!++;
+          }
+        });
       // 选项选择率
       optionItem.rate = parseFloat(
         (
@@ -99,7 +105,7 @@ export interface FormatStatResult {
   questionRaw: Question;
 
   // 答卷数据列表
-  answerResultList: any[];
+  answerResultList: ResultList;
 
   // 填写率
   answerRate: string;
@@ -113,3 +119,9 @@ interface RadioOptionFormatStatResult {
   count: number;
   rate: number;
 }
+
+type ResultList = {
+  [x: string]: any;
+  answerId: number;
+  resultValue: any;
+}[];

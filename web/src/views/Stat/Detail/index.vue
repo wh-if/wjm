@@ -1,34 +1,46 @@
 <template>
   <div>
     <ElCard class="filter-box">
-      <ElForm :model="filterState" label-position="top" inline>
-        <ElFormItem label="提交时间区间" prop="submitTimeRange">
-          <ElDatePicker
-            v-model="filterState.submitTimeRange"
-            type="datetimerange"
-            range-separator="To"
-            start-placeholder="Start date"
-            end-placeholder="End date"
-          />
-        </ElFormItem>
-        <ElFormItem label="答题时长区间" style="flex: 1" prop="durationRange">
-          <ElSlider
-            style="width: 100%"
-            :format-tooltip="(val) => val + ' 秒'"
-            v-model="filterState.durationRange"
-            range
-          ></ElSlider>
-        </ElFormItem>
-        <div style="display: flex; align-items: center">
-          <ElButton
-            type="primary"
-            @click="getData()"
-            size="large"
-            style="width: 150px"
-          >
-            筛选
-          </ElButton>
-        </div>
+      <ElForm :model="filterState" label-position="top">
+        <ElRow justify="space-around">
+          <ElCol :span="10">
+            <ElFormItem label="答卷ID" prop="answerId">
+              <ElInput v-model="filterState.answerId" clearable />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="10">
+            <ElFormItem label="提交时间区间" prop="submitTimeRange">
+              <ElDatePicker
+                v-model="filterState.submitTimeRange"
+                type="datetimerange"
+                range-separator="To"
+                start-placeholder="Start date"
+                end-placeholder="End date"
+              />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+        <ElRow justify="space-around">
+          <ElCol :span="10">
+            <ElFormItem label="答题时长区间" prop="durationRange">
+              <ElSlider
+                :format-tooltip="(val) => val + ' 秒'"
+                v-model="filterState.durationRange"
+                range
+              ></ElSlider>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="10" style="display: flex; align-items: center">
+            <ElButton
+              type="primary"
+              @click="handleSearch"
+              size="large"
+              style="width: 150px"
+            >
+              筛选
+            </ElButton>
+          </ElCol>
+        </ElRow>
       </ElForm>
     </ElCard>
     <ElTable :data="state.answerList" size="large">
@@ -51,7 +63,7 @@
       </ElTableColumn>
       <ElTableColumn label="IP" width="120" prop="ip"></ElTableColumn>
       <ElTableColumn label="User-Agent" width="400" prop="ua"></ElTableColumn>
-      <ElTableColumn fixed="right" label="操作" width="250">
+      <ElTableColumn fixed="right" label="操作">
         <template #default="scope">
           <ElButton
             link
@@ -98,7 +110,10 @@ import {
   ElTableColumn,
   ElButton,
   ElDatePicker,
-  ElSlider
+  ElSlider,
+  ElInput,
+  ElRow,
+  ElCol
 } from "element-plus";
 import { inject, reactive } from "vue";
 import { useRouter } from "vue-router";
@@ -109,20 +124,26 @@ const state = reactive({
   listTotal: 0,
   answerList: [] as Answer[]
 });
-
+const router = useRouter();
 const filterState = reactive<{
+  answerId: string;
   durationRange: [number, number] | undefined;
   submitTimeRange: [Date, Date] | undefined;
 }>({
+  answerId: router.currentRoute.value.query.answerId as string,
   durationRange: undefined,
   submitTimeRange: undefined
 });
 
-const router = useRouter();
 const updateStatRawData = inject<() => void>("updateStatRawData");
+
+function handleSearch() {
+  getData();
+}
 
 function getData() {
   getAnswerList(parseInt(router.currentRoute.value.query.surveyId as string), {
+    answerId: parseInt(filterState.answerId),
     durationRangeStart: filterState.durationRange?.[0],
     durationRangeEnd: filterState.durationRange?.[1],
     submitTimeRangeStart: filterState.submitTimeRange?.[0].valueOf(),

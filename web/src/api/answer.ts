@@ -15,6 +15,7 @@ export interface Answer {
 export function getAnswerList(
   surveyId: number,
   filterData: {
+    answerId?: number;
     durationRangeStart?: number;
     durationRangeEnd?: number;
     submitTimeRangeStart?: number;
