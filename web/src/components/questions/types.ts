@@ -32,3 +32,7 @@ export type MultiTextContent = {
 export type MultiTextAnswer = {
   [x: number]: string;
 };
+
+// 日期/时间
+export type DateTimeContent = {};
+export type DateTimeAnswer = string;

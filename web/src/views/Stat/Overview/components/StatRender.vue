@@ -58,7 +58,8 @@ const ifShowStatus = computed(() => {
     CommonTable: [
       QuestionTypeEnum.Text,
       QuestionTypeEnum.File,
-      QuestionTypeEnum.MultiText
+      QuestionTypeEnum.MultiText,
+      QuestionTypeEnum.DateTime
     ],
     ChartSet: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio]
   };

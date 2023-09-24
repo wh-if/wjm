@@ -1,6 +1,6 @@
 <template>
   <div class="multi-text">
-    <ElCard shadow="never">
+    <div class="multi-text-content">
       <template v-for="(item, index) in questionContent.textArray" :key="index">
         <template v-if="typeof item == 'string'">
           <ElInput
@@ -35,7 +35,7 @@
           </ElIcon>
         </div>
       </template>
-    </ElCard>
+    </div>
     <ElButton
       v-if="props.edit"
       @click="() => questionContent.textArray.push(Date.now(), '')"
@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElButton, ElInput, ElCard, ElMessageBox, ElIcon } from "element-plus";
+import { ElButton, ElInput, ElMessageBox, ElIcon } from "element-plus";
 import { reactive, ref, watch } from "vue";
 import type { MultiTextAnswer, MultiTextContent, QuestionProps } from "./types";
 import type { Close } from "@element-plus/icons-vue";
@@ -89,6 +89,13 @@ watch(questionContent, (val) => {
 </script>
 
 <style lang="scss" scoped>
+.multi-text-content {
+  padding: 8px;
+  border: 1px transparent;
+  &:hover {
+    border: 1px dashed rgb(162, 162, 162);
+  }
+}
 .input-area {
   padding-right: 30px;
   position: relative;
