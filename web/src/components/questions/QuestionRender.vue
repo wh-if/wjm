@@ -27,7 +27,7 @@
 
     <component
       :is="dynamicComponent!.component"
-      :question-content="questionData.content"
+      v-model:question-content="questionData.content"
       :edit="props.edit"
       :disabled="props.disabled"
       v-model:answer-value="answerValue"
