@@ -59,7 +59,9 @@ const ifShowStatus = computed(() => {
       QuestionTypeEnum.Text,
       QuestionTypeEnum.File,
       QuestionTypeEnum.MultiText,
-      QuestionTypeEnum.DateTime
+      QuestionTypeEnum.DateTime,
+      QuestionTypeEnum.Sign,
+      QuestionTypeEnum.Sort
     ],
     ChartSet: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio]
   };

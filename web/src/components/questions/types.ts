@@ -39,3 +39,6 @@ export type DateTimeAnswer = string;
 // 签名
 export type SignContent = {};
 export type SignAnswer = string;
+// 排序
+export type SortContent = RadioContent;
+export type SortAnswer = number[];

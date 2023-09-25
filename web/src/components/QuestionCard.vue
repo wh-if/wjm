@@ -120,7 +120,7 @@ const isAnswer = computed(() => route.name === "answer");
 }
 .question-card {
   background-color: #fff;
-  padding: 12px 0;
+  padding: 30px 0;
 
   .question-card-body {
     width: 86%;

@@ -7,7 +7,18 @@
         :prop="item"
         :label="'字段' + (index + 1)"
         :key="item"
-      ></ElTableColumn>
+      >
+        <template #default="scope">
+          <ElImage
+            v-if="
+              scope.row[scope.column.rawColumnKey].startsWith('data:image/png;')
+            "
+            :src="scope.row.resultValue"
+          ></ElImage>
+          <span v-else>{{ scope.row[scope.column.rawColumnKey] }}</span>
+          {{ console.log() }}
+        </template>
+      </ElTableColumn>
       <ElTableColumn fixed="right" label="操作">
         <template #default="scope">
           <ElButton
@@ -24,7 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { ElCard, ElTag, ElButton, ElTable, ElTableColumn } from "element-plus";
+import {
+  ElCard,
+  ElImage,
+  ElButton,
+  ElTable,
+  ElTableColumn
+} from "element-plus";
 import { ref, type PropType, computed } from "vue";
 import type { FormatStatResult } from "@/utils/formatStatData";
 import { useRouter } from "vue-router";

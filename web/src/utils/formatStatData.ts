@@ -35,6 +35,9 @@ export function formatStatData(statRawData: StatRawData) {
       case QuestionTypeEnum.MultiText:
         handleMultiText(formatStatResultItem);
         break;
+      case QuestionTypeEnum.Sort:
+        handleSort(formatStatResultItem);
+        break;
       default:
         break;
     }
@@ -109,6 +112,13 @@ function handleMultiText(formatStatResultItem: FormatStatResult) {
   );
   formatStatResultItem.answerResultList.forEach((item) => {
     item.resultValue = arr.map((it: any) => item.resultValue[it]).join("；");
+  });
+}
+
+// 处理排序
+function handleSort(formatStatResultItem: FormatStatResult) {
+  formatStatResultItem.answerResultList.forEach((item) => {
+    item.resultValue = item.resultValue.join("，");
   });
 }
 export interface FormatStatResult {

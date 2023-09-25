@@ -12,7 +12,8 @@ export enum QuestionTypeEnum {
   File = "file",
   MultiText = "multi_text",
   DateTime = "datetime",
-  Sign = "sign"
+  Sign = "sign",
+  Sort = "sort"
 }
 
 // 题目类型
@@ -23,6 +24,8 @@ import FileQuestion from "@/components/questions/FileQuestion.vue";
 import MultiTextQuestion from "@/components/questions/MultiTextQuestion.vue";
 import DateTimeQuestion from "@/components/questions/DateTimeQuestion.vue";
 import SignQuestion from "@/components/questions/SignQuestion.vue";
+import SortQuestion from "@/components/questions/SortQuestion.vue";
+
 export const QuestionTypeList = [
   {
     groupTitle: "选择",
@@ -67,6 +70,10 @@ export const QuestionTypeList = [
       [QuestionTypeEnum.Sign]: {
         name: "签名",
         component: SignQuestion
+      },
+      [QuestionTypeEnum.Sort]: {
+        name: "排序",
+        component: SortQuestion
       }
     }
   }
@@ -76,6 +83,7 @@ export function getDefaultContent(type: QuestionTypeEnum) {
   switch (type) {
     case QuestionTypeEnum.Radio:
     case QuestionTypeEnum.MultiRadio:
+    case QuestionTypeEnum.Sort:
       content.options = [
         { text: "选项1", id: 1 },
         { text: "选项2", id: 2 },
@@ -86,6 +94,7 @@ export function getDefaultContent(type: QuestionTypeEnum) {
     case QuestionTypeEnum.MultiText:
       content.textArray = [""];
       break;
+
     default:
       break;
   }
