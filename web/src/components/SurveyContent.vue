@@ -343,7 +343,7 @@ if (props.type == "Answer") {
 
 <style lang="scss" scoped>
 .survey-content {
-  padding-bottom: 50px;
+  padding-bottom: 200px;
   .submit-box {
     text-align: center;
     padding: 25px 0 40px;

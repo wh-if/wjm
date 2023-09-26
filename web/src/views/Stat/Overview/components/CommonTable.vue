@@ -86,7 +86,9 @@ const tableState = computed(() => {
     }
     return result;
   });
-  const columns = Reflect.ownKeys(list[0]).slice(1) as string[];
+  const columns = Reflect.ownKeys(list[0]).filter(
+    (i) => i != "answerId"
+  ) as string[];
   return {
     list,
     columns

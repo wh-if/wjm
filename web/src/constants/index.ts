@@ -13,7 +13,10 @@ export enum QuestionTypeEnum {
   MultiText = "multi_text",
   DateTime = "datetime",
   Sign = "sign",
-  Sort = "sort"
+  Sort = "sort",
+  MatrixRadio = "matrix_radio",
+  MatrixMultiText = "matrix_multi_text",
+  MatrixMultiRadio = "matrix_multi_radio"
 }
 
 // 题目类型
@@ -25,6 +28,9 @@ import MultiTextQuestion from "@/components/questions/MultiTextQuestion.vue";
 import DateTimeQuestion from "@/components/questions/DateTimeQuestion.vue";
 import SignQuestion from "@/components/questions/SignQuestion.vue";
 import SortQuestion from "@/components/questions/SortQuestion.vue";
+import MatrixRadioQuestion from "@/components/questions/MatrixRadioQuestion.vue";
+import MatrixMultiRadioQuestion from "@/components/questions/MatrixMultiRadioQuestion.vue";
+import MatrixMultiTextQuestion from "@/components/questions/MatrixMultiTextQuestion.vue";
 
 export const QuestionTypeList = [
   {
@@ -76,6 +82,26 @@ export const QuestionTypeList = [
         component: SortQuestion
       }
     }
+  },
+  {
+    groupTitle: "矩阵",
+    items: {
+      // 矩阵单选
+      [QuestionTypeEnum.MatrixRadio]: {
+        name: "矩阵单选",
+        component: MatrixRadioQuestion
+      },
+      // 矩阵多选
+      [QuestionTypeEnum.MatrixMultiRadio]: {
+        name: "矩阵多选",
+        component: MatrixMultiRadioQuestion
+      },
+      // 矩阵填空
+      [QuestionTypeEnum.MatrixMultiText]: {
+        name: "矩阵填空",
+        component: MatrixMultiTextQuestion
+      }
+    }
   }
 ];
 export function getDefaultContent(type: QuestionTypeEnum) {
@@ -94,7 +120,29 @@ export function getDefaultContent(type: QuestionTypeEnum) {
     case QuestionTypeEnum.MultiText:
       content.textArray = [""];
       break;
+    case QuestionTypeEnum.MatrixMultiRadio:
+    case QuestionTypeEnum.MatrixRadio:
+    case QuestionTypeEnum.MatrixMultiText:
+      {
+        content.options = [
+          { text: "选项1", id: 1 },
+          { text: "选项2", id: 2 },
+          { text: "选项3", id: 3 },
+          { text: "选项4", id: 4 }
+        ];
+        content.series = [
+          {
+            id: 1,
+            name: "行标题一"
+          },
+          {
+            id: 2,
+            name: "行标题二"
+          }
+        ];
+      }
 
+      break;
     default:
       break;
   }

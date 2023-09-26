@@ -42,3 +42,27 @@ export type SignAnswer = string;
 // 排序
 export type SortContent = RadioContent;
 export type SortAnswer = number[];
+
+// 矩阵单选
+export type MatrixRadioContent = {
+  options: {
+    id: number;
+    text: string;
+  }[];
+  // 维度
+  series: {
+    id: number;
+    name: string;
+  }[];
+};
+export type MatrixRadioAnswer = Record<string, number>;
+
+// 矩阵多选
+export type MatrixMultiRadioContent = MatrixRadioContent;
+export type MatrixMultiRadioAnswer = Record<string, Record<number, boolean>>;
+
+// 矩阵填空
+export type MatrixMultiTextContent = MatrixRadioContent;
+export type MatrixMultiTextAnswer = {
+  [x: string]: Record<number, string>;
+};

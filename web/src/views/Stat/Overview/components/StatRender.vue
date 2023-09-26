@@ -26,12 +26,17 @@
       v-if="ifShowStatus.ChartSet"
       :stat-data="props.statData"
     ></ChartSet>
+    <MatrixChartSet
+      v-if="ifShowStatus.MatrixChartSet"
+      :stat-data="props.statData"
+    ></MatrixChartSet>
   </div>
 </template>
 
 <script setup lang="ts">
 import PercentBar from "./PercentBar.vue";
 import ChartSet from "./ChartSet.vue";
+import MatrixChartSet from "./MatrixChartSet.vue";
 import CommonTable from "./CommonTable.vue";
 import { computed, type PropType } from "vue";
 import type { FormatStatResult } from "@/utils/formatStatData";
@@ -61,9 +66,11 @@ const ifShowStatus = computed(() => {
       QuestionTypeEnum.MultiText,
       QuestionTypeEnum.DateTime,
       QuestionTypeEnum.Sign,
-      QuestionTypeEnum.Sort
+      QuestionTypeEnum.Sort,
+      QuestionTypeEnum.MatrixMultiText
     ],
-    ChartSet: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio]
+    ChartSet: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio],
+    MatrixChartSet: [QuestionTypeEnum.MatrixRadio,QuestionTypeEnum.MatrixMultiRadio]
   };
   const ifShowStatus: Partial<Record<keyof typeof ifShowList, boolean>> = {};
 

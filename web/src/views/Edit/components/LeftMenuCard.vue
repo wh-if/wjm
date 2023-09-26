@@ -57,7 +57,7 @@
               @cancel="handleRemoveCollect(item.id!)"
             >
               <template #reference>
-                <ElButton style="margin: 6px 0 0" text>{{
+                <ElButton style="margin: 6px 0 0" bg text>{{
                   item.title
                 }}</ElButton>
               </template>
@@ -150,7 +150,7 @@ function handleRemoveCollect(questionId: number) {
       removeCollect(questionId).then(() => {
         ElMessage.success("取消成功！");
         getCollectData();
-      }); 
+      });
     })
     .catch(() => {});
 }

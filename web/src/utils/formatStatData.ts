@@ -38,6 +38,13 @@ export function formatStatData(statRawData: StatRawData) {
       case QuestionTypeEnum.Sort:
         handleSort(formatStatResultItem);
         break;
+      case QuestionTypeEnum.MatrixRadio:
+      case QuestionTypeEnum.MatrixMultiRadio:
+        handleMatrixRadio(formatStatResultItem);
+        break;
+      case QuestionTypeEnum.MatrixMultiText:
+        handleMatrixText(formatStatResultItem);
+        break;
       default:
         break;
     }
@@ -121,6 +128,63 @@ function handleSort(formatStatResultItem: FormatStatResult) {
     item.resultValue = item.resultValue.join("，");
   });
 }
+
+// 处理矩阵单选\多选
+function handleMatrixRadio(formatStatResultItem: FormatStatResult) {
+  const resultSeries = [] as any;
+
+  formatStatResultItem.questionRaw.content!.series.forEach(
+    (seriesItem: any) => {
+      const newSeriesItem = Object.assign({}, seriesItem);
+      newSeriesItem.options = [];
+      formatStatResultItem.questionRaw.content!.options?.forEach(
+        (optionItem: RadioOptionFormatStatResult) => {
+          const newOptionItem = Object.assign({}, optionItem);
+          // 选该选项的个数
+          newOptionItem.count = 0;
+          formatStatResultItem.answerResultList
+            .map((s) => s.resultValue)
+            .forEach((item) => {
+              // 单选 || 多选
+              if (
+                item[seriesItem.id] == optionItem.id ||
+                item[seriesItem.id][optionItem.id]
+              ) {
+                newOptionItem.count!++;
+              }
+            });
+          // 选项选择率
+          newOptionItem.rate = parseFloat(
+            (
+              newOptionItem.count / formatStatResultItem.answerResultList.length
+            ).toFixed(2)
+          );
+          if (isNaN(newOptionItem.rate)) newOptionItem.rate = 0;
+          newSeriesItem.options.push(newOptionItem);
+        }
+      );
+      resultSeries.push(newSeriesItem);
+    }
+  );
+  formatStatResultItem.seriesStat = resultSeries;
+}
+
+// 处理矩阵填空
+function handleMatrixText(formatStatResultItem: FormatStatResult) {
+  formatStatResultItem.answerResultList.forEach((item) => {
+    formatStatResultItem.questionRaw.content!.series.forEach(
+      (seriesItem: any) => {
+        const element = item.resultValue[seriesItem.id];
+        const optionsResult =
+          formatStatResultItem.questionRaw.content!.options.map(
+            (optionItem: any) => element[optionItem.id]
+          );
+        item.resultValue[seriesItem.id] = optionsResult.join("，");
+      }
+    );
+  });
+}
+
 export interface FormatStatResult {
   // 题目源数据
   questionRaw: Question;
@@ -132,6 +196,11 @@ export interface FormatStatResult {
   answerRate: string;
   // 各选项数据(选择题)
   options?: RadioOptionFormatStatResult[];
+  seriesStat?: {
+    id: number;
+    name: string;
+    options: RadioOptionFormatStatResult[];
+  }[];
 }
 
 interface RadioOptionFormatStatResult {
