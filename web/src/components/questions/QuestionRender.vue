@@ -38,9 +38,8 @@
 <script setup lang="ts">
 import { ElTag } from "element-plus";
 import EditInput from "../EditInput.vue";
-import { ref, watch, reactive, type PropType, computed } from "vue";
+import { ref, watch, reactive, type PropType, computed, inject } from "vue";
 import { updateQuestion, type Question } from "@/api/question";
-import { useAutoSave } from "@/hooks/useAutoSave";
 import { QuestionTypeObj } from "@/constants";
 
 export interface AnswerData {
@@ -71,7 +70,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["answer-change", "focus"]);
-const { addSaveItem } = useAutoSave();
+const { addSaveItem } = inject('saveTool') as any;
 
 const questionData = reactive<Question>(props.questionData);
 const answerValue = ref<any>(props.answerData?.resultValue);

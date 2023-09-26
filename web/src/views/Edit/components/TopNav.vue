@@ -24,10 +24,9 @@ import { ElButton, ElDialog, ElPageHeader } from "element-plus";
 import SharePane from "@/components/SharePane.vue";
 import { computed, inject, ref, type Ref } from "vue";
 import { type SurveyWithQuestions } from "@/api/survey";
-import { useAutoSave } from "@/hooks/useAutoSave";
 const showShareDialog = ref(false);
 const surveyContentRef = inject<Ref>("surveyContentRef");
-const { saveAll, hasSaved } = useAutoSave();
+const { saveAll, hasSaved } = inject("saveTool") as any;
 
 const surveyData = computed(() => {
   if (surveyContentRef?.value?.surveyState) {

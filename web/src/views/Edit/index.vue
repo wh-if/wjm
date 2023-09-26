@@ -16,11 +16,57 @@ import TopNav from "./components/TopNav.vue";
 import LeftMenuCard from "./components/LeftMenuCard.vue";
 import RightSettingCard from "./components/RightSettingCard.vue";
 import SurveyContent from "@/components/SurveyContent.vue";
-
+import { ElMessageBox, ElNotification } from "element-plus";
 import { ref, provide } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 
 const surveyContentRef = ref();
 
+onBeforeRouteLeave(async () => {
+  if (!hasSaved.value) {
+    try {
+      await ElMessageBox.confirm("当前修改暂未保存，确认要离开吗？", {
+        type: "warning",
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  return true;
+});
+
+const hasSaved = ref(true);
+let timer = 0;
+const fnMap = new Map<string, () => Promise<any>>();
+
+function addSaveItem(key: string, fn: () => Promise<any>) {
+  fnMap.set(key, fn);
+  hasSaved.value = false;
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(saveAll, 5000);
+}
+// 全部保存
+function saveAll() {
+  const promises: Promise<any>[] = [];
+  fnMap.forEach((valueFn) => promises.push(valueFn()));
+  Promise.all(promises).then(() => {
+    clearTimeout(timer);
+    fnMap.clear();
+    hasSaved.value = true;
+    ElNotification.success({
+      message: "保存成功！",
+      duration: 1500
+    });
+  });
+}
+provide("saveTool", {
+  addSaveItem,
+  saveAll,
+  hasSaved
+});
 provide("surveyContentRef", surveyContentRef);
 </script>
 

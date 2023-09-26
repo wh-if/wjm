@@ -113,12 +113,11 @@ import {
 import EditInput from "@/components/EditInput.vue";
 import QuestionCard from "@/components/QuestionCard.vue";
 import { ElButton, ElMessage, ElMessageBox, ElPagination } from "element-plus";
-import { ref, watch, type PropType, computed, reactive } from "vue";
+import { ref, watch, type PropType, computed, reactive, inject } from "vue";
 import { useRouter } from "vue-router";
 import QuestionRender, {
   type AnswerData
 } from "./questions/QuestionRender.vue";
-import { useAutoSave } from "@/hooks/useAutoSave";
 import { addCollect, removeCollect } from "@/api/collect";
 import {
   removeQuestion,
@@ -148,7 +147,7 @@ const surveyState = reactive({
 
 const editFlag = computed(() => props.type === "Edit");
 const disabledFlag = computed(() => editFlag.value || props.type === "Review");
-const { addSaveItem } = useAutoSave();
+const { addSaveItem } = inject('saveTool') as any;
 
 const router = useRouter();
 
