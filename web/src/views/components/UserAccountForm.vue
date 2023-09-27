@@ -84,6 +84,7 @@ import { Lock, UserFilled } from "@element-plus/icons-vue";
 import { useUserStore } from "@/stores/user";
 import { reactive, ref } from "vue";
 import { getVerifyData, register, updatePassword } from "@/api/user";
+import { cryptoDigest } from "@/utils/crypto";
 
 const props = defineProps<{
   type: "register" | "password";
@@ -122,30 +123,31 @@ function sendVerifyCode() {
 }
 
 function handleSubmit() {
-  formRef.value.validate((valid: boolean) => {
-    if (valid) {
-      let params = {
-        email: inputState.email,
-        password: inputState.password,
-        vcode: inputState.vcode
-      };
-      if (props.type == "register") {
-        register(params).then(() => {
-          ElMessage.success("注册成功！");
-          inputState.vcode = "";
+  formRef.value.validate(async (valid: boolean) => {
+    if (!valid) {
+      return;
+    }
+    let params = {
+      email: inputState.email,
+      password: await cryptoDigest(inputState.password),
+      vcode: inputState.vcode
+    };
+    if (props.type == "register") {
+      register(params).then(() => {
+        ElMessage.success("注册成功！");
+        inputState.vcode = "";
+        props.close();
+      });
+    } else if (props.type == "password") {
+      updatePassword(params).then(({ message, data }) => {
+        if (data) {
+          ElMessage.success("修改成功！");
           props.close();
-        });
-      } else if (props.type == "password") {
-        updatePassword(params).then(({ message, data }) => {
-          if (data) {
-            ElMessage.success("修改成功！");
-            props.close();
-          } else {
-            ElMessage.warning(message);
-            inputState.vcode = "";
-          }
-        });
-      }
+        } else {
+          ElMessage.warning(message);
+          inputState.vcode = "";
+        }
+      });
     }
   });
 }

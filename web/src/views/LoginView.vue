@@ -15,6 +15,7 @@ ElMenuItem
           type="email"
           size="large"
           placeholder="邮箱"
+          clearable
         />
       </ElFormItem>
       <ElFormItem v-if="isPasswordType" prop="password">
@@ -23,6 +24,7 @@ ElMenuItem
           type="password"
           :prefix-icon="Lock"
           size="large"
+          clearable
           :placeholder="isPasswordType ? '密码' : '验证码'"
         />
       </ElFormItem>
@@ -33,6 +35,7 @@ ElMenuItem
             :prefix-icon="Lock"
             style="flex: 1"
             size="large"
+            clearable
             :placeholder="isPasswordType ? '密码' : '验证码'"
           />
           <ElButton
@@ -59,7 +62,11 @@ ElMenuItem
       <ElFormItem>
         <div class="checkbox-box">
           <div>
-            <ElCheckbox v-show="isPasswordType" label="记住密码" />
+            <ElCheckbox
+              v-model="state.remember"
+              v-show="isPasswordType"
+              label="记住密码"
+            />
           </div>
 
           <div>
@@ -109,14 +116,14 @@ import {
   ElFormItem,
   ElLink,
   ElCheckbox,
-  ElDivider,
   type FormRules,
   ElMessage,
   ElCountdown
 } from "element-plus";
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import { type LoginParams, getVerifyData } from "@/api/user";
 import UserAccountForm from "./components/UserAccountForm.vue";
+import { cryptoDigest } from "@/utils/crypto";
 
 const isPasswordType = ref<boolean>(true);
 
@@ -125,6 +132,18 @@ const inputState = reactive({
   password: "", // 密码或验证码
   vcode: ""
 });
+
+const rememberObj = JSON.parse(localStorage.getItem("remember") || "null");
+
+const state = reactive({
+  inputIsCrypto: false,
+  remember: !!rememberObj
+});
+if (state.remember) {
+  inputState.email = rememberObj.email;
+  inputState.password = rememberObj.password;
+  state.inputIsCrypto = true;
+}
 
 const visible = ref(false);
 
@@ -193,22 +212,40 @@ function sendVerifyCode() {
 }
 
 function handleLogin() {
-  formRef.value!.validate((valid: boolean) => {
-    if (valid) {
-      const loginParams: LoginParams = {
-        email: inputState.email
-      };
-      if (isPasswordType.value) {
-        loginParams.password = inputState.password;
-      } else {
-        loginParams.vcode = inputState.vcode;
-      }
-      userStore.loginAction(loginParams);
-      inputState.password = "";
-      inputState.vcode = "";
+  formRef.value!.validate(async (valid: boolean) => {
+    if (!valid) {
+      return;
     }
+    const loginParams: LoginParams = {
+      email: inputState.email
+    };
+    if (isPasswordType.value) {
+      loginParams.password = state.inputIsCrypto
+        ? inputState.password
+        : await cryptoDigest(inputState.password);
+    } else {
+      loginParams.vcode = inputState.vcode;
+    }
+    userStore.loginAction(loginParams, state.remember);
+    inputState.password = "";
+    inputState.vcode = "";
   });
 }
+
+watch(
+  () => inputState.password,
+  () => {
+    state.inputIsCrypto = false;
+  }
+);
+watch(
+  () => state.remember,
+  (val) => {
+    if (!val) {
+      localStorage.removeItem("remember");
+    }
+  }
+);
 </script>
 
 <style lang="scss" scoped>

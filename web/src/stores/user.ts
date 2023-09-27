@@ -14,7 +14,7 @@ export const useUserStore = defineStore("user", () => {
   });
   const router = useRouter();
 
-  function loginAction(loginInfo: LoginParams) {
+  function loginAction(loginInfo: LoginParams, remember: boolean) {
     login(loginInfo).then(
       ({ data: { id, name, email, token, refresh_token }, message }) => {
         user.id = id;
@@ -22,6 +22,15 @@ export const useUserStore = defineStore("user", () => {
         user.email = email;
         user.token = token;
         user.refresh_token = refresh_token;
+        if (remember) {
+          localStorage.setItem(
+            "remember",
+            JSON.stringify({
+              email: loginInfo.email,
+              password: loginInfo.password
+            })
+          );
+        }
         ElMessage.success(message);
         router.replace("mine");
       }
