@@ -76,8 +76,15 @@ function initChart() {
       {
         type: "line",
         data: Object.values(computedData),
-        areaStyle: {},
-        smooth: true
+        smooth: true,
+        lineStyle: { color: "#fe9a8b" },
+        itemStyle: { color: "#fe9a8b", borderColor: "#fe9a8b" },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: "#fe9a8bb3" },
+            { offset: 1, color: "#fe9a8b03" }
+          ])
+        }
       }
     ]
   });

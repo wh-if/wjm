@@ -70,7 +70,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["answer-change", "focus"]);
-const { addSaveItem } = inject('saveTool') as any;
+const saveTool = props.edit && (inject("saveTool") as any);
 
 const questionData = reactive<Question>(props.questionData);
 const answerValue = ref<any>(props.answerData?.resultValue);
@@ -93,7 +93,7 @@ function handleClickQuestion() {
 
 const saveKey = Symbol("question");
 watch(questionData, (newVal) => {
-  addSaveItem(saveKey, () => updateQuestion(newVal));
+  saveTool.addSaveItem(saveKey, () => updateQuestion(newVal));
 });
 </script>
 

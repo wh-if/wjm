@@ -147,7 +147,7 @@ const surveyState = reactive({
 
 const editFlag = computed(() => props.type === "Edit");
 const disabledFlag = computed(() => editFlag.value || props.type === "Review");
-const { addSaveItem } = inject('saveTool') as any;
+const saveTool = editFlag.value && (inject("saveTool") as any);
 
 const router = useRouter();
 
@@ -212,7 +212,7 @@ function onUpdateSurveyData() {
           }
         }
         if (changed) {
-          addSaveItem(saveKey, () =>
+          saveTool.addSaveItem(saveKey, () =>
             updateSurvey({
               title: surveyState.data.title,
               description: surveyState.data.description,
