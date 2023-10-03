@@ -49,12 +49,17 @@ const controller: Controller[] = [
   // 删除文件夹, removeSurvey是否将文件夹内的问卷移入回收站
   // TODO 文件夹删除后，更新survey的folderIds字段
   {
-    path: "/folder/:folderId",
+    path: "/folder",
     method: HttpMethodEnum.DELETE,
     handler: async (ctx) => {
-      const folderId = ctx.params.folderId as string;
+      const ids = JSON.parse(ctx.query.ids as string);
+      try {
+        const result = await folderMapper.removeOfList(ids);
+        ctx.body = AjaxResult.success({ result });
+      } catch (error) {
+        ctx.body = AjaxResult.success("删除失败！");
+      }
       // const { removeSurvey } = ctx.request.body;
-      const result = await folderMapper.remove({ id: parseInt(folderId) });
 
       // if (removeSurvey) {
       //   surveyMapper.update(
@@ -65,7 +70,7 @@ const controller: Controller[] = [
       //   );
       // }
       // console.log(folderId + "---" + removeSurvey);
-      ctx.body = AjaxResult.success({ result });
+      // ctx.body = AjaxResult.success({ result });
     },
   },
 ];

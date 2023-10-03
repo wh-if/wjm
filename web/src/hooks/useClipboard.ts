@@ -1,19 +1,7 @@
 import { computed, ref, type Ref } from "vue";
 
-
 export interface UseClipboardOptions {
-  /**
-   * Milliseconds to reset state of `copied` ref
-   *
-   * @default 1500
-   */
   copiedDuring?: number;
-
-  /**
-   * Whether fallback to document.execCommand('copy') if clipboard is undefined.
-   *
-   * @default false
-   */
   legacy?: boolean;
 }
 
@@ -36,8 +24,7 @@ export function useClipboard(
 
   async function copy(value: string | undefined) {
     if (isSupported.value && value != null) {
-      if (isClipboardApiSupported)
-        await navigator!.clipboard.writeText(value);
+      if (isClipboardApiSupported) await navigator!.clipboard.writeText(value);
       else legacyCopy(value);
 
       text.value = value;

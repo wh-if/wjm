@@ -29,9 +29,12 @@ export function updateFolderName(folderId: number, name: string) {
     }
   });
 }
-export function removeFolder(folderId: number) {
+export function removeFolder(folderIds: number[]) {
   return request({
-    url: "/folder/" + folderId,
-    method: "delete"
+    url: "/folder",
+    method: "delete",
+    params: {
+      ids: JSON.stringify(folderIds)
+    }
   });
 }

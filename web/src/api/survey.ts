@@ -57,9 +57,12 @@ export function updateSurvey(data: SurveyWithQuestions) {
   });
 }
 
-export function removeSurvey(surveyId: number) {
+export function removeSurvey(surveyIds: number[]) {
   return request({
-    url: "/survey/" + surveyId,
-    method: "delete"
+    url: "/survey",
+    method: "delete",
+    params: {
+      ids: JSON.stringify(surveyIds)
+    }
   });
 }

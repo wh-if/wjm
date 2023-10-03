@@ -106,9 +106,30 @@ export default class BaseMapper<T> {
 
   remove(whereValues: T) {
     return new Promise<number>((resolve, reject) => {
-      let sql = this.warpWhere(`delete from \`${this.TABLE_NAME}\``, whereValues);
-      console.warn(sql);
-      this.POOL.query(sql, function (error, results, fields) {
+      if (
+        Object.values(whereValues).filter((i) => !Number.isNaN(i)).length > 0
+      ) {
+        let sql = this.warpWhere(
+          `delete from \`${this.TABLE_NAME}\``,
+          whereValues
+        );
+        console.warn(sql);
+        this.POOL.query(sql, function (error, results, fields) {
+          if (error) throw error;
+          resolve(results.affectedRows);
+        });
+      } else {
+        reject(0);
+      }
+    });
+  }
+
+  removeOfList(ids: number[]) {
+    return new Promise((resolve) => {
+      const sql = `delete from ${
+        this.TABLE_NAME
+      } where id in (${ids.toString()})`;
+      this.POOL.query(sql, (error, results) => {
         if (error) throw error;
         resolve(results.affectedRows);
       });

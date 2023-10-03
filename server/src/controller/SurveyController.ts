@@ -154,13 +154,16 @@ const controller: Controller[] = [
   },
   // 删除问卷
   {
-    path: "/survey/:surveyId",
+    path: "/survey", // /:surveyId
     method: HttpMethodEnum.DELETE,
     handler: async (ctx) => {
-      const result = await surveyMapper.remove({
-        id: parseInt(ctx.params.surveyId),
-      });
-      ctx.body = AjaxResult.success({ result });
+      const ids = JSON.parse(ctx.query.ids as string);
+      try {
+        const result = await surveyMapper.removeOfList(ids);
+        ctx.body = AjaxResult.success({ result });
+      } catch (error) {
+        ctx.body = AjaxResult.success("删除失败！");
+      }
     },
   },
 ];

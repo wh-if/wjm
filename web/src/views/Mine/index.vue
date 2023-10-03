@@ -46,6 +46,7 @@
           <ElButton type="success" @click="handleFolder()" v-if="inFolderMenu">
             新建文件夹
           </ElButton>
+
           <template v-else>
             <ElSelect @change="getData" v-model="state.searchOrderBy">
               <ElOption
@@ -60,6 +61,12 @@
               <ElOption key="false" label="升序" :value="false" />
             </ElSelect>
           </template>
+          <ElButton
+            type="danger"
+            @click="handleRemove(inFolderMenu ? 'folder' : 'survey')"
+          >
+            批量删除
+          </ElButton>
         </div>
       </div>
       <ElTable
@@ -68,9 +75,11 @@
         :row-key="inFolderMenu ? 'idInFolder' : 'id'"
         :load="loadSurveyListOfFolder"
         :lazy="inFolderMenu"
+        @selection-change="handleSelectionChange"
         :max-height="inFolderMenu ? '' : 700"
         size="large"
       >
+        <ElTableColumn type="selection" width="55" />
         <ElTableColumn label="ID" prop="id">
           <!-- scope.row.folderIds !== undefined 判断该条数据是文件夹还是问卷 -->
           <template #default="scope">
@@ -274,7 +283,8 @@ const state = shallowReactive({
   pageSize: 10,
   listTotal: 0,
   showShareDialog: false,
-  folderList: [] as Array<Record<string, any>>
+  folderList: [] as Array<Record<string, any>>,
+  tableSelectList: [] as number[]
 });
 const currentFocusSurvey = ref<number>(0);
 
@@ -462,7 +472,17 @@ function handleFolder(folderId?: number) {
 }
 
 // 删除问卷或文件夹
-function handleRemove(type: "survey" | "folder", id: number) {
+function handleRemove(type: "survey" | "folder", id?: number) {
+  let ids: number[] = [];
+  if (id) {
+    ids.push(id);
+  } else {
+    ids = state.tableSelectList;
+  }
+  if (ids.length === 0) {
+    ElMessage.warning("请选择删除项目！");
+    return;
+  }
   ElMessageBox.confirm(
     `确定要删除该${type === "survey" ? "问卷" : "文件夹"}吗？`,
     "提示",
@@ -477,12 +497,16 @@ function handleRemove(type: "survey" | "folder", id: number) {
         getData();
       };
       if (type === "survey") {
-        removeSurvey(id).then(cb);
+        removeSurvey(ids).then(cb);
       } else if (type === "folder") {
-        removeFolder(id).then(cb);
+        removeFolder(ids).then(cb);
       }
     })
     .catch(() => {});
+}
+
+function handleSelectionChange(val: any) {
+  state.tableSelectList = val.map((i: any) => i.id);
 }
 
 // 获取列表数据
