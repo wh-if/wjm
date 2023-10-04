@@ -66,3 +66,12 @@ export type MatrixMultiTextContent = MatrixRadioContent;
 export type MatrixMultiTextAnswer = {
   [x: string]: Record<number, string>;
 };
+
+// 量表
+export type StarContent = {
+  // 两极文案
+  leftText: string;
+  rightText: string;
+  countLength: number; // 量表维度
+};
+export type StarAnswer = number;

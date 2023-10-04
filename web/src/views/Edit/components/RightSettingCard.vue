@@ -1,7 +1,7 @@
 <template>
   <ElCard class="right-setting-box">
-    <ElTabs>
-      <ElTabPane label="问卷设置">
+    <ElTabs v-model="activeTab">
+      <ElTabPane name="survey" label="问卷设置">
         <ElForm v-if="!!surveyData">
           <ElFormItem label="允许作答">
             <el-switch
@@ -23,7 +23,7 @@
           
         </div> -->
       </ElTabPane>
-      <ElTabPane label="题目设置">
+      <ElTabPane name="question" label="题目设置">
         <ElForm v-if="!!questionData" label-position="top">
           <ElFormItem label="题目类型">
             <ElSelect
@@ -46,6 +46,10 @@
               size="large"
             />
           </ElFormItem>
+          <StarQuestionContent
+            v-if="questionTypeValue === QuestionTypeEnum.Star"
+            v-model:contentData="questionData.content"
+          ></StarQuestionContent>
         </ElForm>
         <ElEmpty v-else description="请选择题目"></ElEmpty>
         <!-- <div style="overflow-y: auto; height: 100%">
@@ -70,12 +74,15 @@ import {
   ElSelect,
   ElMessageBox
 } from "element-plus";
-import { computed, inject, watch, type Ref, ref, watchEffect } from "vue";
+import { computed, inject, type Ref, ref, watchEffect, watch } from "vue";
 import {
   QuestionTypeEnum,
   QuestionTypeObj,
   getDefaultContent
 } from "@/constants";
+import StarQuestionContent from "./StarQuestionContent.vue";
+
+const activeTab = ref<"survey" | "question">("survey");
 const surveyContentRef = inject<Ref>("surveyContentRef");
 
 const surveyData = computed(() => {
@@ -86,8 +93,16 @@ const surveyData = computed(() => {
   }
 });
 
-const focusQuestionIndex = computed(
-  () => surveyContentRef?.value?.focusQuestionIndex
+const focusQuestionIndex = ref<number>(
+  surveyContentRef?.value?.focusQuestionIndex
+);
+
+watch(
+  () => surveyContentRef?.value?.focusQuestionIndex,
+  (val) => {
+    focusQuestionIndex.value = val;
+    activeTab.value = "question";
+  }
 );
 
 const questionData = computed(() => {
@@ -104,7 +119,8 @@ watchEffect(() => {
   questionTypeValue.value = questionData.value?.type;
 });
 
-function handleUpdateQuestionTypeValue(val: QuestionTypeEnum | undefined) {
+function handleUpdateQuestionTypeValue(newVal: QuestionTypeEnum | undefined) {
+  const oldVal = questionTypeValue.value;
   ElMessageBox.confirm(
     "更改题目类型可能导致丢失部分信息，确认要修改吗？",
     "提示",
@@ -115,23 +131,22 @@ function handleUpdateQuestionTypeValue(val: QuestionTypeEnum | undefined) {
     }
   )
     .then(() => {
-      questionTypeValue.value = val;
+      questionTypeValue.value = newVal;
+      questionData.value!.type = newVal as QuestionTypeEnum;
+      const arr = [QuestionTypeEnum.MultiRadio, QuestionTypeEnum.Radio];
+      if (
+        arr.includes(newVal as QuestionTypeEnum) &&
+        arr.includes(oldVal as QuestionTypeEnum)
+      ) {
+        return;
+      } else {
+        questionData.value!.content = getDefaultContent(
+          newVal as QuestionTypeEnum
+        );
+      }
     })
     .catch(() => {});
 }
-
-watch(questionTypeValue, (newVal, oldVal) => {
-  questionData.value!.type = newVal as QuestionTypeEnum;
-  const arr = [QuestionTypeEnum.MultiRadio, QuestionTypeEnum.Radio];
-  if (
-    arr.includes(newVal as QuestionTypeEnum) &&
-    arr.includes(oldVal as QuestionTypeEnum)
-  ) {
-    return;
-  } else {
-    questionData.value!.content = getDefaultContent(newVal as QuestionTypeEnum);
-  }
-});
 </script>
 
 <style lang="scss" scoped>

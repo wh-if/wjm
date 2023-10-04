@@ -62,6 +62,7 @@
             </ElSelect>
           </template>
           <ElButton
+            v-if="!(currentMenuItem === 'all')"
             type="danger"
             @click="handleRemove(inFolderMenu ? 'folder' : 'survey')"
           >

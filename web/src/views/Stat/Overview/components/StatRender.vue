@@ -67,10 +67,14 @@ const ifShowStatus = computed(() => {
       QuestionTypeEnum.DateTime,
       QuestionTypeEnum.Sign,
       QuestionTypeEnum.Sort,
-      QuestionTypeEnum.MatrixMultiText
+      QuestionTypeEnum.MatrixMultiText,
+      QuestionTypeEnum.Star
     ],
     ChartSet: [QuestionTypeEnum.Radio, QuestionTypeEnum.MultiRadio],
-    MatrixChartSet: [QuestionTypeEnum.MatrixRadio,QuestionTypeEnum.MatrixMultiRadio]
+    MatrixChartSet: [
+      QuestionTypeEnum.MatrixRadio,
+      QuestionTypeEnum.MatrixMultiRadio
+    ]
   };
   const ifShowStatus: Partial<Record<keyof typeof ifShowList, boolean>> = {};
 

@@ -16,7 +16,8 @@ export enum QuestionTypeEnum {
   Sort = "sort",
   MatrixRadio = "matrix_radio",
   MatrixMultiText = "matrix_multi_text",
-  MatrixMultiRadio = "matrix_multi_radio"
+  MatrixMultiRadio = "matrix_multi_radio",
+  Star = "star"
 }
 
 // 题目类型
@@ -31,6 +32,7 @@ import SortQuestion from "@/components/questions/SortQuestion.vue";
 import MatrixRadioQuestion from "@/components/questions/MatrixRadioQuestion.vue";
 import MatrixMultiRadioQuestion from "@/components/questions/MatrixMultiRadioQuestion.vue";
 import MatrixMultiTextQuestion from "@/components/questions/MatrixMultiTextQuestion.vue";
+import StarQuestion from "@/components/questions/StarQuestion.vue";
 
 export const QuestionTypeList = [
   {
@@ -65,6 +67,10 @@ export const QuestionTypeList = [
   {
     groupTitle: "高级题型",
     items: {
+      [QuestionTypeEnum.Star]: {
+        name: "量表",
+        component: StarQuestion
+      },
       [QuestionTypeEnum.File]: {
         name: "图片/文件",
         component: FileQuestion
@@ -123,25 +129,27 @@ export function getDefaultContent(type: QuestionTypeEnum) {
     case QuestionTypeEnum.MatrixMultiRadio:
     case QuestionTypeEnum.MatrixRadio:
     case QuestionTypeEnum.MatrixMultiText:
-      {
-        content.options = [
-          { text: "选项1", id: 1 },
-          { text: "选项2", id: 2 },
-          { text: "选项3", id: 3 },
-          { text: "选项4", id: 4 }
-        ];
-        content.series = [
-          {
-            id: 1,
-            name: "行标题一"
-          },
-          {
-            id: 2,
-            name: "行标题二"
-          }
-        ];
-      }
-
+      content.options = [
+        { text: "选项1", id: 1 },
+        { text: "选项2", id: 2 },
+        { text: "选项3", id: 3 },
+        { text: "选项4", id: 4 }
+      ];
+      content.series = [
+        {
+          id: 1,
+          name: "行标题一"
+        },
+        {
+          id: 2,
+          name: "行标题二"
+        }
+      ];
+      break;
+    case QuestionTypeEnum.Star:
+      (content.leftText = "左极文案"),
+        (content.rightText = "右极文案"),
+        (content.countLength = 5);
       break;
     default:
       break;

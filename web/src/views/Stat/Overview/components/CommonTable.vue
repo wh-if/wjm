@@ -11,7 +11,9 @@
         <template #default="scope">
           <ElImage
             v-if="
-              scope.row[scope.column.rawColumnKey].startsWith('data:image/png;')
+              scope.row[scope.column.rawColumnKey]
+                .toString()
+                .startsWith('data:image/png;')
             "
             :src="scope.row.resultValue"
           ></ElImage>

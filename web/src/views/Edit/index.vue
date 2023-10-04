@@ -83,7 +83,7 @@ provide("surveyContentRef", surveyContentRef);
   margin-top: 60px;
 
   .left {
-    width: 230px;
+    width: 300px;
     position: fixed;
     top: 120px;
     left: 10px;
@@ -91,7 +91,7 @@ provide("surveyContentRef", surveyContentRef);
   }
 
   .content {
-    margin: 0 250px 20px;
+    margin: 0 320px 20px;
     // height: 1500px;
     padding: 100px 0 0;
   }
@@ -100,8 +100,19 @@ provide("surveyContentRef", surveyContentRef);
     position: fixed;
     top: 120px;
     right: 10px;
-    width: 230px;
+    width: 300px;
     height: calc(100vh - 140px);
+  }
+
+  @media (max-width: 1280px) {
+    .left,
+    .right {
+      width: 230px;
+    }
+    .content {
+      margin-left: 250px;
+      margin-right: 250px;
+    }
   }
 }
 </style>

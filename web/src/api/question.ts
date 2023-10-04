@@ -1,12 +1,12 @@
 import type { QuestionTypeEnum } from "@/constants";
 import { request } from ".";
 
-export interface Question {
+export interface Question<T = Record<string, any>> {
   [x: string]: any;
   id?: number;
   title?: string;
   type?: QuestionTypeEnum;
-  content?: Record<string, any>;
+  content?: T;
   surveyId?: number;
   description?: string;
   required?: boolean;
