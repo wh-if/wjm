@@ -18,3 +18,34 @@ export function getFile(fileKey: string, mimetype: string) {
     }
   });
 }
+
+export function checkFileShard(data: {
+  fileKey: string;
+  shardTotalCount: number;
+  fileSuffix: string;
+}) {
+  return request({
+    url: "/file/shard/check",
+    method: "post",
+    data
+  });
+}
+
+export function uploadFileShard(formData: FormData) {
+  return request({
+    url: "/file/shard/upload",
+    method: "post",
+    data: formData
+  });
+}
+export function mergeFileShard(data: {
+  fileKey: string;
+  shardTotalCount: number;
+  fileSuffix: string;
+}) {
+  return request({
+    url: "/file/shard/merge",
+    method: "post",
+    data
+  });
+}

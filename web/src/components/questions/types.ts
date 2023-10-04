@@ -23,7 +23,7 @@ export type FileContent = {};
 export type FileAnswer = {
   filename: string;
   mimetype: string;
-  originalFilename: string;
+  fileKey: string;
 }[];
 // 多项填空
 export type MultiTextContent = {

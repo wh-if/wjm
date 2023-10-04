@@ -22,7 +22,7 @@ type AjaxResult<T> = {
 };
 const service: AxiosInstance = axios.create({
   baseURL: "/api",
-  timeout: 5000
+  timeout: 10000
 });
 
 service.interceptors.request.use(
