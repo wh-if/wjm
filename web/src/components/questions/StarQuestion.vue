@@ -43,7 +43,7 @@ watch(inputValue, (val) => {
   .star-question-tips {
     display: flex;
     justify-content: space-between;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
   }
   .star-question-content {
     height: auto;

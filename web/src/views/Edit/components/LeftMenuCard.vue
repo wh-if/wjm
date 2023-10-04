@@ -1,7 +1,15 @@
 <template>
   <ElCard class="edit-left-menu-card">
     <ElTabs v-model="currentTab" tab-position="left">
-      <ElTabPane label="大纲" :name="0">
+      <ElTabPane :name="0">
+        <template #label>
+          <div style="padding: 8px 0">
+            <ElIcon :size="24">
+              <Memo></Memo>
+            </ElIcon>
+            <p>大纲</p>
+          </div>
+        </template>
         <div class="scroll-box">
           <ElText size="large" style="font-weight: bold" truncated>
             {{ surveyData.title }}
@@ -15,7 +23,15 @@
           </ElText>
         </div>
       </ElTabPane>
-      <ElTabPane label="题型" :name="1">
+      <ElTabPane :name="1">
+        <template #label>
+          <div style="padding: 8px 0">
+            <ElIcon :size="24">
+              <Document></Document>
+            </ElIcon>
+            <p>题型</p>
+          </div>
+        </template>
         <div class="scroll-box">
           <div
             v-for="item in QuestionTypeList"
@@ -31,12 +47,26 @@
               bg
               text
             >
+              <img
+                width="18"
+                style="margin-right: 4px"
+                src="@/assets/question_type_icon/radio.svg"
+                alt="t"
+              />
               {{ i!.name }}
             </ElButton>
           </div>
         </div>
       </ElTabPane>
-      <ElTabPane label="题库" :name="2">
+      <ElTabPane :name="2">
+        <template #label>
+          <div style="padding: 8px 0">
+            <ElIcon :size="24">
+              <Collection></Collection>
+            </ElIcon>
+            <p>题库</p>
+          </div>
+        </template>
         <div class="collect-container">
           <ElRadioGroup v-model="collect.isPublic" size="small">
             <ElRadioButton :label="true">公共题库</ElRadioButton>
@@ -57,9 +87,14 @@
               @cancel="handleRemoveCollect(item.id!)"
             >
               <template #reference>
-                <ElButton style="margin: 6px 0 0" bg text>{{
-                  item.title
-                }}</ElButton>
+                <div class="collect-list-item">
+                  <ElTag effect="light" type="info">
+                    {{ QuestionTypeObj[item.type!]!.name }}
+                  </ElTag>
+                  <ElText style="width: 120px" truncated>
+                    {{ item.title }}
+                  </ElText>
+                </div>
               </template>
             </ElPopconfirm>
           </div>
@@ -75,10 +110,16 @@ import { addQuestionToSurvey, type Question } from "@/api/question";
 import type { SurveyWithQuestions } from "@/api/survey";
 import {
   QuestionTypeList,
-  type QuestionTypeEnum,
-  getDefaultContent
+  QuestionTypeEnum,
+  getDefaultContent,
+  QuestionTypeObj
 } from "@/constants";
-import { InfoFilled } from "@element-plus/icons-vue";
+import {
+  InfoFilled,
+  Memo,
+  Collection,
+  Document
+} from "@element-plus/icons-vue";
 import {
   ElCard,
   ElTabs,
@@ -88,7 +129,9 @@ import {
   ElText,
   ElRadioButton,
   ElMessage,
-  ElMessageBox
+  ElMessageBox,
+  ElTag,
+  ElIcon
 } from "element-plus";
 import { type Ref, inject, computed, ref, reactive, watch } from "vue";
 
@@ -183,6 +226,7 @@ getCollectData();
 .scroll-box {
   overflow-y: auto;
   height: 100%;
+  padding: 10px 20px;
   .el-text {
     width: 100%;
   }
@@ -198,9 +242,33 @@ getCollectData();
 }
 
 .collect-container {
+  text-align: center;
+
   .collect-list {
-    margin-top: 10px;
+    margin-top: 15px;
     text-align: center;
+    padding: 0 10px;
+
+    &-item {
+      display: flex;
+      align-items: center;
+      background-color: #f6f6f6;
+
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-top: 8px;
+      cursor: pointer;
+      text-align: left;
+    }
+    &-item:hover .el-text {
+      color: #1f75ff;
+    }
   }
+}
+</style>
+
+<style>
+.edit-left-menu-card .el-tabs__item {
+  height: auto;
 }
 </style>
