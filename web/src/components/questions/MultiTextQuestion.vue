@@ -2,19 +2,18 @@
   <div class="multi-text">
     <div class="multi-text-content">
       <template v-for="(item, index) in questionContent.textArray" :key="index">
-        <template v-if="typeof item == 'string'">
-          <ElInput
-            v-if="props.edit"
-            v-model="questionContent.textArray[index]"
-            style="display: inline"
-          ></ElInput>
-          <span v-else>
-            {{ item }}
-          </span>
-        </template>
-        <div
+        <span
+          v-if="typeof item == 'string'"
+          class="text-area"
+          :contenteditable="props.edit"
+          @input="(e) => handleContentInput(e, index)"
+        >
+          {{ item || "输入内容" }}
+        </span>
+        <span
           v-else
           :class="props.edit ? 'input-area' : ''"
+          contenteditable="false"
           :style="{
             display: 'inline-block',
             width: props.edit ? '100px' : 'fit-content'
@@ -33,14 +32,10 @@
           >
             <Close></Close>
           </ElIcon>
-        </div>
+        </span>
       </template>
     </div>
-    <ElButton
-      v-if="props.edit"
-      @click="() => questionContent.textArray.push(Date.now(), '')"
-      text
-      class="input-add"
+    <ElButton v-if="props.edit" @click="handleAdd" text class="input-add"
       >添加输入框</ElButton
     >
   </div>
@@ -74,6 +69,14 @@ function handleClickRemove(index: number) {
     .catch(() => {});
 }
 
+function handleContentInput(e: any, index: number) {
+  questionContent.textArray[index] = e.target.innerText;
+}
+
+function handleAdd() {
+  questionContent.textArray.push(Date.now(), "");
+}
+
 watch(
   answerObj,
   (val) => {
@@ -92,8 +95,13 @@ watch(questionContent, (val) => {
 .multi-text-content {
   padding: 8px;
   border: 1px transparent;
-  &:hover {
-    border: 1px dashed rgb(162, 162, 162);
+  border: 1px dashed rgb(162, 162, 162);
+  line-height: 32px;
+
+  .text-area {
+    padding: 6px 14px;
+    outline: none;
+    cursor: text;
   }
 }
 .input-area {
