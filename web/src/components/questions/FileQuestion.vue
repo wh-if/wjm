@@ -6,9 +6,10 @@
       drag
       multiple
       :limit="3"
+      v-loading="uploadState.uploading"
+      element-loading-text="上传中..."
       :on-exceed="handleExceed"
       :auto-upload="false"
-      list-type="picture"
       :disabled="props.disabled"
     >
       <ElIcon class="el-icon--upload"><UploadFilled /></ElIcon>
@@ -54,8 +55,9 @@ const emit = defineEmits(["update:answerValue"]);
 
 const fileList = ref<UploadUserFile[]>([]);
 
-const uploadConfig = reactive({
-  shardSize: 1 * 1024 * 1024 // 1M
+const uploadState = reactive({
+  shardSize: 1 * 1024 * 1024, // 1M
+  uploading: false
 });
 
 function handleDownload(fileItem: FileAnswer[0]) {
@@ -90,6 +92,7 @@ function handleUploadFile() {
       const fileKey = await cryptoDigest(
         itemRaw!.name + itemRaw!.size + itemRaw?.type + itemRaw?.lastModified
       );
+      uploadState.uploading = true;
       await handleShardUpload(fileKey, itemRaw);
       return {
         mimetype: item.raw?.type,
@@ -98,6 +101,7 @@ function handleUploadFile() {
       };
     })
   ).then((values) => {
+    uploadState.uploading = false;
     ElMessage.success("上传成功！");
     emit("update:answerValue", values);
   });
@@ -105,7 +109,7 @@ function handleUploadFile() {
 
 async function handleShardUpload(fileKey: string, itemRaw: File) {
   const fileSuffix = itemRaw.name.split(".")[1];
-  const shardTotalCount = Math.ceil(itemRaw.size / uploadConfig.shardSize);
+  const shardTotalCount = Math.ceil(itemRaw.size / uploadState.shardSize);
   const {
     data: { uploadedShard, fullUploaded }
   } = await checkFileShard({
@@ -114,36 +118,66 @@ async function handleShardUpload(fileKey: string, itemRaw: File) {
     fileSuffix
   });
 
-  if (fullUploaded) {
-    return;
-  }
-
-  let uploadPromiseArray = [];
-  for (let i = 0; i < shardTotalCount; i++) {
-    // 跳过已经上传过的分片
-    if (uploadedShard.includes(i.toString())) {
-      continue;
+  return new Promise((resolve) => {
+    // 秒传，资源已经上传过
+    if (fullUploaded) {
+      resolve("秒传成功！");
     }
-    const start = i * uploadConfig.shardSize;
-    const end = Math.min(itemRaw.size, start + uploadConfig.shardSize);
-    const formData = new FormData();
-    formData.append("file", (itemRaw as File).slice(start, end));
-    formData.append("fileKey", fileKey);
-    formData.append("shardIndex", i.toString());
-    uploadPromiseArray.push(uploadFileShard(formData));
-  }
-  await Promise.all(uploadPromiseArray);
-
-  await mergeFileShard({
-    fileKey,
-    shardTotalCount,
-    fileSuffix
+    // 资源分片已全部上传，但未合并
+    if (uploadedShard.length === shardTotalCount) {
+      resolve(
+        mergeFileShard({
+          fileKey,
+          shardTotalCount,
+          fileSuffix
+        })
+      );
+    }
+    let currentShardIndex = -1;
+    const isUploadingCount = ref(0);
+    watch(isUploadingCount, (val) => {
+      if (val === 0 && currentShardIndex === shardTotalCount - 1) {
+        resolve(
+          mergeFileShard({
+            fileKey,
+            shardTotalCount,
+            fileSuffix
+          })
+        );
+      }
+    });
+    const uploadFn = (shardIndex: number) => {
+      isUploadingCount.value++;
+      // 跳过已经上传过的分片
+      if (uploadedShard.includes(shardIndex.toString())) {
+        isUploadingCount.value--;
+        if (currentShardIndex < shardTotalCount - 1) {
+          uploadFn(++currentShardIndex);
+        }
+        return;
+      }
+      const start = shardIndex * uploadState.shardSize;
+      const end = Math.min(itemRaw.size, start + uploadState.shardSize);
+      const formData = new FormData();
+      formData.append("file", (itemRaw as File).slice(start, end));
+      formData.append("fileKey", fileKey);
+      formData.append("shardIndex", shardIndex.toString());
+      uploadFileShard(formData).then(() => {
+        isUploadingCount.value--;
+        if (currentShardIndex < shardTotalCount - 1) {
+          uploadFn(++currentShardIndex);
+        }
+      });
+    };
+    for (let i = 0; i < Math.min(3, shardTotalCount); i++) {
+      uploadFn(++currentShardIndex);
+    }
   });
 }
 
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.warning(
-    `最多选择3个文件，您选择了${files.length}个文件，请重新选择。`
+    `最多选择3个文件，您总共选择了${fileList.value.length}个文件，请重新选择。`
   );
 };
 
