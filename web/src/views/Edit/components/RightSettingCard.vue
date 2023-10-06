@@ -76,16 +76,17 @@ import {
   ElSelect,
   ElMessageBox
 } from "element-plus";
-import { computed, inject, type Ref, ref, watchEffect, watch } from "vue";
+import { computed, inject, ref, watchEffect, watch } from "vue";
 import {
   QuestionTypeEnum,
   QuestionTypeObj,
   getDefaultContent
 } from "@/constants";
 import StarQuestionContent from "./StarQuestionContent.vue";
+import { surveyContentRefInjectionKey } from "@/constants/injectionKey";
 
 const activeTab = ref<"survey" | "question">("survey");
-const surveyContentRef = inject<Ref>("surveyContentRef");
+const surveyContentRef = inject(surveyContentRefInjectionKey);
 
 const surveyData = computed(() => {
   if (surveyContentRef?.value?.surveyState) {

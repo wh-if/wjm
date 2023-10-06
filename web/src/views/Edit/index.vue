@@ -19,6 +19,7 @@ import SurveyContent from "@/components/SurveyContent.vue";
 import { ElMessageBox, ElNotification } from "element-plus";
 import { ref, provide } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
+import { saveToolInjectionKey, surveyContentRefInjectionKey } from "@/constants/injectionKey";
 
 const surveyContentRef = ref();
 
@@ -40,9 +41,9 @@ onBeforeRouteLeave(async () => {
 
 const hasSaved = ref(true);
 let timer = 0;
-const fnMap = new Map<string, () => Promise<any>>();
+const fnMap = new Map<string | Symbol, () => Promise<any>>();
 
-function addSaveItem(key: string, fn: () => Promise<any>) {
+function addSaveItem(key: string | Symbol, fn: () => Promise<any>) {
   fnMap.set(key, fn);
   hasSaved.value = false;
   if (timer) clearTimeout(timer);
@@ -62,12 +63,13 @@ function saveAll() {
     });
   });
 }
-provide("saveTool", {
+
+provide(saveToolInjectionKey, {
   addSaveItem,
   saveAll,
   hasSaved
 });
-provide("surveyContentRef", surveyContentRef);
+provide(surveyContentRefInjectionKey, surveyContentRef);
 </script>
 
 <style lang="scss" scoped>

@@ -114,6 +114,7 @@ import {
   getDefaultContent,
   QuestionTypeObj
 } from "@/constants";
+import { surveyContentRefInjectionKey } from "@/constants/injectionKey";
 import {
   InfoFilled,
   Memo,
@@ -134,7 +135,7 @@ import {
   ElTag,
   ElIcon
 } from "element-plus";
-import { type Ref, inject, computed, ref, reactive, watch } from "vue";
+import { inject, computed, ref, reactive, watch } from "vue";
 
 const currentTab = ref<0 | 1 | 2>(1);
 
@@ -150,7 +151,7 @@ watch(
   }
 );
 
-const surveyContentRef = inject<Ref>("surveyContentRef");
+const surveyContentRef = inject(surveyContentRefInjectionKey);
 const surveyData = computed(() => {
   if (surveyContentRef?.value?.surveyState) {
     return surveyContentRef.value.surveyState.data as SurveyWithQuestions;

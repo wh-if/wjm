@@ -125,6 +125,7 @@ import {
   addQuestionToSurvey
 } from "@/api/question";
 import Draggable from "vuedraggable-es";
+import { saveToolInjectionKey } from "@/constants/injectionKey";
 
 type SurveyContentType = "Edit" | "Review" | "Answer";
 
@@ -147,7 +148,7 @@ const surveyState = reactive({
 
 const editFlag = computed(() => props.type === "Edit");
 const disabledFlag = computed(() => editFlag.value || props.type === "Review");
-const saveTool = editFlag.value && (inject("saveTool") as any);
+const saveTool = editFlag.value ? inject(saveToolInjectionKey) : undefined;
 
 const router = useRouter();
 
@@ -212,7 +213,7 @@ function onUpdateSurveyData() {
           }
         }
         if (changed) {
-          saveTool.addSaveItem(saveKey, () =>
+          saveTool?.addSaveItem(saveKey, () =>
             updateSurvey({
               title: surveyState.data.title,
               description: surveyState.data.description,

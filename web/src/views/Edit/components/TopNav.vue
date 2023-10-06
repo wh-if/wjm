@@ -22,11 +22,15 @@
 <script setup lang="ts">
 import { ElButton, ElDialog, ElPageHeader } from "element-plus";
 import SharePane from "@/components/SharePane.vue";
-import { computed, inject, ref, type Ref } from "vue";
+import { computed, inject, ref } from "vue";
 import { type SurveyWithQuestions } from "@/api/survey";
+import {
+  saveToolInjectionKey,
+  surveyContentRefInjectionKey
+} from "@/constants/injectionKey";
 const showShareDialog = ref(false);
-const surveyContentRef = inject<Ref>("surveyContentRef");
-const { saveAll, hasSaved } = inject("saveTool") as any;
+const surveyContentRef = inject(surveyContentRefInjectionKey);
+const { saveAll, hasSaved } = inject(saveToolInjectionKey)!;
 
 const surveyData = computed(() => {
   if (surveyContentRef?.value?.surveyState) {

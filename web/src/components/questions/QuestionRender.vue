@@ -41,6 +41,7 @@ import EditInput from "../EditInput.vue";
 import { ref, watch, reactive, type PropType, computed, inject } from "vue";
 import { updateQuestion, type Question } from "@/api/question";
 import { QuestionTypeObj } from "@/constants";
+import { saveToolInjectionKey } from "@/constants/injectionKey";
 
 export interface AnswerData {
   questionId: number;
@@ -70,7 +71,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["answer-change", "focus"]);
-const saveTool = props.edit && (inject("saveTool") as any);
+const saveTool = props.edit ? inject(saveToolInjectionKey) : undefined;
 
 const questionData = reactive<Question>(props.questionData);
 const answerValue = ref<any>(props.answerData?.resultValue);
@@ -93,7 +94,7 @@ function handleClickQuestion() {
 
 const saveKey = Symbol("question");
 watch(questionData, (newVal) => {
-  saveTool.addSaveItem(saveKey, () => updateQuestion(newVal));
+  saveTool?.addSaveItem(saveKey, () => updateQuestion(newVal));
 });
 </script>
 
