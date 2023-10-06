@@ -66,7 +66,8 @@ import {
   ElDropdownMenu,
   ElIcon,
   ElLink,
-  ElDialog
+  ElDialog,
+  ElHeader
 } from "element-plus";
 import UserInfoForm from "./components/UserInfoForm.vue";
 import { reactive, ref } from "vue";

@@ -83,7 +83,7 @@
               >
               <ElInput
                 v-if="props.type == 'input'"
-                style="max-width: 180px;"
+                style="max-width: 180px"
                 v-model="textValues[element.id][state.options[item].id]"
                 :disabled="props.disabled"
               ></ElInput>
@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElCheckbox, ElInput, ElRadio, ElButton } from "element-plus";
+import { ElCheckbox, ElInput, ElRadio, ElButton, ElIcon } from "element-plus";
 import { reactive, ref, toRaw, watch } from "vue";
 import Draggable from "vuedraggable-es";
 import EditInput from "../EditInput.vue";

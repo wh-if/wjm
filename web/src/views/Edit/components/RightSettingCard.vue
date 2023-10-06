@@ -71,6 +71,8 @@ import {
   ElFormItem,
   ElOption,
   ElTabs,
+  ElTabPane,
+  ElSwitch,
   ElSelect,
   ElMessageBox
 } from "element-plus";

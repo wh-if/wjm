@@ -118,7 +118,8 @@ import {
   ElCheckbox,
   type FormRules,
   ElMessage,
-  ElCountdown
+  ElCountdown,
+  ElDialog
 } from "element-plus";
 import { reactive, ref, watch } from "vue";
 import { type LoginParams, getVerifyData } from "@/api/user";
