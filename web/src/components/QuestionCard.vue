@@ -88,6 +88,7 @@ const isAnswer = computed(() => route.name === "answer");
 .question-card-container {
   position: relative;
   padding: 0 64px;
+  margin: 20px 0;
 
   .question-card-tool {
     position: absolute;

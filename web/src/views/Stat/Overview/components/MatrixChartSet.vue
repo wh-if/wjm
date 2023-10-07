@@ -94,6 +94,11 @@ function initChart() {
 function handleChange(type: ChartType) {
   chartState.value = type;
   const options: echarts.EChartsOption = {
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
     xAxis: {
       data: props.statData.questionRaw.content.options.map(
         (item: any) => item.text

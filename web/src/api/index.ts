@@ -27,7 +27,6 @@ const service: AxiosInstance = axios.create({
 
 service.interceptors.request.use(
   (config) => {
-    // const token = sessionStorage.getItem("token");
     const userStore = useUserStore();
     const { token, refresh_token } = userStore.user;
     if (token) {
@@ -110,7 +109,7 @@ function handleRefresh(response: AxiosResponse) {
       });
       isRefreshToken = false;
       //发布 消息
-      retryOldRequest.trigger(data.token);
+      retryOldRequest.trigger();
     });
   }
   //收集订阅者 并把成功后的数据返回原接口
@@ -124,18 +123,16 @@ const retryOldRequest = {
   //添加订阅者
   listen(response: AxiosResponse) {
     return new Promise((resolve) => {
-      this.requestQuery.push((newToken: any) => {
-        const config = response.config || {};
-        config.headers["Authorization"] = newToken;
-        resolve(service(config));
+      this.requestQuery.push(() => {
+        resolve(service(response.config));
       });
     });
   },
 
   //发布消息
-  trigger(newToken: string) {
+  trigger() {
     this.requestQuery.forEach((fn: any) => {
-      fn(newToken);
+      fn();
     });
     this.requestQuery = [];
   }
