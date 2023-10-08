@@ -5,10 +5,12 @@
         <span
           v-if="typeof item == 'string'"
           class="text-area"
+          :style="props.edit ? 'min-width:100px' : ''"
           :contenteditable="props.edit"
+          @click="handleClickText(index)"
           @input="(e) => handleContentInput(e, index)"
         >
-          {{ item || "输入内容" }}
+          {{ item }}
         </span>
         <span
           v-else
@@ -54,6 +56,11 @@ const questionContent = reactive(props.questionContent);
 
 const answerObj = ref(props.answerValue || {});
 
+const selectionState = reactive({
+  focusedSpanIndex: questionContent.textArray.length - 1,
+  lastRange: {} as Range | undefined
+});
+
 // 删除填空
 function handleClickRemove(index: number) {
   ElMessageBox.confirm("确认要删除吗？", {
@@ -74,7 +81,27 @@ function handleContentInput(e: any, index: number) {
 }
 
 function handleAdd() {
-  questionContent.textArray.push(Date.now(), "");
+  const targetText = questionContent.textArray[
+    selectionState.focusedSpanIndex
+  ] as string;
+
+  let _t = selectionState.lastRange?.startOffset;
+  const selectionInTextIndex = _t === undefined ? targetText.length : _t;
+
+  questionContent.textArray.splice(
+    selectionState.focusedSpanIndex,
+    1,
+    targetText.slice(0, selectionInTextIndex),
+    Date.now(),
+    targetText.slice(selectionInTextIndex)
+  );
+}
+
+function handleClickText(index: number) {
+  selectionState.focusedSpanIndex = index;
+  const selection = getSelection();
+  const range = selection?.getRangeAt(0);
+  selectionState.lastRange = range;
 }
 
 watch(
@@ -96,10 +123,11 @@ watch(questionContent, (val) => {
   padding: 8px;
   border: 1px transparent;
   border: 1px dashed rgb(162, 162, 162);
-  line-height: 32px;
+  line-height: 36px;
 
   .text-area {
-    padding: 6px 14px;
+    padding: 0 6px;
+    display: inline-block;
     outline: none;
     cursor: text;
   }
