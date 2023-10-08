@@ -29,6 +29,7 @@
       :move="editFlag ? undefined : () => false"
       @end="handleDragEnd"
       item-key="id"
+      :disabled="!editFlag"
     >
       <template #item="{ element: item, index }">
         <QuestionCard
@@ -50,26 +51,6 @@
         </QuestionCard>
       </template>
     </Draggable>
-    <!-- <template v-else>
-      <QuestionCard
-        v-for="(item, index) in surveyState.data.questions"
-        :key="item.id"
-        :stared="item.stared"
-        @star="handleStar(item.id!, item.stared)"
-        @delete="handleDelete(item.id!)"
-        @copy="handleCopy(item)"
-      >
-        <QuestionRender
-          :question-data="item"
-          :index="index"
-          :edit="editFlag"
-          :disabled="disabledFlag"
-          @focus="(e) => (focusQuestionIndex = e.index)"
-          @answer-change="(e) => (answerResult[e.index] = e.data)"
-          :answer-data="answerResult[index]"
-        ></QuestionRender>
-      </QuestionCard>
-    </template> -->
 
     <div v-if="props.type === 'Answer'" class="submit-box">
       <ElButton

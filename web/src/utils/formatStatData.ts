@@ -145,10 +145,18 @@ function handleMatrixRadio(formatStatResultItem: FormatStatResult) {
           formatStatResultItem.answerResultList
             .map((s) => s.resultValue)
             .forEach((item) => {
-              // 单选 || 多选
+              const answerOfSeriesItem = item[seriesItem.id];
+              if (!answerOfSeriesItem) {
+                return;
+              }
+              // 单选
+              if (answerOfSeriesItem == optionItem.id) {
+                newOptionItem.count!++;
+              }
+              // 多选
               if (
-                item[seriesItem.id] == optionItem.id ||
-                item[seriesItem.id][optionItem.id]
+                typeof answerOfSeriesItem === "object" &&
+                answerOfSeriesItem[optionItem.id]
               ) {
                 newOptionItem.count!++;
               }

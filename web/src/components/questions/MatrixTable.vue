@@ -7,6 +7,7 @@
           v-model="state.options"
           tag="tr"
           item-key="id"
+          :disabled="!props.edit"
         >
           <template #item="{ element, index }">
             <th>
@@ -41,6 +42,7 @@
         :move="handleDragMove"
         tag="tbody"
         :item-key="(e: any) => e"
+        :disabled="!props.edit"
       >
         <template #item="{ element, index }">
           <tr>
@@ -67,26 +69,11 @@
               </div>
             </td>
             <td v-for="item in state.options.length - 1" :key="item">
-              <ElRadio
-                v-if="props.type == 'radio'"
-                v-model="radioValues[element.id]"
-                :label="state.options[item].id.toString()"
-                :disabled="props.disabled"
-                >{{ "" }}</ElRadio
-              >
-              <ElCheckbox
-                v-if="props.type == 'checkbox'"
-                v-model="multiRadioValues[element.id][state.options[item].id]"
-                :label="state.options[item].id.toString()"
-                :disabled="props.disabled"
-                >{{ "" }}</ElCheckbox
-              >
-              <ElInput
-                v-if="props.type == 'input'"
-                style="max-width: 180px"
-                v-model="textValues[element.id][state.options[item].id]"
-                :disabled="props.disabled"
-              ></ElInput>
+              <slot
+                name="item"
+                :columnData="state.options[item]"
+                :rowData="element"
+              ></slot>
             </td>
           </tr>
         </template>
@@ -114,8 +101,8 @@
 </template>
 
 <script setup lang="ts">
-import { ElCheckbox, ElInput, ElRadio, ElButton, ElIcon } from "element-plus";
-import { reactive, ref, toRaw, watch } from "vue";
+import { ElButton, ElIcon } from "element-plus";
+import { reactive, toRaw, watch } from "vue";
 import Draggable from "vuedraggable-es";
 import EditInput from "../EditInput.vue";
 
@@ -128,25 +115,13 @@ const props = defineProps<{
     id: number;
     name: string;
   }[];
-  type: "radio" | "checkbox" | "input";
   edit: boolean;
-  disabled: boolean;
-  values: Record<
-    string,
-    number | Record<number, string> | Record<number, boolean>
-  >;
 }>();
 
 const state = reactive({
   options: [{ id: -1 }, ...props.options],
   series: [...props.series]
 });
-
-const radioValues = ref(props.values as Record<string, number>);
-const multiRadioValues = ref(
-  props.values as Record<string, Record<number, boolean>>
-);
-const textValues = ref(props.values as Record<string, Record<number, string>>);
 
 const emit = defineEmits(["update:options", "update:series", "update:values"]);
 
@@ -169,39 +144,8 @@ function handleAdd() {
     id: key,
     name
   });
-  if (props.type == "input" || props.type == "checkbox") {
-    multiRadioValues.value[key] = {};
-    textValues.value[key] = {};
-  }
 }
 
-watch(
-  radioValues,
-  (val) => {
-    emit("update:values", val);
-  },
-  {
-    deep: true
-  }
-);
-watch(
-  multiRadioValues,
-  (val) => {
-    emit("update:values", val);
-  },
-  {
-    deep: true
-  }
-);
-watch(
-  textValues,
-  (val) => {
-    emit("update:values", val);
-  },
-  {
-    deep: true
-  }
-);
 watch(
   () => state.options,
   (val) => {

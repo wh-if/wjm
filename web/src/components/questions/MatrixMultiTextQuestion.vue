@@ -1,17 +1,25 @@
 <template>
   <MatrixTable
-    type="input"
     v-model:options="questionContent.options"
     v-model:series="questionContent.series"
     :edit="props.edit"
-    :disabled="props.disabled"
-    v-model:values="answerValue"
-  ></MatrixTable>
+  >
+    <template #item="{ rowData, columnData }">
+      <ElInput
+        v-model="answerValue[rowData.id][columnData.id]"
+        style="max-width: 180px"
+        :disabled="props.disabled"
+      >
+        {{ "" }}
+      </ElInput>
+    </template>
+  </MatrixTable>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
 import MatrixTable from "./MatrixTable.vue";
+import { ElInput } from "element-plus";
 import type {
   MatrixMultiTextAnswer,
   MatrixMultiTextContent,
@@ -24,7 +32,7 @@ const props =
 const questionContent = reactive(props.questionContent);
 const emit = defineEmits(["update:answerValue", "update:question-content"]);
 
-const answerValue = ref(getInitValues());
+const answerValue = ref<MatrixMultiTextAnswer>({});
 
 watch(
   answerValue,
@@ -39,18 +47,22 @@ watch(
   questionContent,
   (val) => {
     emit("update:question-content", val);
+    initAnswerValues();
   },
   {
     deep: true
   }
 );
-function getInitValues() {
+initAnswerValues();
+function initAnswerValues() {
   if (props.answerValue) {
-    return props.answerValue as MatrixMultiTextAnswer;
+    answerValue.value = props.answerValue;
   }
-  let obj = {} as MatrixMultiTextAnswer;
-  questionContent.series.forEach((item) => (obj[item.id] = {}));
-  return obj;
+  questionContent.series.forEach((item) => {
+    if (!answerValue.value[item.id]) {
+      answerValue.value[item.id] = {};
+    }
+  });
 }
 </script>
 

@@ -1,16 +1,24 @@
 <template>
   <MatrixTable
-    type="radio"
     v-model:options="questionContent.options"
     v-model:series="questionContent.series"
     :edit="props.edit"
-    :disabled="props.disabled"
-    v-model:values="answerValue"
-  ></MatrixTable>
+  >
+    <template #item="{ rowData, columnData }">
+      <ElRadio
+        v-model="answerValue[rowData.id]"
+        :label="columnData.id.toString()"
+        :disabled="props.disabled"
+      >
+        {{ "" }}
+      </ElRadio>
+    </template>
+  </MatrixTable>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
+import { ElRadio } from "element-plus";
 import MatrixTable from "./MatrixTable.vue";
 import type {
   MatrixRadioAnswer,
@@ -24,7 +32,7 @@ const props =
 const questionContent = reactive(props.questionContent);
 const emit = defineEmits(["update:answerValue", "update:question-content"]);
 
-const answerValue = ref(getInitValues());
+const answerValue = ref<MatrixRadioAnswer>(props.answerValue || {});
 
 watch(
   answerValue,
@@ -44,13 +52,6 @@ watch(
     deep: true
   }
 );
-function getInitValues() {
-  if (props.answerValue) {
-    return props.answerValue as MatrixRadioAnswer;
-  }
-  let obj = {} as MatrixRadioAnswer;
-  return obj;
-}
 </script>
 
 <style lang="scss" scoped></style>
