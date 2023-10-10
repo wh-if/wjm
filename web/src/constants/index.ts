@@ -33,6 +33,18 @@ import MatrixRadioQuestion from "@/components/questions/MatrixRadioQuestion.vue"
 import MatrixMultiRadioQuestion from "@/components/questions/MatrixMultiRadioQuestion.vue";
 import MatrixMultiTextQuestion from "@/components/questions/MatrixMultiTextQuestion.vue";
 import StarQuestion from "@/components/questions/StarQuestion.vue";
+import RadioIcon from "@/assets/svg/radio.svg";
+import CheckboxIcon from "@/assets/svg/checkbox.svg";
+import DatetimeIcon from "@/assets/svg/datetime.svg";
+import FilelinkIcon from "@/assets/svg/filelink.svg";
+import SingleTextIcon from "@/assets/svg/single_text.svg";
+import SortIcon from "@/assets/svg/sort.svg";
+import StarIcon from "@/assets/svg/star.svg";
+import SignIcon from "@/assets/svg/sign.svg";
+import MatrixCheckboxIcon from "@/assets/svg/matrix_checkbox.svg";
+import MultiTextIcon from "@/assets/svg/multi_text.svg";
+import MatrixMultiTextIcon from "@/assets/svg/matrix_multi_text.svg";
+import MatrixRadioIcon from "@/assets/svg/matrix_radio.svg";
 
 export const QuestionTypeList = [
   {
@@ -41,12 +53,14 @@ export const QuestionTypeList = [
       // 单选
       [QuestionTypeEnum.Radio]: {
         name: "单选",
-        component: RadioQuestion
+        component: RadioQuestion,
+        icon: RadioIcon
       },
       // 多选
       [QuestionTypeEnum.MultiRadio]: {
         name: "多选",
-        component: CheckboxQuestion
+        component: CheckboxQuestion,
+        icon: CheckboxIcon
       }
     }
   },
@@ -56,11 +70,13 @@ export const QuestionTypeList = [
       // 文本
       [QuestionTypeEnum.Text]: {
         name: "单行文本",
-        component: TextQuestion
+        component: TextQuestion,
+        icon: SingleTextIcon
       },
       [QuestionTypeEnum.MultiText]: {
         name: "多项填空",
-        component: MultiTextQuestion
+        component: MultiTextQuestion,
+        icon: MultiTextIcon
       }
     }
   },
@@ -69,23 +85,28 @@ export const QuestionTypeList = [
     items: {
       [QuestionTypeEnum.Star]: {
         name: "量表",
-        component: StarQuestion
+        component: StarQuestion,
+        icon: StarIcon
       },
       [QuestionTypeEnum.File]: {
         name: "图片/文件",
-        component: FileQuestion
+        component: FileQuestion,
+        icon: FilelinkIcon
       },
       [QuestionTypeEnum.DateTime]: {
         name: "日期/时间",
-        component: DateTimeQuestion
+        component: DateTimeQuestion,
+        icon: DatetimeIcon
       },
       [QuestionTypeEnum.Sign]: {
         name: "签名",
-        component: SignQuestion
+        component: SignQuestion,
+        icon: SignIcon
       },
       [QuestionTypeEnum.Sort]: {
         name: "排序",
-        component: SortQuestion
+        component: SortQuestion,
+        icon: SortIcon
       }
     }
   },
@@ -95,17 +116,20 @@ export const QuestionTypeList = [
       // 矩阵单选
       [QuestionTypeEnum.MatrixRadio]: {
         name: "矩阵单选",
-        component: MatrixRadioQuestion
+        component: MatrixRadioQuestion,
+        icon: MatrixRadioIcon
       },
       // 矩阵多选
       [QuestionTypeEnum.MatrixMultiRadio]: {
         name: "矩阵多选",
-        component: MatrixMultiRadioQuestion
+        component: MatrixMultiRadioQuestion,
+        icon: MatrixCheckboxIcon
       },
       // 矩阵填空
       [QuestionTypeEnum.MatrixMultiText]: {
         name: "矩阵填空",
-        component: MatrixMultiTextQuestion
+        component: MatrixMultiTextQuestion,
+        icon: MatrixMultiTextIcon
       }
     }
   }

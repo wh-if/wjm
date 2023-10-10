@@ -50,7 +50,7 @@
               <img
                 width="18"
                 style="margin-right: 4px"
-                src="@/assets/question_type_icon/radio.svg"
+                :src="i!.icon"
                 alt="t"
               />
               {{ i!.name }}
