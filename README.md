@@ -8,24 +8,24 @@
 
 * 登录
 
-![](.\screenshot\login.jpeg)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/screenshot/login.jpeg)
 
 * 主页
 
-![](.\screenshot\mine.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/screenshot/mine.png)
 
 * 编辑设计
 
-![](.\screenshot\edit.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/screenshot/edit.png)
 
 * 填写问卷
 
-![](.\screenshot\view.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/screenshot/view.png)
 
 * 统计
 
-![](.\screenshot\stat.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/screenshot/stat.png)
 
 
 
-![statItem](.\screenshot\statItem.png)
+![statItem](https://raw.githubusercontent.com/wh-if/wjm/master/screenshot/statItem.png)
