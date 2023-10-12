@@ -8,24 +8,24 @@
 
 * 登录
 
-![](D:\MyFile\WorkSpace\问卷猫\screenshot\login.jpeg)
+![](.\screenshot\login.jpeg)
 
 * 主页
 
-![](D:\MyFile\WorkSpace\问卷猫\screenshot\mine.png)
+![](.\screenshot\mine.png)
 
 * 编辑设计
 
-![](D:\MyFile\WorkSpace\问卷猫\screenshot\edit.png)
+![](.\screenshot\edit.png)
 
 * 填写问卷
 
-![](D:\MyFile\WorkSpace\问卷猫\screenshot\view.png)
+![](.\screenshot\view.png)
 
 * 统计
 
-![](D:\MyFile\WorkSpace\问卷猫\screenshot\stat.png)
+![](.\screenshot\stat.png)
 
 
 
-![statItem](D:\MyFile\WorkSpace\问卷猫\screenshot\statItem.png)
+![statItem](.\screenshot\statItem.png)
