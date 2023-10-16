@@ -40,36 +40,40 @@ function initChart() {
   // 基于准备好的dom，初始化echarts实例
   const chart = echarts.init(chartRef.value);
 
+  const resultData: [string, number][] = [];
+
   const sortedAnswerList = statRawData?.answerList.sort(
     (a, b) => parseInt(a.submitTime!) - parseInt(b.submitTime!)
   );
 
-  const getHourFn = (time: string) => {
-    if (time === undefined) {
-      return undefined;
-    }
-    return new Date(parseInt(time)).toLocaleString().split(":")[0];
-  };
+  if (sortedAnswerList.length > 0) {
+    const getHourFn = (time: string) => {
+      if (time === undefined) {
+        return undefined;
+      }
+      return new Date(parseInt(time)).toLocaleString().split(":")[0];
+    };
 
-  let baseHour = getHourFn(sortedAnswerList[0].submitTime!);
-  const resultData: [string, number][] = [];
-  let count = 0;
-  for (let i = 0; i < sortedAnswerList.length + 1; ) {
-    const item = sortedAnswerList[i];
-    const itemHour = getHourFn(item?.submitTime!);
-    if (itemHour === baseHour) {
-      resultData.splice(resultData.length - 1, 1, [itemHour + "时", ++count]);
-      i++;
-    } else {
-      count = 0;
-      baseHour = getHourFn(
-        dayjs(baseHour + ":00")
-          .add(1, "hour")
-          .unix() + "000"
-      );
-      resultData.push([baseHour + "时", count]);
-      if (!item) {
-        break;
+    let baseHour = getHourFn(sortedAnswerList[0].submitTime!);
+
+    let count = 0;
+    for (let i = 0; i < sortedAnswerList.length + 1; ) {
+      const item = sortedAnswerList[i];
+      const itemHour = getHourFn(item?.submitTime!);
+      if (itemHour === baseHour) {
+        resultData.splice(resultData.length - 1, 1, [itemHour + "时", ++count]);
+        i++;
+      } else {
+        count = 0;
+        baseHour = getHourFn(
+          dayjs(baseHour + ":00")
+            .add(1, "hour")
+            .unix() + "000"
+        );
+        resultData.push([baseHour + "时", count]);
+        if (!item) {
+          break;
+        }
       }
     }
   }
