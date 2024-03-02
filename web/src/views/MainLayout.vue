@@ -70,7 +70,7 @@ import {
   ElHeader
 } from "element-plus";
 import UserInfoForm from "./components/UserInfoForm.vue";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import UserAccountForm from "./components/UserAccountForm.vue";
 
 const userStore = useUserStore();
