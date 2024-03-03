@@ -46,6 +46,7 @@
 import { ElButton, ElButtonGroup, ElOption, ElSelect } from "element-plus";
 import { computed, onMounted, ref, watch } from "vue";
 import * as echarts from "echarts";
+import { useDark } from "@/hooks/useDark";
 
 type ChartType = "bar" | "line" | "pie";
 
@@ -57,6 +58,7 @@ const props = defineProps({
 });
 
 const chartContainerRef = ref();
+const { darkState } = useDark();
 
 const chartState = ref<ChartType>("bar");
 
@@ -86,7 +88,10 @@ watch(computedSeriesStat, () => {
 let chart: echarts.ECharts;
 function initChart() {
   // 基于准备好的dom，初始化echarts实例
-  chart = echarts.init(chartContainerRef.value);
+  chart = echarts.init(
+    chartContainerRef.value,
+    darkState.value ? "dark" : "light"
+  );
   // 绘制图表
   handleChange("bar");
 }
@@ -170,7 +175,7 @@ onMounted(() => {
   .chartset-container {
     width: 100%;
     height: 360px;
-    border: 1px solid #e1e7f2;
+    border: 1px solid var(--el-border-color);
   }
 }
 </style>

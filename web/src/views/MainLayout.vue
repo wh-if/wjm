@@ -3,6 +3,13 @@
     <div class="logo">
       <h1>问卷猫</h1>
     </div>
+    <ElSwitch
+      v-model="darkState"
+      style="margin: 0 25px"
+      size="large"
+      :active-action-icon="Moon"
+      :inactive-action-icon="Sunny"
+    />
     <ElDropdown>
       <ElLink :underline="false">
         {{ userStore.user.name }}
@@ -67,13 +74,17 @@ import {
   ElIcon,
   ElLink,
   ElDialog,
-  ElHeader
+  ElHeader,
+  ElSwitch
 } from "element-plus";
+import { Sunny, Moon } from "@element-plus/icons-vue";
 import UserInfoForm from "./components/UserInfoForm.vue";
-import { reactive } from "vue";
+import { reactive} from "vue";
 import UserAccountForm from "./components/UserAccountForm.vue";
+import { useDark } from "@/hooks/useDark";
 
 const userStore = useUserStore();
+const { darkState } = useDark();
 
 const dialogState = reactive({
   visible: false,
@@ -89,10 +100,11 @@ function handleLogout() {
 .main-header {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   position: fixed;
   width: 100%;
-  background-color: #fff;
-  border-bottom: 1px solid #dcdfe6;
+  background-color: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color);
   z-index: 99;
 
   .logo {
@@ -100,7 +112,7 @@ function handleLogout() {
     height: 80%;
     align-self: center;
     position: absolute;
-    left: 150px;
+    left: 100px;
     background-image: url("@/assets/image/ghost.png");
     background-size: contain;
     background-repeat: no-repeat;

@@ -45,7 +45,7 @@ export const useUserStore = defineStore("user", () => {
       user.token = "";
       user.refresh_token = "";
       ElMessage.success(message);
-      router.replace("login");
+      router.replace("/login");
     });
   }
   return { user, loginAction, logoutAction };

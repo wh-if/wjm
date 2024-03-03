@@ -120,7 +120,7 @@ const isAnswer = computed(() => route.name === "answer");
   }
 }
 .question-card {
-  background-color: #fff;
+  background-color: var(--el-bg-color-overlay);
   padding: 30px 0;
 
   .question-card-body {

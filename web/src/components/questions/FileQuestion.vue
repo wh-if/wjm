@@ -109,7 +109,7 @@ function handleUploadFile() {
 
 async function handleShardUpload(fileKey: string, itemRaw: File) {
   const fileSuffix = itemRaw.name.split(".")[1];
-  const shardTotalCount = Math.ceil(itemRaw.size / uploadState.shardSize);
+  const shardTotalCount = Math.ceil(itemRaw.size / uploadState.shardSize) || 1;
   const {
     data: { uploadedShard, fullUploaded }
   } = await checkFileShard({

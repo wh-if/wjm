@@ -47,7 +47,7 @@ const surveyData = computed(() => {
   justify-content: space-between;
   text-align: center;
 
-  background-color: #fff;
+  background-color: var(--el-bg-color);
   z-index: 99;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06);
 

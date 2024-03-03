@@ -24,6 +24,7 @@ import StatRender from "./components/StatRender.vue";
 import type { SurveyWithQuestions } from "@/api/survey";
 import type { Answer } from "@/api/answer";
 import { formatStatData, type FormatStatResult } from "@/utils/formatStatData";
+import { useDark } from "@/hooks/useDark";
 
 const chartRef = ref();
 
@@ -36,9 +37,14 @@ const statFormattedData = shallowRef<FormatStatResult[]>([]);
 
 statFormattedData.value = formatStatData(statRawData!);
 
+const { darkState } = useDark();
+
 function initChart() {
   // 基于准备好的dom，初始化echarts实例
-  const chart = echarts.init(chartRef.value);
+  const chart = echarts.init(
+    chartRef.value,
+    darkState.value ? "dark" : "light"
+  );
 
   const resultData: [string, number][] = [];
 

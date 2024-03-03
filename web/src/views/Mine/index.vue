@@ -28,7 +28,7 @@
         </ElMenuItem>
       </ElMenu>
     </ElAside>
-    <ElMain>
+    <ElCard class="mine-main">
       <div class="tool-bar">
         <ElInput
           v-if="!inFolderMenu"
@@ -221,7 +221,7 @@
       <ElDialog title="分享问卷" v-model="state.showShareDialog">
         <SharePane :survey-id="currentFocusSurvey"></SharePane>
       </ElDialog>
-    </ElMain>
+    </ElCard>
   </ElContainer>
 </template>
 
@@ -260,7 +260,8 @@ import {
   ElDialog,
   ElMessageBox,
   ElMessage,
-  ElTag
+  ElTag,
+  ElCard
 } from "element-plus";
 import {
   ArrowDown,
@@ -545,7 +546,11 @@ getData();
   bottom: 0;
   width: 100%;
   .mine-sidebar {
-    background-color: #fff;
+    background-color: var(--el-bg-color);
+  }
+  .mine-main {
+    margin: 50px;
+    flex: 1;
   }
 }
 

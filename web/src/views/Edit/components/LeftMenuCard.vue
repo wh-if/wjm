@@ -43,16 +43,11 @@
               v-for="(i, index) in item.items"
               :key="index"
               @click="addQuestionByType(index)"
-              style="margin: 6px 0 0 8px"
+              class="question-type-button"
               bg
               text
             >
-              <img
-                width="18"
-                style="margin-right: 4px"
-                :src="i!.icon"
-                alt="t"
-              />
+              <img width="18" :src="i!.icon" alt="t" />
               {{ i!.name }}
             </ElButton>
           </div>
@@ -233,14 +228,22 @@ getCollectData();
     width: 100%;
   }
 }
+.question-type-button {
+  overflow: hidden;
+  margin: 6px 0 0 8px;
+  img {
+    margin-right: 4px;
+    filter: drop-shadow(var(--el-text-color-primary) 50px 0);
+    transform: translateX(-50px);
+  }
+}
+
 .question-group-title {
   height: 40px;
   font-size: 14px;
   line-height: 40px;
   font-weight: 500;
   margin-bottom: 0;
-
-  color: #333;
 }
 
 .collect-container {
@@ -254,7 +257,7 @@ getCollectData();
     &-item {
       display: flex;
       align-items: center;
-      background-color: #f6f6f6;
+      border: 1px solid var(--el-border-color);
 
       border-radius: 6px;
       padding: 6px 8px;

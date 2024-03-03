@@ -42,7 +42,7 @@ const props = defineProps({
   height: 40px;
   position: relative;
   border-radius: 6px;
-  border: 1px solid #e1e7f2;
+  border: 1px solid var(--el-border-color);
   margin: 10px 0;
   > * {
     height: 100%;
