@@ -1,4 +1,4 @@
-import Koa from "Koa";
+import Koa from "koa";
 import router from "./controller/router";
 import koaBody from "koa-body";
 import { auth } from "./middleware/auth";
