@@ -3,14 +3,14 @@ import { Controller, HttpMethodEnum } from "../model";
 import { collectMapper } from "../dao/mapper/CollectMapper";
 
 const controller: Controller[] = [
-  // 获取当前用户的所有收藏题目
+  // 获取当前用户的所有收藏题目, isPublic区分收藏和公共题库
   {
     path: "/collect",
     method: HttpMethodEnum.GET,
     handler: async (ctx) => {
       const { isPublic } = ctx.query;
       const resultList = await collectMapper.getCollectList(
-        isPublic ? undefined : ctx.body
+        isPublic === "true" ? undefined : ctx.body
       );
       ctx.body = AjaxResult.success({ resultList });
     },

@@ -118,6 +118,7 @@ function sendVerifyCode() {
     getVerifyData(inputState.email).then(() => {
       verifyCodeState.countDown = Date.now() + 60 * 1000;
       verifyCodeState.hasSend = true;
+      ElMessage.success("发送成功！（后台查看）");
     });
   }
 }

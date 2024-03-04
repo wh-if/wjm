@@ -10,10 +10,7 @@ class CollectMapper extends BaseMapper<Collect> {
     super("collect");
   }
   // 10000000为公共题库
-  getCollectList(userId: number) {
-    if (!userId) {
-      userId = 10000000;
-    }
+  getCollectList(userId: number = 10000000) {
     let sql = `select question.* from question,collect where collect.userId=${userId} and collect.questionId=question.id`;
     return this.selectBySql<Question[]>(sql);
   }

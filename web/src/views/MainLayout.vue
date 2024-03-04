@@ -3,6 +3,14 @@
     <div class="logo">
       <h1>问卷猫</h1>
     </div>
+
+    <img
+      class="github-icon"
+      @click="toGitHub()"
+      src="../assets/svg/github.svg"
+      title="GitHub"
+      alt="GitHub"
+    />
     <ElSwitch
       v-model="darkState"
       style="margin: 0 25px"
@@ -79,7 +87,7 @@ import {
 } from "element-plus";
 import { Sunny, Moon } from "@element-plus/icons-vue";
 import UserInfoForm from "./components/UserInfoForm.vue";
-import { reactive} from "vue";
+import { reactive } from "vue";
 import UserAccountForm from "./components/UserAccountForm.vue";
 import { useDark } from "@/hooks/useDark";
 
@@ -94,6 +102,10 @@ const dialogState = reactive({
 function handleLogout() {
   userStore.logoutAction();
 }
+
+function toGitHub() {
+  window.open("https://github.com/wh-if/wjm");
+}
 </script>
 
 <style lang="scss" scoped>
@@ -106,6 +118,11 @@ function handleLogout() {
   background-color: var(--el-bg-color);
   border-bottom: 1px solid var(--el-border-color);
   z-index: 99;
+
+  .github-icon {
+    width: 26px;
+    cursor: pointer;
+  }
 
   .logo {
     width: 130px;

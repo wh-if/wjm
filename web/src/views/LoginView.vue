@@ -119,12 +119,18 @@ import {
   type FormRules,
   ElMessage,
   ElCountdown,
-  ElDialog
+  ElDialog,
+  ElNotification
 } from "element-plus";
 import { reactive, ref, watch } from "vue";
 import { type LoginParams, getVerifyData } from "@/api/user";
 import UserAccountForm from "./components/UserAccountForm.vue";
 import { cryptoDigest } from "@/utils/crypto";
+import { onBeforeRouteLeave } from "vue-router";
+
+onBeforeRouteLeave(() => {
+  closeNotification();
+});
 
 const isPasswordType = ref<boolean>(true);
 
@@ -208,6 +214,7 @@ function sendVerifyCode() {
     getVerifyData(inputState.email).then(() => {
       verifyCodeState.countDown = Date.now() + 60 * 1000;
       verifyCodeState.hasSend = true;
+      ElMessage.success("发送成功！（后台查看）");
     });
   }
 }
@@ -233,6 +240,18 @@ function handleLogin() {
   });
 }
 
+const { close: closeNotification } = ElNotification.info({
+  message: "账号：admin2@qq.com<br/> 密码：123123",
+  dangerouslyUseHTMLString: true,
+  duration: 0
+});
+
+watch(
+  () => inputState.email,
+  () => {
+    inputState.password = "";
+  }
+);
 watch(
   () => inputState.password,
   () => {
