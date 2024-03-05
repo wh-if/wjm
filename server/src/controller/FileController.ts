@@ -84,7 +84,18 @@ const controller: Controller[] = [
     handler: [
       async (ctx) => {
         const { fileKey, shardTotalCount, fileSuffix } = ctx.request.body;
-        const allFileList = await fs.readdir(path.join(__dirname, `../upload`));
+        const uploadPath = path.join(__dirname, `../upload`);
+        // upload文件夹不存在时要新建一个
+        try {
+          await fs.access(uploadPath);
+        } catch (err) {
+          if (err.code === "ENOENT") {
+            await fs.mkdir(uploadPath);
+          } else {
+            console.log(err);
+          }
+        }
+        const allFileList = await fs.readdir(uploadPath);
         if (allFileList.includes(`${fileKey}.${fileSuffix}`)) {
           ctx.body = AjaxResult.success({
             fullUploaded: true,

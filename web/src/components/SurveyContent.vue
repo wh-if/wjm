@@ -74,11 +74,23 @@
       >
       </ElPagination>
       <ElButton
+        v-if="
+          currentQuestionIndex === 0 ||
+          currentQuestionIndex === surveyState.data.questions!.length
+        "
         @click="handleSubmit"
         type="primary"
         size="large"
         style="width: 240px"
         >提交</ElButton
+      >
+      <ElButton
+        v-else
+        @click="currentQuestionIndex += 1"
+        type="primary"
+        size="large"
+        style="width: 240px"
+        >下一题</ElButton
       >
     </div>
   </div>
