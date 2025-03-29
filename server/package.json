@@ -8,8 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "wh",
-  "license": "ISC",
+  "author": "wh-if",
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.2",
     "@types/koa": "^2.13.5",

@@ -1,9 +1,10 @@
 {
   "name": "wjm",
   "version": "0.0.0",
+  "private": "true",
   "description": "",
-  "main": "index.js",
   "scripts": {
+    "prepare": "husky",
     "dev:web": "pnpm -F @wjm/web run dev",
     "dev:server": "pnpm -F @wjm/server run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,17 +13,29 @@
     "type": "git",
     "url": "git+https://github.com/wh-if/wjm.git"
   },
-  "author": "",
+  "author": "wh-if",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/wh-if/wjm/issues"
   },
   "homepage": "https://github.com/wh-if/wjm#readme",
   "devDependencies": {
-    "@types/lodash-es": "^4.17.9",
-    "typescript": "^5.2.2"
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "typescript": "^5.8.2"
   },
-  "dependencies": {
-    "lodash-es": "^4.17.21"
-  }
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.vue": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "packageManager": "pnpm@9.13.2"
 }
