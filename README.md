@@ -4,30 +4,28 @@
 
 技术栈：Vue 3、Vue Router、Pinia、Nodejs。
 
-![](https://raw.githubusercontent.com/wh-if/wjm/master/picture/wjm.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/info/image/wjm.png)
 
 ## 预览
 
-* 登录
+- 登录
 
-![](https://raw.githubusercontent.com/wh-if/wjm/master/picture/login.jpeg)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/info/image/login.jpeg)
 
-* 主页
+- 主页
 
-![](https://raw.githubusercontent.com/wh-if/wjm/master/picture/mine.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/info/image/mine.png)
 
-* 编辑设计
+- 编辑设计
 
-![](https://raw.githubusercontent.com/wh-if/wjm/master/picture/edit.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/info/image/edit.png)
 
-* 填写问卷
+- 填写问卷
 
-![](https://raw.githubusercontent.com/wh-if/wjm/master/picture/view.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/info/image/view.png)
 
-* 统计
+- 统计
 
-![](https://raw.githubusercontent.com/wh-if/wjm/master/picture/stat.png)
+![](https://raw.githubusercontent.com/wh-if/wjm/master/info/image/stat.png)
 
-
-
-![statItem](https://raw.githubusercontent.com/wh-if/wjm/master/picture/statItem.png)
+![statItem](https://raw.githubusercontent.com/wh-if/wjm/master/info/image/statItem.png)

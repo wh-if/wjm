@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon src/app.ts --watch src",
     "serve": "ts-node src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --fix",
+    "format": "prettier --write src/"
   },
   "keywords": [],
   "author": "wh-if",

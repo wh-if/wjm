@@ -29,3 +29,5 @@ coverage
 *.sw?
 
 server/src/upload
+
+**/wjm.md
